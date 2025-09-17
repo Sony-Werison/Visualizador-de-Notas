@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="">
+<html lang="pt-BR" class="dark"> <!-- Inicia em modo escuro por padrão -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,58 +7,69 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
-        // Aplica o modo escuro imediatamente para evitar flash de tela clara
-        if (localStorage.getItem('notionViewerDarkMode') === 'true') {
-            document.documentElement.classList.add('dark');
+        // Mantém a preferência do usuário, mas o padrão agora é escuro
+        if (localStorage.getItem('notionViewerDarkMode') === 'false') {
+            document.documentElement.classList.remove('dark');
         }
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            touch-action: pan-y;
+        :root {
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Lora', serif;
+            --font-mono: 'Roboto Mono', monospace;
         }
-        .slide-content {
-            animation: fadeIn 0.5s ease-in-out;
+        body { 
+            font-family: var(--font-sans); 
+            touch-action: pan-y; 
+            background-color: #111827; /* bg-gray-900 */
         }
+        .font-sans { font-family: var(--font-sans); }
+        .font-serif { font-family: var(--font-serif); }
+        .font-mono { font-family: var(--font-mono); }
+
+        .slide-content { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        pre {
-            background-color: #f4f4f5; /* zinc-100 */
-            color: #18181b; /* zinc-900 */
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-family: monospace;
+        /* Estilo do teleprompter com a linha lateral */
+        .teleprompter-body {
+            border-left: 3px solid #34d399; /* emerald-400 */
+            padding-left: 2rem;
         }
-        .dark pre {
-            background-color: #3f3f46; /* zinc-700 */
-            color: #e4e4e7; /* zinc-200 */
+        .settings-panel {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        .settings-panel.open {
+            transform: translateX(0);
+        }
+        /* Estilizando a barra de rolagem */
+        #slides-container::-webkit-scrollbar { width: 8px; }
+        #slides-container::-webkit-scrollbar-track { background: transparent; }
+        #slides-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 20px; }
+        
+        .control-btn-group button.active {
+            background-color: #3b82f6; /* blue-600 */
+            color: white;
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col items-center justify-center min-h-screen p-4 md:p-8 transition-colors duration-300">
+<body class="text-gray-200 flex flex-col items-center justify-center min-h-screen transition-colors duration-300">
 
-    <div id="app" class="w-full max-w-4xl mx-auto">
+    <div id="app" class="w-full h-screen flex flex-col">
         <!-- Tela de Configuração Inicial -->
-        <div id="setup-view" class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg space-y-6">
+        <div id="setup-view" class="w-full max-w-xl mx-auto my-auto bg-gray-800 p-8 rounded-xl shadow-lg space-y-6">
             <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Visualizador de Notas do Notion</h1>
-                <p class="text-gray-600 dark:text-gray-400 mt-2">Insira suas credenciais do Notion para transformar uma página em uma apresentação.</p>
+                <h1 class="text-3xl font-bold text-white">Visualizador de Notas do Notion</h1>
+                <p class="text-gray-400 mt-2">Insira a URL da sua página do Notion para transformá-la em uma apresentação.</p>
             </div>
             
-            <div class="space-y-4">
-                <div>
-                    <label for="apiKey" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notion API Key (Token de Integração)</label>
-                    <input type="password" id="apiKey" placeholder="Ex: secret_..." class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900 dark:text-white">
-                </div>
-                <div>
-                    <label for="pageId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL ou ID da Página do Notion</label>
-                    <input type="text" id="pageId" placeholder="Cole a URL ou o ID da sua página aqui" class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900 dark:text-white">
-                </div>
+            <div>
+                <label for="pageId" class="block text-sm font-medium text-gray-300 mb-1">URL ou ID da Página do Notion</label>
+                <input type="text" id="pageId" placeholder="Cole a URL ou o ID da sua página aqui" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition text-white">
             </div>
 
             <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-transform transform hover:scale-105">
@@ -66,295 +77,235 @@
             </button>
 
             <div id="error-message" class="text-red-500 text-center font-medium hidden mt-4"></div>
-
-            <div class="text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-4">
-                 <div class="bg-yellow-100 dark:bg-yellow-900/50 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 p-3 rounded-r-lg">
-                    <p class="font-bold">Não está carregando?</p>
-                    <p class="mt-1">Pode ser necessário ativar o acesso ao proxy. <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="font-semibold underline">Clique aqui para fazer isso</a> e depois tente visualizar novamente.</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-sm mb-2">Como obter as credenciais:</h3>
-                    <ol class="list-decimal list-inside space-y-1">
-                        <li><strong>API Key:</strong> Crie uma "integração interna" em <a href="https://www.notion.so/my-integrations" target="_blank" class="text-blue-500 hover:underline">notion.so/my-integrations</a>. Copie o token "Internal Integration Token".</li>
-                        <li><strong>ID da Página:</strong> Abra sua página no Notion. O ID é a parte final da URL (Ex: `...-PAGEID`). Você pode colar a URL inteira aqui.</li>
-                        <li><strong>Permissão:</strong> Na página do Notion, clique nos 3 pontos no canto superior direito, vá em "Add connections" e adicione a integração que você criou.</li>
-                    </ol>
-                </div>
-            </div>
         </div>
 
         <!-- Tela de Apresentação -->
-        <div id="presentation-view" class="hidden w-full h-full">
-            <div id="slides-container" class="bg-white dark:bg-gray-800 w-full h-[75vh] md:h-[80vh] p-8 md:p-12 rounded-xl shadow-2xl flex flex-col items-center justify-center overflow-y-auto relative transition-colors duration-300">
-                <!-- O conteúdo do slide será inserido aqui -->
-            </div>
+        <div id="presentation-view" class="hidden w-full h-full flex flex-col relative overflow-hidden">
+            <!-- Barra Superior -->
+            <header class="w-full p-4 flex justify-between items-center absolute top-0 left-0 z-20 bg-gradient-to-b from-black/50 to-transparent">
+                <button id="home-btn" title="Voltar ao Início" class="px-3 py-1 bg-gray-700/50 text-gray-200 font-semibold rounded-lg hover:bg-gray-600/50 transition text-sm">Início</button>
+                <div class="text-center">
+                    <h2 id="presentation-title" class="text-sm text-white">Modo de Apresentação</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="overall-timer" class="text-sm text-gray-300 font-mono" title="Tempo total da sessão">0:00</div>
+                    <button id="settings-toggle-btn" title="Ajustes" class="p-2 rounded-lg hover:bg-gray-700/50 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+            </header>
 
-            <div class="flex items-center justify-between mt-6">
-                 <div class="flex items-center space-x-2">
-                    <button id="home-btn" title="Voltar ao Início" class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition">Início</button>
-                    <div id="overall-timer" class="text-sm text-gray-500 dark:text-gray-400 font-mono" title="Tempo total da sessão"></div>
-                    <button id="dark-mode-toggle" title="Alternar modo escuro" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"></button>
-                    <button id="single-slide-toggle" title="Ver tudo em um slide" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"></button>
-                    <div class="flex items-center space-x-1">
-                        <button id="font-decrease" title="Diminuir fonte" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-xl font-bold">-</button>
-                        <button id="font-increase" title="Aumentar fonte" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-xl font-bold">+</button>
-                    </div>
-                     <!-- Controles do Teleprompter -->
-                    <div id="teleprompter-controls" class="hidden items-center space-x-2 ml-4">
-                        <button id="teleprompter-play-pause" title="Iniciar/Pausar Rolagem Automática" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"></button>
-                        <div class="flex items-center space-x-1">
-                            <button id="wpm-decrease" title="Diminuir Palavras por Minuto" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition font-bold">-</button>
-                            <span id="wpm-display" class="text-sm font-mono w-20 text-center" title="Palavras por Minuto">180 PPM</span>
-                            <button id="wpm-increase" title="Aumentar Palavras por Minuto" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition font-bold">+</button>
-                        </div>
+            <!-- Conteúdo Principal -->
+            <main id="slides-container" class="w-full h-full flex-1 flex flex-col items-center justify-center overflow-y-auto px-8 py-24 transition-all duration-300">
+                <!-- Conteúdo renderizado aqui -->
+            </main>
+
+            <!-- Barra Inferior -->
+            <footer id="navigation-controls" class="w-full p-4 flex justify-between items-center absolute bottom-0 left-0 z-20 bg-gradient-to-t from-black/50 to-transparent">
+                 <button id="prev-btn" title="Anterior" class="p-3 rounded-full hover:bg-gray-700/50 disabled:opacity-20 disabled:cursor-not-allowed transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                 </button>
+                 <div id="slide-counter" class="text-sm font-medium"></div>
+                 <button id="next-btn" title="Próximo" class="p-3 rounded-full hover:bg-gray-700/50 disabled:opacity-20 disabled:cursor-not-allowed transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                 </button>
+            </footer>
+            
+            <footer id="teleprompter-footer" class="hidden w-full p-4 text-center absolute bottom-0 left-0 z-20">
+                <span id="estimated-time" class="text-sm font-mono"></span>
+            </footer>
+
+            <!-- Painel de Ajustes -->
+            <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 bg-gray-800/95 backdrop-blur-sm shadow-2xl p-6 z-30 space-y-6 text-sm overflow-y-auto">
+                <h3 class="font-bold text-lg">Ajustes de Visualização</h3>
+
+                <!-- Coluna de Texto -->
+                <div>
+                    <h4 class="font-semibold mb-2">Coluna de Texto</h4>
+                    <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <button data-setting="displayMode" data-value="slides" class="flex-1 px-2 py-1 rounded transition">Páginas</button>
+                        <button data-setting="displayMode" data-value="scroll" class="flex-1 px-2 py-1 rounded transition active">Rolagem</button>
                     </div>
                 </div>
 
-                <div id="navigation-controls" class="flex items-center space-x-4">
-                    <button id="prev-btn" class="px-5 py-3 bg-blue-500 text-white font-bold rounded-full hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-transform transform hover:scale-110">&larr;</button>
-                    <div id="slide-counter" class="text-lg font-medium text-gray-700 dark:text-gray-300"></div>
-                    <button id="next-btn" class="px-5 py-3 bg-blue-500 text-white font-bold rounded-full hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-transform transform hover:scale-110">&rarr;</button>
+                <!-- Fonte -->
+                <div>
+                    <h4 class="font-semibold mb-2">Fonte</h4>
+                    <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded transition active">Sans</button>
+                        <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded transition">Serif</button>
+                        <button data-setting="fontFamily" data-value="font-mono" class="flex-1 px-2 py-1 rounded transition">Mono</button>
+                    </div>
                 </div>
-            </div>
-            <!-- Rodapé com Tempo de Leitura -->
-            <div id="reading-time-footer" class="hidden w-full text-center text-sm text-gray-500 dark:text-gray-400 mt-4 font-mono">
-                <span id="estimated-time"></span> &bull; <span id="remaining-time"></span>
-            </div>
+
+                <!-- Tamanho da Fonte -->
+                <div>
+                    <h4 class="font-semibold mb-2">Tamanho da Fonte</h4>
+                    <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                         <button data-setting="fontSize" data-value="-2" class="flex-1 px-2 py-1 rounded transition">P</button>
+                         <button data-setting="fontSize" data-value="-1" class="flex-1 px-2 py-1 rounded transition">M</button>
+                         <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded transition active">G</button>
+                         <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded transition">XG</button>
+                         <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded transition">2XG</button>
+                    </div>
+                </div>
+                
+                <!-- Espaçamento -->
+                <div>
+                    <h4 class="font-semibold mb-2">Espaçamento entre Linhas</h4>
+                    <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <button data-setting="lineHeight" data-value="leading-normal" class="flex-1 px-2 py-1 rounded transition">Simples</button>
+                        <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded transition active">1.5</button>
+                        <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded transition">Duplo</button>
+                    </div>
+                </div>
+
+                <!-- Margens -->
+                <div>
+                    <h4 class="font-semibold mb-2">Margens</h4>
+                    <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <button data-setting="textWidth" data-value="max-w-xl" class="flex-1 px-2 py-1 rounded transition">Estreito</button>
+                        <button data-setting="textWidth" data-value="max-w-3xl" class="flex-1 px-2 py-1 rounded transition active">Normal</button>
+                        <button data-setting="textWidth" data-value="max-w-5xl" class="flex-1 px-2 py-1 rounded transition">Solto</button>
+                    </div>
+                </div>
+
+                <!-- Teleprompter -->
+                <div id="teleprompter-controls" class="pt-4 border-t border-gray-700">
+                    <h4 class="font-semibold mb-2">Teleprompter</h4>
+                    <div class="flex items-center justify-between">
+                         <button id="wpm-decrease" class="px-3 py-1 bg-gray-700 rounded transition">-</button>
+                         <span id="wpm-display" class="font-mono text-center">180 PPM</span>
+                         <button id="wpm-increase" class="px-3 py-1 bg-gray-700 rounded transition">+</button>
+                    </div>
+                     <button id="teleprompter-play-pause" class="w-full mt-2 px-2 py-1.5 bg-gray-700 rounded transition">Iniciar Rolagem</button>
+                </div>
+
+            </aside>
         </div>
         
-        <div id="loading-view" class="hidden text-center p-8">
-             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-             <p class="mt-4 text-gray-600 dark:text-gray-400">Carregando conteúdo do Notion...</p>
+        <div id="loading-view" class="hidden text-center p-8 my-auto">
+             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
+             <p class="mt-4 text-gray-400">Carregando conteúdo do Notion...</p>
         </div>
     </div>
 
     <script>
-        // --- Seletores e Ícones ---
-        const setupView = document.getElementById('setup-view');
-        const presentationView = document.getElementById('presentation-view');
-        const loadingView = document.getElementById('loading-view');
-        const apiKeyInput = document.getElementById('apiKey');
-        const pageIdInput = document.getElementById('pageId');
-        const generateBtn = document.getElementById('generate-btn');
-        const errorMessage = document.getElementById('error-message');
-        const slidesContainer = document.getElementById('slides-container');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const homeBtn = document.getElementById('home-btn');
-        const overallTimerEl = document.getElementById('overall-timer');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const singleSlideToggle = document.getElementById('single-slide-toggle');
-        const fontDecreaseBtn = document.getElementById('font-decrease');
-        const fontIncreaseBtn = document.getElementById('font-increase');
-        const navigationControls = document.getElementById('navigation-controls');
-        // Teleprompter
-        const teleprompterControls = document.getElementById('teleprompter-controls');
-        const teleprompterPlayPauseBtn = document.getElementById('teleprompter-play-pause');
-        const wpmDecreaseBtn = document.getElementById('wpm-decrease');
-        const wpmIncreaseBtn = document.getElementById('wpm-increase');
-        const wpmDisplay = document.getElementById('wpm-display');
-        const readingTimeFooter = document.getElementById('reading-time-footer');
-        const estimatedTimeEl = document.getElementById('estimated-time');
-        const remainingTimeEl = document.getElementById('remaining-time');
+        // --- Seletores ---
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
 
-
-        const ICONS = {
-            moon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>`,
-            sun: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>`,
-            singlePage: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
-            slides: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 12-3-3-3 3"></path><path d="m2 12 3 3 3-3"></path></svg>`,
-            play: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`,
-            pause: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`,
-        };
-
+        const setupView = $('#setup-view');
+        const presentationView = $('#presentation-view');
+        const loadingView = $('#loading-view');
+        const pageIdInput = $('#pageId');
+        const generateBtn = $('#generate-btn');
+        const errorMessage = $('#error-message');
+        const slidesContainer = $('#slides-container');
+        const prevBtn = $('#prev-btn');
+        const nextBtn = $('#next-btn');
+        const slideCounter = $('#slide-counter');
+        const homeBtn = $('#home-btn');
+        const overallTimerEl = $('#overall-timer');
+        const navigationControls = $('#navigation-controls');
+        const teleprompterFooter = $('#teleprompter-footer');
+        const estimatedTimeEl = $('#estimated-time');
+        const presentationTitle = $('#presentation-title');
+        
+        // --- Painel de Ajustes ---
+        const settingsPanel = $('#settings-panel');
+        const settingsToggleBtn = $('#settings-toggle-btn');
+        const teleprompterControls = $('#teleprompter-controls');
+        const teleprompterPlayPauseBtn = $('#teleprompter-play-pause');
+        const wpmDecreaseBtn = $('#wpm-decrease');
+        const wpmIncreaseBtn = $('#wpm-increase');
+        const wpmDisplay = $('#wpm-display');
+        
         // --- Estado da Aplicação ---
         let state = {
-            slides: [],
-            rawBlocks: [],
-            currentSlide: 0,
-            apiKey: '',
-            pageId: '',
-            overallTimerInterval: null,
-            slideTimerInterval: null,
-            overallSeconds: 0,
-            slideSeconds: 0,
-            isDarkMode: localStorage.getItem('notionViewerDarkMode') === 'true',
-            isSingleSlideMode: false,
-            fontSizeLevel: 0, // range -2 to 2
-            // Teleprompter State
+            slides: [], rawBlocks: [], currentSlide: 0, pageId: '',
+            overallTimerInterval: null, overallSeconds: 0,
+            isSettingsOpen: false,
+            // Teleprompter
             isTeleprompterPlaying: false,
-            teleprompterWPM: parseInt(localStorage.getItem('notionViewerWPM')) || 180,
-            animationFrameId: null,
-            totalWords: 0,
-            totalReadingSeconds: 0,
-            lastFrameTime: null,
+            animationFrameId: null, lastFrameTime: null,
+            totalWords: 0, totalReadingSeconds: 0,
+            // Configurações de Visualização
+            settings: {
+                displayMode: 'scroll', // 'slides' or 'scroll'
+                fontFamily: 'font-sans', // 'font-sans', 'font-serif', 'font-mono'
+                fontSize: 0, // range -2 to 2
+                lineHeight: 'leading-relaxed', // 'leading-normal', 'leading-relaxed', 'leading-loose'
+                textWidth: 'max-w-3xl', // 'max-w-xl', 'max-w-3xl', 'max-w-5xl'
+                wpm: 180,
+            }
         };
 
-        // --- FUNÇÕES DE INICIALIZAÇÃO E UI ---
-        
-        function initializeUI() {
-            updateDarkMode();
-            updateSingleSlideModeIcon();
-            updateFontButtons();
+        // --- LÓGICA DE CONFIGURAÇÕES ---
+        function loadSettings() {
+            const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
+            if (savedSettings) {
+                state.settings = { ...state.settings, ...savedSettings };
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
+        }
+
+        function applySettings() {
+            // Aplica todas as configurações de uma vez
+            const contentWrapper = $('.slide-content');
+            if (!contentWrapper) return;
+
+            // Remove classes antigas
+            contentWrapper.classList.remove('font-sans', 'font-serif', 'font-mono', 'leading-normal', 'leading-relaxed', 'leading-loose', 'max-w-xl', 'max-w-3xl', 'max-w-5xl');
+            
+            // Adiciona novas classes
+            contentWrapper.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
+
+            // Aplica tamanho da fonte
+            const baseFontSize = 1.125; // rem (corresponde a text-lg)
+            const scaleFactor = 0.125;
+            contentWrapper.style.fontSize = `${baseFontSize + (state.settings.fontSize * scaleFactor)}rem`;
+            
             updateWPMDisplay();
-            teleprompterPlayPauseBtn.innerHTML = ICONS.play;
+            updateSettingsUI();
         }
-
-        function updateDarkMode() {
-            if (state.isDarkMode) {
-                document.documentElement.classList.add('dark');
-                darkModeToggle.innerHTML = ICONS.sun;
-            } else {
-                document.documentElement.classList.remove('dark');
-                darkModeToggle.innerHTML = ICONS.moon;
+        
+        function updateSettingsUI() {
+            // Atualiza os botões no painel para refletir o estado atual
+            for (const key in state.settings) {
+                const buttons = $$(`[data-setting="${key}"]`);
+                buttons.forEach(btn => {
+                    if (btn.dataset.value == state.settings[key]) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
             }
-            localStorage.setItem('notionViewerDarkMode', state.isDarkMode);
         }
-
-        function updateSingleSlideModeIcon() {
-            singleSlideToggle.innerHTML = state.isSingleSlideMode ? ICONS.slides : ICONS.singlePage;
-        }
-
-        function updateFontButtons() {
-            fontDecreaseBtn.disabled = state.fontSizeLevel <= -2;
-            fontIncreaseBtn.disabled = state.fontSizeLevel >= 2;
-        }
-
-        function applyFontSize() {
-            const baseSizes = { 'h1': 2.25, 'h2': 1.875, 'h3': 1.5, 'p': 1.125, 'li': 1.125, 'blockquote': 1.125, 'pre': 1 }; // rem
-            const scaleFactor = 0.15; // 15% increase/decrease per level
+        
+        function handleSettingChange(e) {
+            const button = e.target.closest('button[data-setting]');
+            if (!button) return;
             
-            Object.keys(baseSizes).forEach(tag => {
-                const elements = slidesContainer.querySelectorAll(tag);
-                const newSize = baseSizes[tag] * (1 + state.fontSizeLevel * scaleFactor);
-                elements.forEach(el => el.style.fontSize = `${newSize}rem`);
-            });
-        }
-        
-        // --- FUNÇÕES DE TIMER ---
-        
-        function formatTime(totalSeconds) {
-            const mins = Math.floor(totalSeconds / 60);
-            const secs = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
-            return `${mins}:${secs}`;
-        }
-
-        function startOverallTimer() {
-            if (state.overallTimerInterval) clearInterval(state.overallTimerInterval);
-            state.overallSeconds = 0;
-            state.overallTimerInterval = setInterval(() => {
-                state.overallSeconds++;
-                overallTimerEl.textContent = formatTime(state.overallSeconds);
-            }, 1000);
-        }
-
-        function resetSlideTimer() {
-            if (state.slideTimerInterval) clearInterval(state.slideTimerInterval);
-            state.slideSeconds = 0;
-            const slideTimerEl = document.getElementById('slide-timer');
-
-            if (slideTimerEl) {
-                slideTimerEl.textContent = formatTime(state.slideSeconds);
-                state.slideTimerInterval = setInterval(() => {
-                    state.slideSeconds++;
-                    slideTimerEl.textContent = formatTime(state.slideSeconds);
-                }, 1000);
-            }
-        }
-        
-        function stopTimers() {
-            clearInterval(state.overallTimerInterval);
-            clearInterval(state.slideTimerInterval);
-            stopTeleprompter();
-        }
-
-        // --- LÓGICA DO TELEPROMPTER ---
-
-        function countWords(container) {
-            if (!container) return 0;
-            const text = container.innerText || container.textContent || '';
-            return text.trim().split(/\s+/).filter(word => word.length > 0).length;
-        }
-        
-        function updateWPMDisplay() {
-            wpmDisplay.textContent = `${state.teleprompterWPM} PPM`;
-            localStorage.setItem('notionViewerWPM', state.teleprompterWPM);
-            calculateAndUpdateReadingTime();
-        }
-
-        function calculateAndUpdateReadingTime() {
-            state.totalWords = countWords(slidesContainer);
-            if (state.totalWords === 0 || state.teleprompterWPM === 0) {
-                state.totalReadingSeconds = 0;
-            } else {
-                const totalMinutes = state.totalWords / state.teleprompterWPM;
-                state.totalReadingSeconds = totalMinutes * 60;
-            }
-            estimatedTimeEl.textContent = `Estimado: ${formatTime(state.totalReadingSeconds)}`;
-            updateRemainingTime();
-        }
-
-        function updateRemainingTime() {
-             const scrollableHeight = slidesContainer.scrollHeight - slidesContainer.clientHeight;
-             if (scrollableHeight <= 0) {
-                 remainingTimeEl.textContent = 'Restante: 0:00';
-                 return;
-             }
-             const scrollPercentage = slidesContainer.scrollTop / scrollableHeight;
-             const elapsedSeconds = state.totalReadingSeconds * scrollPercentage;
-             const remainingSeconds = state.totalReadingSeconds - elapsedSeconds;
-             remainingTimeEl.textContent = `Restante: ${formatTime(remainingSeconds)}`;
-        }
-
-        function startTeleprompter() {
-            if (state.isTeleprompterPlaying) return;
-            state.isTeleprompterPlaying = true;
-            teleprompterPlayPauseBtn.innerHTML = ICONS.pause;
-            state.lastFrameTime = null; // Reset time for smooth start
-            state.animationFrameId = requestAnimationFrame(teleprompterLoop);
-        }
-
-        function stopTeleprompter() {
-            if (!state.isTeleprompterPlaying) return;
-            state.isTeleprompterPlaying = false;
-            teleprompterPlayPauseBtn.innerHTML = ICONS.play;
-            if (state.animationFrameId) {
-                cancelAnimationFrame(state.animationFrameId);
-                state.animationFrameId = null;
+            const { setting, value } = button.dataset;
+            if (setting && value) {
+                state.settings[setting] = isNaN(value) ? value : parseInt(value);
+                saveSettings();
+                
+                // Ações imediatas
+                if (setting === 'displayMode') {
+                    rebuildSlidesAndRender();
+                } else {
+                    applySettings();
+                }
             }
         }
 
-        function teleprompterLoop(timestamp) {
-            if (!state.isTeleprompterPlaying) return;
-
-            if (!state.lastFrameTime) {
-                state.lastFrameTime = timestamp;
-            }
-            const deltaTime = (timestamp - state.lastFrameTime) / 1000; // seconds
-            state.lastFrameTime = timestamp;
-            
-            const scrollableHeight = slidesContainer.scrollHeight - slidesContainer.clientHeight;
-            if (scrollableHeight <= 0 || state.totalReadingSeconds <= 0) {
-                stopTeleprompter();
-                return;
-            }
-
-            const scrollPerSecond = scrollableHeight / state.totalReadingSeconds;
-            slidesContainer.scrollTop += scrollPerSecond * deltaTime;
-
-            updateRemainingTime();
-
-            if (slidesContainer.scrollTop >= scrollableHeight) {
-                slidesContainer.scrollTop = scrollableHeight; // Clamp to the end
-                stopTeleprompter();
-            } else {
-                state.animationFrameId = requestAnimationFrame(teleprompterLoop);
-            }
-        }
-
-        // --- LÓGICA PRINCIPAL ---
-
+        // --- LÓGICA PRINCIPAL (API, RENDERIZAÇÃO) ---
         function extractPageId(input) {
             if (!input) return '';
             try {
@@ -362,65 +313,39 @@
                     const url = new URL(input);
                     const pathParts = url.pathname.split('/');
                     const lastPart = pathParts[pathParts.length - 1];
-                    const idMatch = lastPart.match(/([0-9a-fA-F]{32})$/);
-                    if (idMatch) return idMatch[1];
-                     const idFromEnd = lastPart.split('-').pop();
+                    const idFromEnd = lastPart.split('-').pop();
                     if (idFromEnd && idFromEnd.length === 32) return idFromEnd;
                 }
                 return input.split('-').pop().replace(/[^0-9a-fA-F]/g, '');
-            } catch (e) {
-                return input.split('-').pop().replace(/[^0-9a-fA-F]/g, '');
-            }
+            } catch (e) { return input.split('-').pop().replace(/[^0-9a-fA-F]/g, ''); }
         }
 
         async function fetchNotionContent() {
-            state.apiKey = apiKeyInput.value.trim();
-            const rawPageId = pageIdInput.value.trim();
-            state.pageId = extractPageId(rawPageId);
-
-            if (!state.apiKey || !state.pageId) {
-                showError("Por favor, preencha a API Key e a URL/ID da Página.");
+            state.pageId = extractPageId(pageIdInput.value.trim());
+            if (!state.pageId) {
+                showError("Por favor, insira a URL ou ID da Página.");
                 return;
             }
-            
-            localStorage.setItem('notionViewerApiKey', state.apiKey);
             showView('loading');
-
-            const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-            const API_URL = `${PROXY_URL}https://api.notion.com/v1/blocks/${state.pageId}/children`;
-
+            const API_URL = `/.netlify/functions/notion-proxy?pageId=${state.pageId}`;
             try {
-                const response = await fetch(API_URL, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${state.apiKey}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' }
-                });
-                
-                if (!response.ok) {
-                    if (response.status === 401) throw new Error('API Key inválida ou não autorizada.');
-                    if (response.status === 404) throw new Error('ID da Página não encontrado. Verifique o ID e as permissões da integração.');
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `Erro ${response.status}: Falha ao buscar dados.`);
-                }
-
+                const response = await fetch(API_URL);
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.message || `Erro ${response.status}`);
                 state.rawBlocks = data.results;
                 rebuildSlidesAndRender();
                 showView('presentation');
                 startOverallTimer();
             } catch (error) {
-                showError(`Erro: ${error.message}. Por favor, tente ativar o proxy (link na tela inicial).`);
+                showError(`Erro: ${error.message}. Verifique o ID e as permissões.`);
                 showView('setup');
             }
         }
 
         function parseBlocksIntoSlides(blocks) {
             if (!blocks || blocks.length === 0) return [];
-            if (state.isSingleSlideMode) {
-                slidesContainer.style.justifyContent = 'flex-start';
-                return [blocks]; 
-            }
+            if (state.settings.displayMode === 'scroll') return [blocks];
             
-            slidesContainer.style.justifyContent = 'center';
             const slides = [];
             let currentSlideContent = [];
             blocks.forEach(block => {
@@ -443,23 +368,13 @@
 
         function renderCurrentSlide() {
             if (state.slides.length === 0) {
-                slidesContainer.innerHTML = '<p class="text-center text-gray-500">Nenhum conteúdo encontrado para exibir. Verifique se a página do Notion não está vazia e se a integração tem permissão.</p>';
-                updateControls();
+                slidesContainer.innerHTML = '<p>Nenhum conteúdo encontrado.</p>';
                 return;
-            };
-
+            }
             const slideData = state.slides[state.currentSlide];
             const slideWrapper = document.createElement('div');
-            slideWrapper.className = 'slide-content w-full h-full flex flex-col items-center text-center space-y-6';
-
-            if (!state.isSingleSlideMode) {
-                const slideTimerEl = document.createElement('div');
-                slideTimerEl.id = 'slide-timer';
-                slideTimerEl.className = 'absolute top-4 right-6 text-sm font-mono text-gray-400';
-                slideTimerEl.title = 'Tempo neste slide';
-                slideWrapper.appendChild(slideTimerEl);
-            }
-
+            slideWrapper.className = 'slide-content w-full h-full teleprompter-body space-y-4 text-left';
+            
             slideData.forEach(block => {
                 const element = createHtmlFromBlock(block);
                 if (element) slideWrapper.appendChild(element);
@@ -468,170 +383,158 @@
             slidesContainer.innerHTML = '';
             slidesContainer.appendChild(slideWrapper);
             
-            applyFontSize();
+            applySettings();
             updateControls();
-            if (state.isSingleSlideMode) {
+            
+            if (state.settings.displayMode === 'scroll') {
                 calculateAndUpdateReadingTime();
             }
-            if (!state.isSingleSlideMode) resetSlideTimer();
         }
 
         function createHtmlFromBlock(block) {
             const type = block.type;
             const content = block[type];
             if (!content || (type !== 'divider' && type !== 'image' && !content.rich_text)) return null;
-
-            const processRichText = (richTextArray) => richTextArray.map(textItem => {
-                let text = textItem.plain_text;
-                if (textItem.annotations.bold) text = `<strong>${text}</strong>`;
-                if (textItem.annotations.italic) text = `<em>${text}</em>`;
-                if (textItem.annotations.strikethrough) text = `<s>${text}</s>`;
-                if (textItem.annotations.underline) text = `<u>${text}</u>`;
-                if (textItem.annotations.code) text = `<code class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-1 rounded">${text}</code>`;
-                if (textItem.href) text = `<a href="${textItem.href}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">${text}</a>`;
-                return text;
-            }).join('');
             
+            const processRichText = (richTextArray) => richTextArray.map(item => item.plain_text).join('');
+
             let element;
-            switch (type) {
-                case 'heading_1': element = document.createElement('h1'); element.className = 'text-4xl md:text-5xl font-bold text-gray-900 dark:text-white'; element.innerHTML = processRichText(content.rich_text); break;
-                case 'heading_2': element = document.createElement('h2'); element.className = 'text-3xl md:text-4xl font-semibold text-gray-800 dark:text-gray-100'; element.innerHTML = processRichText(content.rich_text); break;
-                case 'heading_3': element = document.createElement('h3'); element.className = 'text-2xl md:text-3xl font-medium text-gray-700 dark:text-gray-200'; element.innerHTML = processRichText(content.rich_text); break;
-                case 'paragraph': element = document.createElement('p'); element.className = 'text-lg md:text-xl max-w-2xl leading-relaxed text-left'; element.innerHTML = processRichText(content.rich_text) || '&nbsp;'; break;
+            switch(type) {
+                case 'heading_1': element = document.createElement('h1'); element.className = 'text-4xl font-bold text-white'; element.textContent = processRichText(content.rich_text); break;
+                case 'heading_2': element = document.createElement('h2'); element.className = 'text-3xl font-semibold text-gray-100 mt-8'; element.textContent = processRichText(content.rich_text); break;
+                case 'heading_3': element = document.createElement('h3'); element.className = 'text-2xl font-medium text-gray-200 mt-6'; element.textContent = processRichText(content.rich_text); break;
+                case 'paragraph': element = document.createElement('p'); element.innerHTML = processRichText(content.rich_text) || '&nbsp;'; break;
                 case 'bulleted_list_item':
-                case 'numbered_list_item': element = document.createElement('li'); element.className = 'text-lg text-left max-w-2xl'; element.innerHTML = `• ${processRichText(content.rich_text)}`; break;
-                case 'code': element = document.createElement('pre'); element.innerHTML = `<code>${processRichText(content.rich_text)}</code>`; break;
-                case 'image': element = document.createElement('img'); const url = content.type === 'external' ? content.external.url : content.file.url; element.src = url; element.alt = content.caption.length > 0 ? processRichText(content.caption) : 'Imagem'; element.className = 'max-w-full md:max-w-lg h-auto rounded-lg shadow-md my-4'; break;
-                case 'divider': element = document.createElement('hr'); element.className = 'w-1/2 my-4 border-gray-300 dark:border-gray-600'; break;
-                case 'quote': element = document.createElement('blockquote'); element.className = 'border-l-4 border-gray-300 dark:border-gray-500 pl-4 italic text-gray-600 dark:text-gray-400 text-lg my-4 text-left'; element.innerHTML = processRichText(content.rich_text); break;
+                case 'numbered_list_item': element = document.createElement('li'); element.className = 'ml-6'; element.textContent = `• ${processRichText(content.rich_text)}`; break;
+                case 'image': element = document.createElement('img'); const url = content.type === 'external' ? content.external.url : content.file.url; element.src = url; element.className = 'max-w-full h-auto rounded-lg shadow-lg my-6'; break;
+                case 'divider': element = document.createElement('hr'); element.className = 'my-8 border-gray-700'; break;
+                case 'quote': element = document.createElement('blockquote'); element.className = 'pl-4 italic text-gray-400'; element.textContent = processRichText(content.rich_text); break;
                 default: return null;
             }
             return element;
         }
 
-        // --- HANDLERS E CONTROLES ---
-
+        // --- CONTROLES E UI GERAL ---
         function updateControls() {
-            if (state.isSingleSlideMode) {
-                navigationControls.classList.add('hidden');
-                teleprompterControls.classList.remove('hidden');
-                readingTimeFooter.classList.remove('hidden');
-            } else {
-                navigationControls.classList.remove('hidden');
-                teleprompterControls.classList.add('hidden');
-                readingTimeFooter.classList.add('hidden');
-                slideCounter.textContent = `${state.currentSlide + 1} / ${state.slides.length}`;
+            const isScrollMode = state.settings.displayMode === 'scroll';
+            presentationTitle.textContent = isScrollMode ? 'Modo de Leitura' : 'Modo de Apresentação';
+            navigationControls.style.display = isScrollMode ? 'none' : 'flex';
+            teleprompterFooter.style.display = isScrollMode ? 'block' : 'none';
+            teleprompterControls.style.display = isScrollMode ? 'block' : 'none';
+
+            if (!isScrollMode) {
+                slideCounter.textContent = `Página ${state.currentSlide + 1} de ${state.slides.length}`;
                 prevBtn.disabled = state.currentSlide === 0;
                 nextBtn.disabled = state.currentSlide >= state.slides.length - 1;
             }
         }
-        
+
         function showView(viewName) {
             [setupView, presentationView, loadingView].forEach(v => v.classList.add('hidden'));
-            errorMessage.classList.add('hidden');
-
             if (viewName === 'setup') { setupView.classList.remove('hidden'); stopTimers(); }
             else if (viewName === 'presentation') presentationView.classList.remove('hidden');
             else if (viewName === 'loading') loadingView.classList.remove('hidden');
         }
-        
+
         function showError(message) { errorMessage.textContent = message; errorMessage.classList.remove('hidden'); }
         function goToNextSlide() { if (state.currentSlide < state.slides.length - 1) { state.currentSlide++; renderCurrentSlide(); } }
         function goToPrevSlide() { if (state.currentSlide > 0) { state.currentSlide--; renderCurrentSlide(); } }
-        
-        function handleKeydown(e) {
-            if (presentationView.classList.contains('hidden')) return;
-            if (e.key === 'ArrowRight' && !state.isSingleSlideMode) goToNextSlide();
-            if (e.key === 'ArrowLeft' && !state.isSingleSlideMode) goToPrevSlide();
-            if (e.key === ' ' && state.isSingleSlideMode) { // Spacebar for play/pause
-                e.preventDefault();
-                teleprompterPlayPauseBtn.click();
-            }
-            if (e.key === 'Escape') {
+
+        // --- TIMERS E TELEPROMPTER ---
+        function formatTime(totalSeconds) {
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+        function startOverallTimer() {
+            if (state.overallTimerInterval) clearInterval(state.overallTimerInterval);
+            state.overallSeconds = 0;
+            state.overallTimerInterval = setInterval(() => { state.overallSeconds++; overallTimerEl.textContent = formatTime(state.overallSeconds); }, 1000);
+        }
+        function stopTimers() { clearInterval(state.overallTimerInterval); stopTeleprompter(); }
+
+        function countWords(container) {
+            return (container.innerText || '').trim().split(/\s+/).filter(Boolean).length;
+        }
+        function updateWPMDisplay() {
+            wpmDisplay.textContent = `${state.settings.wpm} PPM`;
+        }
+        function calculateAndUpdateReadingTime() {
+            state.totalWords = countWords(slidesContainer);
+            state.totalReadingSeconds = (state.totalWords / state.settings.wpm) * 60;
+            estimatedTimeEl.textContent = `Tempo de Leitura: ${formatTime(state.totalReadingSeconds)}`;
+        }
+
+        function startTeleprompter() {
+            if (state.isTeleprompterPlaying) return;
+            state.isTeleprompterPlaying = true;
+            teleprompterPlayPauseBtn.textContent = 'Pausar Rolagem';
+            state.lastFrameTime = null;
+            state.animationFrameId = requestAnimationFrame(teleprompterLoop);
+        }
+
+        function stopTeleprompter() {
+            if (!state.isTeleprompterPlaying) return;
+            state.isTeleprompterPlaying = false;
+            teleprompterPlayPauseBtn.textContent = 'Iniciar Rolagem';
+            if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+        }
+
+        function teleprompterLoop(timestamp) {
+            if (!state.isTeleprompterPlaying) return;
+            if (!state.lastFrameTime) state.lastFrameTime = timestamp;
+            const deltaTime = (timestamp - state.lastFrameTime) / 1000;
+            state.lastFrameTime = timestamp;
+            const scrollableHeight = slidesContainer.scrollHeight - slidesContainer.clientHeight;
+            if (scrollableHeight <= 0 || state.totalReadingSeconds <= 0) { stopTeleprompter(); return; }
+            
+            const scrollPerSecond = scrollableHeight / state.totalReadingSeconds;
+            slidesContainer.scrollTop += scrollPerSecond * deltaTime;
+
+            if (slidesContainer.scrollTop >= scrollableHeight) {
+                slidesContainer.scrollTop = scrollableHeight;
                 stopTeleprompter();
-                showView('setup');
+            } else {
+                state.animationFrameId = requestAnimationFrame(teleprompterLoop);
             }
         }
-
-        // --- Carregamento de Estado e Params da URL ---
-        function loadStateAndHandleUrlParams() {
-            const savedApiKey = localStorage.getItem('notionViewerApiKey');
-            if (savedApiKey) {
-                apiKeyInput.value = savedApiKey;
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const pageIdFromUrl = urlParams.get('pageId');
-            if (pageIdFromUrl) {
-                pageIdInput.value = pageIdFromUrl;
-
-                if (apiKeyInput.value) {
-                    generateBtn.click();
-                }
-            }
-        }
-
-        // --- Event Listeners ---
+        
+        // --- EVENT LISTENERS ---
         generateBtn.addEventListener('click', fetchNotionContent);
         nextBtn.addEventListener('click', goToNextSlide);
         prevBtn.addEventListener('click', goToPrevSlide);
-        homeBtn.addEventListener('click', () => {
-            stopTeleprompter();
-            showView('setup');
+        homeBtn.addEventListener('click', () => showView('setup'));
+        settingsToggleBtn.addEventListener('click', () => {
+            state.isSettingsOpen = !state.isSettingsOpen;
+            settingsPanel.classList.toggle('open');
         });
-        document.addEventListener('keydown', handleKeydown);
-        slidesContainer.addEventListener('scroll', () => {
-            if (state.isSingleSlideMode && !state.isTeleprompterPlaying) {
-                updateRemainingTime();
+        settingsPanel.addEventListener('click', handleSettingChange);
+
+        teleprompterPlayPauseBtn.addEventListener('click', () => state.isTeleprompterPlaying ? stopTeleprompter() : startTeleprompter());
+        wpmIncreaseBtn.addEventListener('click', () => { state.settings.wpm += 10; saveSettings(); calculateAndUpdateReadingTime(); updateWPMDisplay(); });
+        wpmDecreaseBtn.addEventListener('click', () => { if(state.settings.wpm > 20) { state.settings.wpm -= 10; saveSettings(); calculateAndUpdateReadingTime(); updateWPMDisplay(); }});
+        
+        document.addEventListener('keydown', e => {
+            if (presentationView.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') goToNextSlide();
+            if (e.key === 'ArrowLeft') goToPrevSlide();
+            if (e.key === 'Escape') settingsPanel.classList.remove('open');
+            if (e.key === ' ' && state.settings.displayMode === 'scroll') {
+                e.preventDefault();
+                teleprompterPlayPauseBtn.click();
             }
         });
-
-        darkModeToggle.addEventListener('click', () => {
-            state.isDarkMode = !state.isDarkMode;
-            updateDarkMode();
-        });
-
-        singleSlideToggle.addEventListener('click', () => {
-            stopTeleprompter();
-            state.isSingleSlideMode = !state.isSingleSlideMode;
-            updateSingleSlideModeIcon();
-            rebuildSlidesAndRender();
-        });
-
-        fontIncreaseBtn.addEventListener('click', () => {
-            if (state.fontSizeLevel < 2) { state.fontSizeLevel++; applyFontSize(); updateFontButtons(); }
-        });
-        fontDecreaseBtn.addEventListener('click', () => {
-            if (state.fontSizeLevel > -2) { state.fontSizeLevel--; applyFontSize(); updateFontButtons(); }
-        });
-
-        // Teleprompter Listeners
-        teleprompterPlayPauseBtn.addEventListener('click', () => {
-            if (state.isTeleprompterPlaying) {
-                stopTeleprompter();
-            } else {
-                startTeleprompter();
-            }
-        });
-        wpmIncreaseBtn.addEventListener('click', () => {
-            if (state.teleprompterWPM < 400) { state.teleprompterWPM += 10; updateWPMDisplay(); }
-        });
-        wpmDecreaseBtn.addEventListener('click', () => {
-            if (state.teleprompterWPM > 80) { state.teleprompterWPM -= 10; updateWPMDisplay(); }
-        });
-
-        let touchstartX = 0;
-        slidesContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, false);
-        slidesContainer.addEventListener('touchend', e => {
-            if (state.isSingleSlideMode) return;
-            const touchendX = e.changedTouches[0].screenX;
-            if (touchendX < touchstartX - 50) goToNextSlide();
-            if (touchendX > touchstartX + 50) goToPrevSlide();
-        }, false);
-
-        // --- Inicialização ---
-        initializeUI();
-        loadStateAndHandleUrlParams();
+        
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            loadSettings();
+            updateSettingsUI();
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageIdFromUrl = urlParams.get('pageId');
+            if (pageIdFromUrl) { pageIdInput.value = pageIdFromUrl; generateBtn.click(); }
+        }
+        
+        init();
     </script>
 </body>
 </html>

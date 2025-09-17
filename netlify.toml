@@ -1,0 +1,12 @@
+# Este arquivo informa à Netlify como construir e implantar o site.
+
+[build]
+  # Como não temos um passo de compilação (é só HTML), este comando está vazio.
+  command = "# Sem comando de build"
+  
+  # A pasta que contém os arquivos do site a serem publicados.
+  # "/" significa a raiz do repositório.
+  publish = "/"
+  
+  # A pasta onde as nossas Funções Serverless estão localizadas.
+  functions = "functions"
