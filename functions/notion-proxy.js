@@ -1,64 +1,58 @@
 /**
  * Esta é a função serverless que atua como um proxy seguro para a API do Notion.
- * Ela recebe o ID da página, busca a API Key de uma variável de ambiente segura,
- * faz a chamada para a API do Notion e retorna os resultados para o frontend.
+ * Agora ela busca tanto os detalhes da página (como o título) quanto os blocos de conteúdo.
  */
 exports.handler = async function(event, context) {
-  // Pega o pageId dos parâmetros da URL (?pageId=...)
   const { pageId } = event.queryStringParameters;
-  
-  // Pega a API Key das variáveis de ambiente configuradas na Netlify.
-  // Isso é seguro e mantém sua chave secreta.
   const NOTION_API_KEY = process.env.NOTION_API_KEY;
 
-  // Validação para garantir que os dados necessários estão presentes
   if (!pageId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'O parâmetro "pageId" é obrigatório.' })
-    };
+    return { statusCode: 400, body: JSON.stringify({ message: 'O parâmetro "pageId" é obrigatório.' }) };
   }
   if (!NOTION_API_KEY) {
-      return {
-          statusCode: 500,
-          body: JSON.stringify({ message: 'A API Key do Notion não está configurada no servidor.' })
-      }
+      return { statusCode: 500, body: JSON.stringify({ message: 'A API Key do Notion não está configurada no servidor.' }) };
   }
 
-  const API_URL = `https://api.notion.com/v1/blocks/${pageId}/children`;
+  const PAGE_API_URL = `https://api.notion.com/v1/pages/${pageId}`;
+  const BLOCKS_API_URL = `https://api.notion.com/v1/blocks/${pageId}/children`;
+
+  const headers = {
+    'Authorization': `Bearer ${NOTION_API_KEY}`,
+    'Notion-Version': '2022-06-28',
+    'Content-Type': 'application/json'
+  };
 
   try {
-    // Faz a chamada para a API real do Notion
-    const response = await fetch(API_URL, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${NOTION_API_KEY}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json'
-      }
-    });
+    // Busca os detalhes da página e os blocos em paralelo para mais eficiência
+    const [pageResponse, blocksResponse] = await Promise.all([
+      fetch(PAGE_API_URL, { headers }),
+      fetch(BLOCKS_API_URL, { headers })
+    ]);
 
-    const data = await response.json();
+    const pageData = await pageResponse.json();
+    const blocksData = await blocksResponse.json();
 
-    // Se a resposta do Notion for um erro, repassa o erro
-    if (!response.ok) {
-       return { 
-           statusCode: response.status, 
-           body: JSON.stringify(data) 
-        };
+    if (!pageResponse.ok) {
+       return { statusCode: pageResponse.status, body: JSON.stringify(pageData) };
     }
-
-    // Se tudo deu certo, retorna os dados para o frontend
+    if (!blocksResponse.ok) {
+        return { statusCode: blocksResponse.status, body: JSON.stringify(blocksData) };
+    }
+    
+    // Retorna um objeto combinado com as informações da página e o conteúdo
     return {
       statusCode: 200,
-      body: JSON.stringify(data)
+      body: JSON.stringify({
+        page: pageData,
+        blocks: blocksData
+      })
     };
 
   } catch (error) {
-    // Em caso de erro de rede ou outro problema
     return {
       statusCode: 500,
       body: JSON.stringify({ message: `Erro ao contatar a API do Notion: ${error.message}` })
     };
   }
 };
+
