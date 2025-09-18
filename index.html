@@ -46,6 +46,10 @@
         .dark blockquote { border-color: #4b5563; color: #9ca3af; }
         .dark hr { border-color: #374151; }
         .dark .progress-bar-bg { background-color: #374151; }
+        .dark #history-container { border-color: #374151; }
+        .dark #recent-history-list button { background-color: #374151; }
+        .dark #recent-history-list button:hover { background-color: #4b5563; }
+
 
         /* Light Theme Styles */
         html.light body { background-color: #f9fafb; color: #111827; }
@@ -69,6 +73,9 @@
         html.light #slides-container::-webkit-scrollbar-thumb, html.light #history-list::-webkit-scrollbar-thumb, html.light .settings-panel-content::-webkit-scrollbar-thumb, html.light #callouts-list::-webkit-scrollbar-thumb { background-color: #9ca3af; }
         html.light #wpm-decrease, html.light #wpm-increase { background-color: #e5e7eb }
         html.light .progress-bar-bg { background-color: #e5e7eb; }
+        html.light #history-container { border-color: #e5e7eb; }
+        html.light #recent-history-list button { background-color: #f3f4f6; color: #1f2937; }
+        html.light #recent-history-list button:hover { background-color: #e5e7eb; }
 
         /* Sidebar Push Effect */
         header, #footer-bar, #main-content-wrapper {
@@ -97,6 +104,14 @@
             <button id="generate-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
             <button id="preview-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver Prévia</button>
         </div>
+        
+        <div id="history-container" class="pt-4 border-t hidden">
+            <h3 class="text-sm font-semibold text-center text-gray-500 mb-3">Acessos Recentes</h3>
+            <div id="recent-history-list" class="space-y-2">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+
         <div id="error-message" class="text-red-500 text-center font-medium hidden"></div>
     </div>
 
@@ -342,7 +357,7 @@
         if (isPreview) {
             const data = MOCK_DATA;
             const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
-            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Sem Título';
+            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
             state.rawBlocks = data.blocks.results;
             rebuildSlidesAndRender(); 
             showView('presentation'); 
@@ -359,8 +374,11 @@
             }
             const data = await response.json();
             const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
-            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Sem Título';
+            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
             state.rawBlocks = data.blocks.results;
+
+            saveToHistory(pageId, state.pageTitle);
+
             rebuildSlidesAndRender(); 
             showView('presentation');
         } catch (error) { showError(`Falha ao buscar conteúdo: ${error.message}. Verifique a URL e se a página é pública.`); showView('setup'); }
@@ -380,6 +398,22 @@
         });
         if (currentSlideContent.length > 0) slides.push(currentSlideContent);
         return slides.length > 0 ? slides : [[]];
+    };
+    
+    const countPotentialSlides = (blocks) => {
+        if (!blocks || blocks.length === 0) return 1;
+        let slideCount = 0;
+        let currentSlideContent = [];
+        blocks.forEach(block => {
+            const isHeading = state.settings.pageBreakHeadings.includes(block.type);
+            if (isHeading && currentSlideContent.length > 0) { 
+                slideCount++;
+                currentSlideContent = []; 
+            }
+            currentSlideContent.push(block);
+        });
+        if (currentSlideContent.length > 0) slideCount++;
+        return slideCount > 0 ? slideCount : 1;
     };
 
     const processRichText = (richTextArray) => {
@@ -442,13 +476,40 @@
         requestAnimationFrame(() => requestAnimationFrame(updateFooterInfo));
     };
 
-    const rebuildSlidesAndRender = () => { stopAutoScroll(); state.slides = parseBlocksIntoSlides(state.rawBlocks); state.currentSlide = 0; state.pageSeconds = 0; state.pageTimeHistory = {}; renderCurrentSlide(); slidesContainer.scrollTop = 0; };
+    const rebuildSlidesAndRender = () => {
+        stopAutoScroll();
+
+        const pageCount = countPotentialSlides(state.rawBlocks);
+        const slidesButton = document.querySelector('[data-setting="displayMode"][data-value="slides"]');
+        
+        if (slidesButton) {
+            if (pageCount <= 1) {
+                slidesButton.disabled = true;
+                slidesButton.classList.add('opacity-50', 'cursor-not-allowed');
+                state.settings.displayMode = 'scroll';
+            } else {
+                slidesButton.disabled = false;
+                slidesButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        
+        state.slides = parseBlocksIntoSlides(state.rawBlocks);
+        state.currentSlide = 0;
+        state.pageSeconds = 0;
+        state.pageTimeHistory = {};
+        renderCurrentSlide();
+        slidesContainer.scrollTop = 0;
+    };
     
     const showView = (view) => {
         [setupView, presentationView, loadingView].forEach(v => v.classList.add('hidden'));
         clearInterval(state.clockInterval);
         if (view === 'setup') {
-            setupView.classList.remove('hidden'); stopTimer(); stopAutoScroll(); closeAllSidebars();
+            setupView.classList.remove('hidden'); 
+            renderRecentHistory();
+            stopTimer(); 
+            stopAutoScroll(); 
+            closeAllSidebars();
         } else if (view === 'presentation') {
             presentationView.classList.remove('hidden'); updateClock(); state.clockInterval = setInterval(updateClock, 1000);
         } else if (view === 'loading') {
@@ -668,10 +729,9 @@
         document.documentElement.classList.remove('light', 'dark');
         document.documentElement.classList.add(state.settings.theme);
         themeToggleBtn.innerHTML = state.settings.theme === 'dark' ? ICONS.sun : ICONS.moon;
-        localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
-        updateSettingsUI();
-        renderHistorySidebar(); 
+        applySettings();
     };
+    
     const applySettings = () => {
         const contentWrapper = slidesContainer;
         if (!contentWrapper) return;
@@ -698,10 +758,14 @@
         document.querySelectorAll('.callout-item .flex-1').forEach(el => el.style.fontSize = `${calloutBaseSizeRem}rem`);
 
         wpmDisplay.textContent = state.settings.wpm; 
+        
+        localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
+        
         updateFooterInfo(); 
         updateSettingsUI(); 
         renderHistorySidebar();
     };
+
     const updateSettingsUI = () => {
         for (const key in state.settings) {
             if (key === 'wpm') continue;
@@ -736,24 +800,20 @@
                 state.settings.pageBreakHeadings.push(value);
                 settingChanged = true;
             }
-            if (settingChanged) {
-                 rebuildSlidesAndRender();
-            }
         } else {
             const newValue = isNaN(value) ? value : parseInt(value);
             if (state.settings[setting] !== newValue) {
                 state.settings[setting] = newValue;
                 settingChanged = true;
-                if (setting === 'displayMode') {
-                    rebuildSlidesAndRender();
-                } else {
-                    applySettings();
-                }
             }
         }
+
         if(settingChanged) {
-            localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
-            updateSettingsUI();
+             if (setting === 'displayMode' || setting === 'pageBreakHeadings') {
+                rebuildSlidesAndRender();
+            } else {
+                applySettings();
+            }
         }
     };
 
@@ -877,6 +937,40 @@
     };
     const toggleAutoScroll = () => state.isAutoScrolling ? stopAutoScroll() : startAutoScroll();
     
+    const saveToHistory = (id, title) => {
+        if (!id || !title) return;
+        let history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
+        history = history.filter(item => item.id !== id);
+        history.unshift({ id, title });
+        history = history.slice(0, 3);
+        localStorage.setItem('notionViewerHistory', JSON.stringify(history));
+    };
+
+    const renderRecentHistory = () => {
+        const historyContainer = $('#history-container');
+        const historyList = $('#recent-history-list');
+        const history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
+
+        if (history.length > 0) {
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left px-4 py-3 rounded-lg transition truncate text-white';
+                button.textContent = item.title;
+                button.title = item.title;
+                button.dataset.id = item.id;
+                button.addEventListener('click', () => {
+                    pageIdInput.value = item.id;
+                    generateBtn.click();
+                });
+                historyList.appendChild(button);
+            });
+            historyContainer.classList.remove('hidden');
+        } else {
+            historyContainer.classList.add('hidden');
+        }
+    };
+
     // Swipe Gesture Handling
     let touchStartX = 0, touchEndX = 0, touchStartY = 0, touchEndY = 0;
     function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }
@@ -957,7 +1051,12 @@
         });
 
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('pageId')) { pageIdInput.value = urlParams.get('pageId'); generateBtn.click(); }
+        if (urlParams.has('pageId')) {
+             pageIdInput.value = urlParams.get('pageId');
+             generateBtn.click();
+        } else {
+             renderRecentHistory();
+        }
         
         applySettings();
     };
