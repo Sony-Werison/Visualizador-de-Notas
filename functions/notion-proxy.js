@@ -33,7 +33,7 @@ exports.handler = async function(event, context) {
     const blocksData = await blocksResponse.json();
 
     if (!pageResponse.ok) {
-       return { statusCode: pageResponse.status, body: JSON.stringify(pageData) };
+        return { statusCode: pageResponse.status, body: JSON.stringify(pageData) };
     }
     if (!blocksResponse.ok) {
         return { statusCode: blocksResponse.status, body: JSON.stringify(blocksData) };
@@ -55,4 +55,3 @@ exports.handler = async function(event, context) {
     };
   }
 };
-
