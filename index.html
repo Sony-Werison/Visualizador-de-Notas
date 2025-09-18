@@ -9,17 +9,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --font-sans: 'Inter', sans-serif;
-            --font-serif: 'Lora', serif;
-            --font-mono: 'Roboto Mono', monospace;
+            --font-serif: 'Merriweather', serif;
+            --font-display: 'Poppins', sans-serif;
         }
         body { font-family: var(--font-sans); touch-action: pan-y; overflow: hidden; }
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
-        .font-mono { font-family: var(--font-mono); }
+        .font-display { font-family: var(--font-display); }
+        .leading-extra { line-height: 2.5 !important; }
+
         .slide-content { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .settings-panel, .history-sidebar, .callouts-sidebar { transition: transform 0.3s ease-in-out; }
@@ -205,37 +207,37 @@
                 <div>
                     <h4 class="font-semibold mb-3">Fonte</h4>
                     <div class="control-btn-group flex rounded-md p-1">
-                        <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded">Sans</button>
-                        <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded">Serif</button>
-                        <button data-setting="fontFamily" data-value="font-mono" class="flex-1 px-2 py-1 rounded">Mono</button>
+                        <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded font-sans">Inter</button>
+                        <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded font-serif">Merriweather</button>
+                        <button data-setting="fontFamily" data-value="font-display" class="flex-1 px-2 py-1 rounded font-display">Poppins</button>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-3">Tamanho da Fonte (Texto)</h4>
                     <div class="control-btn-group flex rounded-md p-1">
-                         <button data-setting="fontSize" data-value="-2" class="flex-1 px-2 py-1 rounded">P</button>
-                         <button data-setting="fontSize" data-value="-1" class="flex-1 px-2 py-1 rounded">M</button>
-                         <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">G</button>
-                         <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded">XG</button>
-                         <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded">2XG</button>
+                         <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
+                         <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
+                         <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
+                         <button data-setting="fontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
+                         <button data-setting="fontSize" data-value="4" class="flex-1 px-2 py-1 rounded">2XG</button>
                     </div>
                 </div>
                  <div>
                     <h4 class="font-semibold mb-3">Tamanho da Fonte (Destaques)</h4>
                     <div class="control-btn-group flex rounded-md p-1">
-                         <button data-setting="calloutFontSize" data-value="-2" class="flex-1 px-2 py-1 rounded">P</button>
-                         <button data-setting="calloutFontSize" data-value="-1" class="flex-1 px-2 py-1 rounded">M</button>
-                         <button data-setting="calloutFontSize" data-value="0" class="flex-1 px-2 py-1 rounded">G</button>
-                         <button data-setting="calloutFontSize" data-value="1" class="flex-1 px-2 py-1 rounded">XG</button>
-                         <button data-setting="calloutFontSize" data-value="2" class="flex-1 px-2 py-1 rounded">2XG</button>
+                         <button data-setting="calloutFontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
+                         <button data-setting="calloutFontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
+                         <button data-setting="calloutFontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
+                         <button data-setting="calloutFontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
+                         <button data-setting="calloutFontSize" data-value="4" class="flex-1 px-2 py-1 rounded">2XG</button>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-3">Espaçamento entre Linhas</h4>
                     <div class="control-btn-group flex rounded-md p-1">
-                        <button data-setting="lineHeight" data-value="leading-normal" class="flex-1 px-2 py-1 rounded">Simples</button>
-                        <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded">1.5</button>
-                        <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded">Duplo</button>
+                        <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded">Normal</button>
+                        <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded">Largo</button>
+                        <button data-setting="lineHeight" data-value="leading-extra" class="flex-1 px-2 py-1 rounded">Extra</button>
                     </div>
                 </div>
                 <div>
@@ -314,11 +316,11 @@
         pageTimeHistory: {}, clockInterval: null,
         isAutoScrolling: false, autoScrollInterval: null,
         settings: {
-            theme: 'dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 0,
-            lineHeight: 'leading-relaxed', textWidth: 'max-w-3xl', wpm: 180, progressDisplay: 'time',
+            theme: 'dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 2,
+            lineHeight: 'leading-loose', textWidth: 'max-w-3xl', wpm: 180, progressDisplay: 'time',
             pageBreakHeadings: ['heading_1', 'heading_2'],
             textAlign: 'text-left',
-            calloutFontSize: 0,
+            calloutFontSize: 2,
         }
     };
 
@@ -601,16 +603,16 @@
 
             if (state.settings.progressDisplay === 'percent') {
                  infoHTML = `<div class="flex justify-around items-center text-xs w-full mb-2">
-                     <div class="w-1/2 text-center"><span>Pág: ${state.currentSlide + 1}/${state.slides.length} | ${Math.round(pageScrollPercent * 100)}%</span></div>
+                     <div class="w-1/2 text-center"><span>Página: ${state.currentSlide + 1}/${state.slides.length} | ${Math.round(pageScrollPercent * 100)}%</span></div>
                      <div class="w-1/2 text-center"><span>Documento: ${Math.round(docPercent)}%</span></div>
                 </div>`;
             } else { // 'time' display
-                 infoHTML = `<div class="flex justify-around text-xs w-full mb-2">
-                     <div class="w-1/2 text-center">
-                         <div class="font-bold">Pág (${state.currentSlide + 1}/${state.slides.length})</div>
+                 infoHTML = `<div class="flex flex-col md:flex-row justify-around text-xs w-full mb-2 gap-2 md:gap-0">
+                     <div class="w-full md:w-1/2 text-center">
+                         <div class="font-bold">Página (${state.currentSlide + 1}/${state.slides.length})</div>
                          <div>Total: ${formatTime(pageTimeSeconds)} | Restante: ${formatTime(pageTimeRemainingSeconds)}</div>
                     </div>
-                     <div class="w-1/2 text-center">
+                     <div class="w-full md:w-1/2 text-center">
                          <div class="font-bold">Documento</div>
                          <div>Total: ${formatTime(docTimeSeconds)} | Restante: ${formatTime(docTimeRemainingSeconds)}</div>
                     </div>
@@ -743,18 +745,18 @@
         const content = contentWrapper.querySelector('.slide-content');
         if (!content) return;
 
-        const fontClasses = ['font-sans','font-serif','font-mono','leading-normal','leading-relaxed','leading-loose','max-w-xl','max-w-3xl','max-w-5xl'];
+        const fontClasses = ['font-sans','font-serif','font-display','leading-relaxed','leading-loose', 'leading-extra','max-w-xl','max-w-3xl','max-w-5xl'];
         content.classList.remove(...fontClasses); 
         content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
         
-        const baseSizeRem = 1.125 + (state.settings.fontSize * 0.125);
+        const baseSizeRem = 1.25 + (state.settings.fontSize * 0.2);
         content.style.fontSize = `${baseSizeRem}rem`;
 
         content.querySelectorAll('h1').forEach(h => h.style.fontSize = `${baseSizeRem * 1.8}rem`);
         content.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSizeRem * 1.5}rem`);
         content.querySelectorAll('h3').forEach(h => h.style.fontSize = `${baseSizeRem * 1.25}rem`);
 
-        const calloutBaseSizeRem = 0.875 + (state.settings.calloutFontSize * 0.0625);
+        const calloutBaseSizeRem = 1.0 + (state.settings.calloutFontSize * 0.15);
         document.querySelectorAll('.callout-item .flex-1').forEach(el => el.style.fontSize = `${calloutBaseSizeRem}rem`);
 
         wpmDisplay.textContent = state.settings.wpm; 
