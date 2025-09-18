@@ -12,7 +12,7 @@
         :root {
             --font-sans: 'Inter', sans-serif; --font-serif: 'Lora', serif; --font-mono: 'Roboto Mono', monospace;
         }
-        body { font-family: var(--font-sans); touch-action: pan-y; background-color: #191919; color: #d1d5db; overflow: hidden; }
+        body { font-family: var(--font-sans); touch-action: pan-y; overflow: hidden; }
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
         .font-mono { font-family: var(--font-mono); }
@@ -26,23 +26,52 @@
 
         #slides-container::-webkit-scrollbar, #history-list::-webkit-scrollbar { width: 8px; }
         #slides-container::-webkit-scrollbar-track, #history-list::-webkit-scrollbar-track { background: transparent; }
-        #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 20px; }
-        .control-btn-group button.active { background-color: #475569; color: white; }
-        .footer-item:not(:first-child)::before {
-            content: '|';
-            margin: 0 0.5rem; /* mx-2 */
-            color: #4b5563; /* text-gray-600 */
-        }
-        .history-item.active { background-color: #475569 !important; color: white !important; }
+        #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb { background-color: #4b5563; }
+        
+        /* Dark Theme (Default) */
+        .dark body { background-color: #191919; color: #d1d5db; }
+        .dark #setup-view { background-color: #1f2937; }
+        .dark .control-btn-group { background-color: #374151; }
+        .dark .control-btn-group button.active { background-color: #475569; color: white; }
+        .dark .history-item.active { background-color: #475569 !important; color: white !important; }
+        .dark .footer-item:not(:first-child)::before { content: '|'; margin: 0 0.5rem; color: #4b5563; }
+        .dark header, .dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
+        .dark .settings-panel, .dark .history-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
+        .dark #wpm-decrease, .dark #wpm-increase { background-color: #374151 }
+        .dark blockquote { border-color: #4b5563; color: #9ca3af; }
+        .dark hr { border-color: #374151; }
+        
+        /* Light Theme Styles */
+        html.light body { background-color: #f9fafb; color: #111827; }
+        html.light #setup-view { background-color: #ffffff; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        html.light h1, html.light h2, html.light h3, html.light h4, html.light #page-title { color: #111827; }
+        html.light input#pageId { background-color: #f3f4f6; color: #111827; border-color: #d1d5db; }
+        html.light header, html.light footer { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); }
+        html.light #clock, html.light #overall-timer { color: #1f2937; }
+        html.light #main-timer-controls, html.light #settings-toggle-btn, html.light #history-toggle-btn, html.light #prev-btn, html.light #next-btn { background-color: #e5e7eb; color: #1f2937;}
+        html.light .settings-panel, html.light .history-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
+        html.light .control-btn-group { background-color: #e5e7eb; }
+        html.light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        html.light .history-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
+        html.light .history-item.active .text-gray-400 { color: #1e3a8a !important; }
+        html.light .history-item .text-gray-400 { color: #6b7280; }
+        html.light .history-item .font-semibold {color: #111827;}
+        html.light .footer-item:not(:first-child)::before { content: '|'; margin: 0 0.5rem; color: #d1d5db; }
+        html.light blockquote { color: #6b7280; border-color: #d1d5db; }
+        html.light hr { border-color: #e5e7eb; }
+        html.light .callout { background-color: #f3f4f6; }
+        html.light .border-b { border-color: #e5e7eb; }
+        html.light #slides-container::-webkit-scrollbar-thumb { background-color: #9ca3af; }
+        html.light #wpm-decrease, html.light #wpm-increase { background-color: #e5e7eb }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen">
 
     <div id="app" class="w-full h-screen flex flex-col">
         <!-- Tela de Configuração Inicial -->
-        <div id="setup-view" class="w-full max-w-xl mx-auto my-auto bg-gray-800 p-8 rounded-xl shadow-lg space-y-6">
-            <h1 class="text-3xl font-bold text-white text-center">Visualizador de Notas do Notion</h1>
-            <input type="text" id="pageId" placeholder="Cole a URL da sua página aqui" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition text-white">
+        <div id="setup-view" class="w-full max-w-xl mx-auto my-auto p-8 rounded-xl shadow-lg space-y-6">
+            <h1 class="text-3xl font-bold text-center">Visualizador de Notas do Notion</h1>
+            <input type="text" id="pageId" placeholder="Cole a URL da sua página aqui" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
             <div class="flex gap-4">
                 <button id="generate-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
                 <button id="preview-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver Prévia</button>
@@ -52,61 +81,68 @@
 
         <!-- Tela de Apresentação -->
         <div id="presentation-view" class="hidden w-full h-full flex flex-col relative overflow-hidden">
-            <header class="w-full p-4 flex justify-between items-center absolute top-0 left-0 z-20 bg-[#191919]/90 backdrop-blur-sm">
+            <header class="w-full p-4 flex justify-between items-center absolute top-0 left-0 z-20">
                 <div class="w-1/3">
-                    <span id="clock" class="text-lg font-mono text-white"></span>
+                    <span id="clock" class="text-lg font-mono"></span>
                 </div>
                 <div class="w-1/3 text-center">
-                    <h1 id="page-title" class="text-sm font-semibold text-white truncate"></h1>
+                    <h1 id="page-title" class="text-sm font-semibold truncate"></h1>
                 </div>
                 <div class="w-1/3 flex justify-end items-center gap-4">
-                    <div id="main-timer-controls" class="flex items-center gap-2 p-2 bg-black/30 rounded-lg">
+                    <div id="main-timer-controls" class="flex items-center gap-2 p-2 rounded-lg">
                         <button id="timer-play-pause-btn" title="Iniciar/Pausar Tempo" class="p-0.5"></button>
-                        <span id="overall-timer" class="text-lg font-mono text-white" title="Tempo total da sessão">0:00</span>
+                        <span id="overall-timer" class="text-lg font-mono" title="Tempo total da sessão">0:00</span>
                     </div>
-                    <button id="settings-toggle-btn" title="Ajustes" class="p-2 rounded-lg bg-black/30 hover:bg-gray-700/50 transition"></button>
+                    <button id="settings-toggle-btn" title="Ajustes" class="p-2 rounded-lg transition"></button>
                 </div>
             </header>
 
             <main id="slides-container" class="w-full h-full flex-1 flex flex-col items-center overflow-y-auto px-8 pt-24 transition-all duration-300"></main>
             
-            <footer id="footer-bar" class="w-full p-4 flex justify-between items-center absolute bottom-0 left-0 z-20 bg-[#191919]/90 backdrop-blur-sm">
+            <footer id="footer-bar" class="w-full p-4 flex justify-between items-center absolute bottom-0 left-0 z-20">
                 <div class="w-1/3">
-                    <button id="history-toggle-btn" title="Navegação / Histórico" class="hidden p-3 rounded-full bg-black/30 hover:bg-gray-700/50 transition"></button>
+                    <button id="history-toggle-btn" title="Navegação / Histórico" class="hidden p-3 rounded-full transition"></button>
                 </div>
                 <div class="w-1/3 text-center flex justify-center items-center gap-4">
                     <div id="footer-info" class="text-sm font-mono leading-tight"></div>
                 </div>
                 <div class="w-1/3 flex justify-end items-center gap-2">
-                    <button id="prev-btn" title="Anterior" class="p-3 rounded-full bg-black/30 hover:bg-gray-700/50 disabled:opacity-20 transition"></button>
-                    <button id="next-btn" title="Próximo" class="p-3 rounded-full bg-black/30 hover:bg-gray-700/50 disabled:opacity-20 transition"></button>
+                    <button id="prev-btn" title="Anterior" class="p-3 rounded-full disabled:opacity-20 transition"></button>
+                    <button id="next-btn" title="Próximo" class="p-3 rounded-full disabled:opacity-20 transition"></button>
                 </div>
             </footer>
 
-            <aside id="history-sidebar" class="history-sidebar fixed top-0 left-0 h-full w-80 bg-gray-800/95 backdrop-blur-sm shadow-2xl z-20 flex flex-col">
-                 <div class="p-4 flex justify-between items-center border-b border-gray-700">
+            <aside id="history-sidebar" class="history-sidebar fixed top-0 left-0 h-full w-80 shadow-2xl z-20 flex flex-col">
+                 <div class="p-4 flex justify-between items-center border-b">
                     <h3 class="font-bold text-lg">Navegação</h3>
                     <button id="close-history-btn" title="Fechar" class="p-2"></button>
                 </div>
                 <div id="history-list" class="flex-1 overflow-y-auto"></div>
             </aside>
 
-            <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 bg-gray-800/95 backdrop-blur-sm shadow-2xl z-30 flex flex-col">
-                <div class="p-4 flex justify-between items-center border-b border-gray-700">
+            <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 shadow-2xl z-30 flex flex-col">
+                <div class="p-4 flex justify-between items-center border-b">
                     <h3 class="font-bold text-lg">Ajustes</h3>
                     <button id="close-settings-btn" title="Fechar" class="p-2"></button>
                 </div>
                 <div class="flex-1 p-6 space-y-6 overflow-y-auto">
                     <div>
+                        <h4 class="font-semibold mb-2">Tema</h4>
+                        <div class="control-btn-group flex rounded-md p-1">
+                            <button data-setting="theme" data-value="dark" class="flex-1 px-2 py-1 rounded">Escuro</button>
+                            <button data-setting="theme" data-value="light" class="flex-1 px-2 py-1 rounded">Claro</button>
+                        </div>
+                    </div>
+                    <div>
                         <h4 class="font-semibold mb-2">Modo de Exibição</h4>
-                        <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                             <button data-setting="displayMode" data-value="slides" class="flex-1 px-2 py-1 rounded">Páginas</button>
                             <button data-setting="displayMode" data-value="scroll" class="flex-1 px-2 py-1 rounded">Rolagem</button>
                         </div>
                     </div>
                     <div>
                         <h4 class="font-semibold mb-2">Fonte</h4>
-                        <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                             <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded">Sans</button>
                             <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded">Serif</button>
                             <button data-setting="fontFamily" data-value="font-mono" class="flex-1 px-2 py-1 rounded">Mono</button>
@@ -114,7 +150,7 @@
                     </div>
                     <div>
                         <h4 class="font-semibold mb-2">Tamanho da Fonte</h4>
-                        <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                              <button data-setting="fontSize" data-value="-2" class="flex-1 px-2 py-1 rounded">P</button>
                              <button data-setting="fontSize" data-value="-1" class="flex-1 px-2 py-1 rounded">M</button>
                              <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">G</button>
@@ -124,7 +160,7 @@
                     </div>
                     <div>
                         <h4 class="font-semibold mb-2">Espaçamento entre Linhas</h4>
-                        <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                             <button data-setting="lineHeight" data-value="leading-normal" class="flex-1 px-2 py-1 rounded">Simples</button>
                             <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded">1.5</button>
                             <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded">Duplo</button>
@@ -132,18 +168,18 @@
                     </div>
                     <div>
                         <h4 class="font-semibold mb-2">Margens</h4>
-                        <div class="control-btn-group flex rounded-md bg-gray-700 p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                             <button data-setting="textWidth" data-value="max-w-xl" class="flex-1 px-2 py-1 rounded">Estreito</button>
                             <button data-setting="textWidth" data-value="max-w-3xl" class="flex-1 px-2 py-1 rounded">Normal</button>
                             <button data-setting="textWidth" data-value="max-w-5xl" class="flex-1 px-2 py-1 rounded">Solto</button>
                         </div>
                     </div>
-                    <div id="wpm-controls" class="pt-4 border-t border-gray-700">
+                    <div id="wpm-controls" class="pt-4 border-t">
                         <h4 class="font-semibold mb-2">Velocidade de Leitura (PPM)</h4>
                         <div class="flex items-center justify-between">
-                             <button id="wpm-decrease" class="px-3 py-1 bg-gray-700 rounded transition">-</button>
+                             <button id="wpm-decrease" class="px-3 py-1 rounded transition">-</button>
                              <span id="wpm-display" class="font-mono text-center">180</span>
-                             <button id="wpm-increase" class="px-3 py-1 bg-gray-700 rounded transition">+</button>
+                             <button id="wpm-increase" class="px-3 py-1 rounded transition">+</button>
                         </div>
                     </div>
                 </div>
@@ -180,7 +216,7 @@
             isTimerRunning: false, overallTimerInterval: null, overallSeconds: 0, pageSeconds: 0, 
             pageTimeHistory: {}, clockInterval: null,
             settings: {
-                displayMode: 'slides', fontFamily: 'font-sans', fontSize: 0,
+                theme: 'dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 0,
                 lineHeight: 'leading-relaxed', textWidth: 'max-w-3xl', wpm: 180,
             }
         };
@@ -267,18 +303,17 @@
             const type = block.type; const content = block[type]; if (!content) return null;
             let el;
             switch(type) {
-                case 'heading_1': el = document.createElement('h1'); el.className = 'text-4xl font-bold text-white leading-tight'; el.innerHTML = processRichText(content.rich_text); break;
-                case 'heading_2': el = document.createElement('h2'); el.className = 'text-3xl font-semibold text-gray-100 mt-8 leading-snug'; el.innerHTML = processRichText(content.rich_text); break;
-                case 'heading_3': el = document.createElement('h3'); el.className = 'text-2xl font-medium text-gray-200 mt-6'; el.innerHTML = processRichText(content.rich_text); break;
+                case 'heading_1': el = document.createElement('h1'); el.className = 'text-4xl font-bold leading-tight'; el.innerHTML = processRichText(content.rich_text); break;
+                case 'heading_2': el = document.createElement('h2'); el.className = 'text-3xl font-semibold mt-8 leading-snug'; el.innerHTML = processRichText(content.rich_text); break;
+                case 'heading_3': el = document.createElement('h3'); el.className = 'text-2xl font-medium mt-6'; el.innerHTML = processRichText(content.rich_text); break;
                 case 'paragraph': el = document.createElement('p'); el.innerHTML = processRichText(content.rich_text) || '&nbsp;'; break;
                 case 'bulleted_list_item': case 'numbered_list_item': el = document.createElement('li'); el.className = 'ml-6 list-disc'; el.innerHTML = processRichText(content.rich_text); break;
                 case 'image': el = document.createElement('img'); el.src = content.type === 'external' ? content.external.url : content.file.url; el.className = 'max-w-full h-auto rounded-lg shadow-lg my-6 mx-auto block'; break;
-                case 'divider': el = document.createElement('hr'); el.className = 'my-8 border-gray-700'; break;
-                case 'quote': el = document.createElement('blockquote'); el.className = 'pl-4 border-l-4 border-gray-500 italic text-gray-400'; el.innerHTML = processRichText(content.rich_text); break;
+                case 'divider': el = document.createElement('hr'); el.className = 'my-8'; break;
+                case 'quote': el = document.createElement('blockquote'); el.className = 'pl-4 border-l-4 italic'; el.innerHTML = processRichText(content.rich_text); break;
                 case 'callout':
-                    const bgColor = content.color === 'default' ? 'bg-gray-800/80' : 'bg-gray-800';
-                    el = document.createElement('div'); el.className = `p-4 rounded-lg flex items-start gap-4 my-4 ${bgColor}`;
-                    const icon = content.icon.emoji || 'ℹ️';
+                    const icon = (content.icon && content.icon.emoji) ? content.icon.emoji : 'ℹ️';
+                    el = document.createElement('div'); el.className = `p-4 rounded-lg flex items-start gap-4 my-4 callout`;
                     el.innerHTML = `<span>${icon}</span><div class="flex-1">${processRichText(content.rich_text)}</div>`;
                     break;
                 default: return null;
@@ -386,16 +421,21 @@
                 const spentTime = (state.isTimerRunning || spentTimeRaw > 0) ? formatTime(currentSpentTime) : '...';
 
                 const item = document.createElement('button');
-                item.className = `history-item w-full text-left p-4 hover:bg-gray-700/50 transition-colors border-b border-gray-700/50 ${index === state.currentSlide ? 'active' : ''}`;
+                item.className = `history-item w-full text-left p-4 hover:bg-opacity-50 transition-colors border-b ${index === state.currentSlide ? 'active' : ''}`;
                 item.dataset.index = index;
-                item.innerHTML = `<div class="font-semibold text-white truncate" title="${pageTitleText}">${pageTitleText}</div>
-                                  <div class="text-sm font-mono text-gray-400 mt-1">Gasto: ${spentTime} / Previsto: ${estimatedTime}</div>`;
+                item.innerHTML = `<div class="font-semibold truncate" title="${pageTitleText}">${pageTitleText}</div>
+                                  <div class="text-sm font-mono mt-1 text-gray-400">Gasto: ${spentTime} / Previsto: ${estimatedTime}</div>`;
                 historyList.appendChild(item);
             });
         };
         
         const toggleHistorySidebar = (open) => historySidebar.classList.toggle('open', open);
         const toggleSettingsPanel = (open) => settingsPanel.classList.toggle('open', open);
+
+        const applyTheme = () => {
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(state.settings.theme);
+        };
 
         const applySettings = () => {
             const content = $('.slide-content'); if (!content) return;
@@ -414,9 +454,19 @@
 
         const handleSettingChange = (e) => {
             const btn = e.target.closest('button[data-setting]'); if (!btn) return;
-            const { setting, value } = btn.dataset; state.settings[setting] = isNaN(value) ? value : parseInt(value);
+            const { setting, value } = btn.dataset; 
+            state.settings[setting] = isNaN(value) ? value : parseInt(value);
             localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
-            if (setting === 'displayMode') rebuildSlidesAndRender(); else applySettings();
+
+            if (setting === 'theme') {
+                applyTheme();
+                // We need to re-apply settings UI to get correct active button style
+                updateSettingsUI();
+            } else if (setting === 'displayMode') {
+                rebuildSlidesAndRender();
+            } else {
+                applySettings();
+            }
         };
         
         const updateClock = () => {
@@ -484,6 +534,8 @@
             
             const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
             if (savedSettings) state.settings = { ...state.settings, ...savedSettings };
+
+            applyTheme();
 
             generateBtn.addEventListener('click', () => fetchNotionContent(false));
             previewBtn.addEventListener('click', () => fetchNotionContent(true));
