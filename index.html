@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Notas do Notion</title>
+    
+    <!-- Meta tags para "Adicionar à Tela Inicial" (PWA) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Notion Viewer">
+    <meta name="apple-mobile-web-app-title" content="Notion Viewer">
+    <meta name="theme-color" content="#191919">
+    <meta name="msapplication-navbutton-color" content="#191919">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="msapplication-starturl" content="/">
+
     <!-- Favicons para navegadores e atalhos de celular -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,6 +198,11 @@
             margin: -2px -4px;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
+            display: inline;
+        }
+
+        .slide-content .text-highlight.font-bold {
+            display: inline;
         }
 
         /* Light Theme Highlights (Vivid Colors) */
