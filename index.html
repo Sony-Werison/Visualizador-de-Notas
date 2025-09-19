@@ -8,8 +8,8 @@
     <!-- Meta tags para "Adicionar à Tela Inicial" (PWA) -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Notion Viewer">
-    <meta name="apple-mobile-web-app-title" content="Notion Viewer">
+    <meta name="application-name" content="Notion Reader">
+    <meta name="apple-mobile-web-app-title" content="Notion Reader">
     <meta name="theme-color" content="#191919">
     <meta name="msapplication-navbutton-color" content="#191919">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,8 +17,10 @@
 
     <!-- Manifesto do Web App e Favicons -->
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    <!-- ATUALIZAÇÃO: Apontando para o favicon local -->
+    <link rel="icon" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,14 +195,10 @@
         .slide-content .text-highlight {
             padding: 2px 4px;
             border-radius: 4px;
-            margin: -2px -4px;
+            /* margin: -2px -4px; /* Removido para corrigir quebra de linha em texto negrito */
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
             display: inline;
-        }
-
-        .slide-content .text-highlight > .font-bold {
-            display: inline; 
         }
 
         /* Light Theme Highlights (Vivid Colors) */
@@ -612,8 +610,13 @@
                 ] } },
                 { id: 'mock-p-14', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'Teste de ' } },
-                    { type: 'text', text: { content: 'negrito e destaque', "annotations": { "bold": true, "color": "yellow_background" } } },
+                    { type: 'text', text: { content: 'negrito e destaque' }, annotations: { bold: true, color: "yellow_background" } },
                     { type: 'text', text: { content: ' juntos.' } }
+                ] } },
+                { id: 'mock-p-15', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Esta frase mais longa demonstra como o ' } },
+                    { type: 'text', text: { content: 'texto em negrito com fundo colorido agora quebra a linha corretamente' }, annotations: { bold: true, color: "blue_background" } },
+                    { type: 'text', text: { content: ' sem cortar nenhuma letra no final.' } }
                 ] } },
 
                  { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
@@ -1512,4 +1515,6 @@
 </script>
 </body>
 </html>
+
+
 
