@@ -184,13 +184,6 @@
             margin: -2px -4px;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
-            display: inline; /* Garante que o span se comporte como esperado */
-        }
-
-        /* Aplica o estilo a elementos aninhados para corrigir o bug */
-        .slide-content .text-highlight * {
-            box-decoration-break: clone;
-            -webkit-box-decoration-break: clone;
         }
 
         /* Light Theme Highlights (Vivid Colors) */
@@ -571,33 +564,33 @@
                 ] } },
                 { id: 'mock-p-10', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'Também é possível aplicar ' } },
-                    { type: 'text', text: { content: 'cores diferentes', "annotations": { "color": "blue" } } },
+                    { type: 'text', text: { content: 'cores diferentes' }, "annotations": { "color": "blue" } },
                     { type: 'text', text: { content: ' ao texto e usar o estilo de ' } },
-                    { type: 'text', text: { content: 'código', "annotations": { "code": true } } },
+                    { type: 'text', text: { content: 'código' }, "annotations": { "code": true } },
                     { type: 'text', text: { content: '.' } }
                 ] } },
                 { id: 'mock-p-11', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'E, claro, os ' } },
-                    { type: 'text', text: { content: 'destaques com cor de fundo', "annotations": { "color": "red_background" } } },
+                    { type: 'text', text: { content: 'destaques com cor de fundo' }, "annotations": { "color": "red_background" } },
                     { type: 'text', text: { content: ' são exibidos com o novo estilo que você pediu!' } }
                 ] } },
                  { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'Aqui estão mais exemplos: ' } },
-                    { type: 'text', text: { content: 'cinza', "annotations": { "color": "gray_background" } } },
+                    { type: 'text', text: { content: 'cinza' }, "annotations": { "color": "gray_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'marrom', "annotations": { "color": "brown_background" } } },
+                    { type: 'text', text: { content: 'marrom' }, "annotations": { "color": "brown_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'laranja', "annotations": { "color": "orange_background" } } },
+                    { type: 'text', text: { content: 'laranja' }, "annotations": { "color": "orange_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'amarelo', "annotations": { "color": "yellow_background" } } },
+                    { type: 'text', text: { content: 'amarelo' }, "annotations": { "color": "yellow_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'verde', "annotations": { "color": "green_background" } } },
+                    { type: 'text', text: { content: 'verde' }, "annotations": { "color": "green_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'azul', "annotations": { "color": "blue_background" } } },
+                    { type: 'text', text: { content: 'azul' }, "annotations": { "color": "blue_background" } },
                     { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'roxo', "annotations": { "color": "purple_background" } } },
+                    { type: 'text', text: { content: 'roxo' }, "annotations": { "color": "purple_background" } },
                     { type: 'text', text: { content: ' e ' } },
-                    { type: 'text', text: { content: 'rosa', "annotations": { "color": "pink_background" } } },
+                    { type: 'text', text: { content: 'rosa' }, "annotations": { "color": "pink_background" } },
                     { type: 'text', text: { content: '.' } }
                 ] } },
 
@@ -1056,7 +1049,7 @@
             }
         }
 
-        const themes = ['theme-light', 'theme-dark', 'theme-sepia', 'theme-light-green', 'theme-light-blue', 'theme-dark-blue'];
+        const themes = ['theme-light', 'theme-dark', 'theme-sepia', 'theme-light-green', 'theme-light-blue'];
         document.documentElement.className = ''; // Limpa classes para evitar conflitos
         document.documentElement.classList.add(state.settings.theme);
 
