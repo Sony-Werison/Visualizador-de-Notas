@@ -37,11 +37,10 @@
         #slides-container::-webkit-scrollbar-track, #history-list::-webkit-scrollbar-track, .settings-panel-content::-webkit-scrollbar-track, #callouts-list::-webkit-scrollbar-track { background: transparent; }
         #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb, .settings-panel-content::-webkit-scrollbar-thumb, #callouts-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
         #doc-progress-bar, #page-progress-bar { transition: width 0.3s ease-out; }
-        #overlay { transition: opacity 0.3s ease-in-out; }
         
         /* --- Dark Theme (Default) --- */
         .dark body { background-color: #191919; color: #d1d5db; }
-        .dark #setup-view { background-color: #1f2937; }
+        .dark #setup-view { background-color: #191919; }
         .dark .control-btn-group { background-color: #374151; }
         .dark .control-btn-group button.active { background-color: #4b5563; color: white; }
         .dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
@@ -109,7 +108,7 @@
         #presentation-view > header,
         #presentation-view > footer,
         #presentation-view > main {
-            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+            transition: margin-left 0.3s ease-in-out, margin-right 0.3s ease-in-out, width 0.3s ease-in-out;
             width: 100%;
         }
 
@@ -127,6 +126,13 @@
             width: calc(100% - 33.3333%);
         }
 
+        body.settings-open #presentation-view > header,
+        body.settings-open #presentation-view > footer,
+        body.settings-open #presentation-view > main {
+            margin-right: 20rem; /* w-80 */
+            width: calc(100% - 20rem);
+        }
+
         #history-sidebar, #callouts-sidebar { width: 33.3333%; }
     </style>
 </head>
@@ -134,7 +140,7 @@
 <div id="app" class="w-full flex flex-col">
     <!-- Tela de Configuração Inicial -->
     <div id="setup-view" class="w-full h-full flex flex-col items-center justify-center">
-        <div class="w-full max-w-xl mx-auto p-8 rounded-xl shadow-lg space-y-6">
+        <div class="w-full max-w-xl mx-auto p-8 rounded-xl space-y-6">
             <h1 class="text-3xl font-bold text-center">Visualizador de Notas do Notion</h1>
             <p class="text-center text-gray-400">Cole a URL de uma página pública do Notion para começar.</p>
             <input type="text" id="pageId" placeholder="Cole a URL ou ID da sua página aqui" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
@@ -156,7 +162,6 @@
 
     <!-- Tela de Apresentação -->
     <div id="presentation-view" class="hidden w-full h-full flex-col relative overflow-hidden">
-        <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
         <header class="w-full p-4 flex justify-between items-center fixed top-0 left-0 z-20">
             <div class="w-1/3 flex items-center gap-2">
                  <button id="home-btn" title="Voltar ao Início" class="header-btn p-2.5 rounded-lg transition"></button>
@@ -230,6 +235,22 @@
                     </div>
                 </div>
                 <div>
+                    <h4 class="font-semibold mb-3">Margens</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="textWidth" data-value="max-w-[33vw]" class="flex-1 px-2 py-1 rounded">Estreito</button>
+                        <button data-setting="textWidth" data-value="max-w-[66vw]" class="flex-1 px-2 py-1 rounded">Normal</button>
+                        <button data-setting="textWidth" data-value="max-w-full" class="flex-1 px-2 py-1 rounded">Largo</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Posicionamento Horizontal</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="contentAlign" data-value="items-start" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Alinhar à Esquerda"></button>
+                        <button data-setting="contentAlign" data-value="items-center" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Centralizar"></button>
+                        <button data-setting="contentAlign" data-value="items-end" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Alinhar à Direita"></button>
+                    </div>
+                </div>
+                <div>
                     <h4 class="font-semibold mb-3">Alinhamento do Texto</h4>
                      <div class="control-btn-group flex rounded-md p-1">
                         <button data-setting="textAlign" data-value="text-left" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
@@ -272,14 +293,6 @@
                         <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded">Normal</button>
                         <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded">Largo</button>
                         <button data-setting="lineHeight" data-value="leading-extra" class="flex-1 px-2 py-1 rounded">Extra</button>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-3">Margens</h4>
-                    <div class="control-btn-group flex rounded-md p-1">
-                        <button data-setting="textWidth" data-value="max-w-[33%]" class="flex-1 px-2 py-1 rounded">Estreito</button>
-                        <button data-setting="textWidth" data-value="max-w-[66%]" class="flex-1 px-2 py-1 rounded">Normal</button>
-                        <button data-setting="textWidth" data-value="max-w-full" class="flex-1 px-2 py-1 rounded">Largo</button>
                     </div>
                 </div>
                  <div>
@@ -325,7 +338,10 @@
         alignLeft: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>`,
         alignCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>`,
         alignRight: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>`,
-        alignJustify: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>`
+        alignJustify: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>`,
+        alignHorizontalStart: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3h2v18H4zm4-4V7h12v10H8z"/></svg>`,
+        alignHorizontalCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21V3h2v18H2zm18 0V3h2v18h-2zM6 17V7h12v10H6z"/></svg>`,
+        alignHorizontalEnd: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21V3h2v18h-2zM4 17V7h12v10H4z"/></svg>`
     };
     
     const $ = (selector) => document.querySelector(selector);
@@ -342,7 +358,6 @@
     const historySidebar = $('#history-sidebar'), historyToggleBtn = $('#history-toggle-btn'), closeHistoryBtn = $('#close-history-btn'), historyList = $('#history-list');
     const calloutsSidebar = $('#callouts-sidebar'), calloutsToggleBtn = $('#callouts-toggle-btn-footer'), closeCalloutsBtn = $('#close-callouts-btn'), calloutsList = $('#callouts-list');
     const autoScrollToggleBtn = $('#auto-scroll-toggle-btn');
-    const overlay = $('#overlay');
 
     let state = {
         rawBlocks: [], slides: [], currentSlide: 0, pageTitle: '',
@@ -351,9 +366,10 @@
         isAutoScrolling: false, autoScrollInterval: null,
         settings: {
             theme: 'dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 2,
-            lineHeight: 'leading-loose', textWidth: 'max-w-[66%]', wpm: 180, progressDisplay: 'time',
+            lineHeight: 'leading-loose', textWidth: 'max-w-[66vw]', wpm: 180, progressDisplay: 'time',
             pageBreakHeadings: ['heading_1', 'heading_2'],
             textAlign: 'text-left',
+            contentAlign: 'items-center',
             calloutFontSize: 2,
         }
     };
@@ -755,22 +771,11 @@
         applySettings(); // Re-apply font size for callouts
     };
     
-    const updateOverlay = () => {
-        if (historySidebar.classList.contains('open') || settingsPanel.classList.contains('open') || calloutsSidebar.classList.contains('open')) {
-            overlay.classList.remove('hidden');
-            overlay.style.opacity = '1';
-        } else {
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.classList.add('hidden'), 300);
-        }
-    };
-    
     const closeAllSidebars = () => {
-        document.body.classList.remove('history-open', 'callouts-open');
+        document.body.classList.remove('history-open', 'callouts-open', 'settings-open');
         historySidebar.classList.remove('open');
         settingsPanel.classList.remove('open');
         calloutsSidebar.classList.remove('open');
-        updateOverlay();
     };
 
     const toggleHistorySidebar = (open) => { 
@@ -782,9 +787,17 @@
             historySidebar.classList.remove('open'); 
             document.body.classList.remove('history-open');
         } 
-        updateOverlay(); 
     };
-    const toggleSettingsPanel = (open) => { if (open) { closeAllSidebars(); settingsPanel.classList.add('open'); } else { settingsPanel.classList.remove('open'); } updateOverlay(); };
+    const toggleSettingsPanel = (open) => { 
+        if (open) { 
+            closeAllSidebars(); 
+            settingsPanel.classList.add('open'); 
+            document.body.classList.add('settings-open');
+        } else { 
+            settingsPanel.classList.remove('open'); 
+            document.body.classList.remove('settings-open');
+        } 
+    };
     const toggleCalloutsSidebar = (open) => { 
         if (open) { 
             closeAllSidebars(); 
@@ -794,7 +807,6 @@
             calloutsSidebar.classList.remove('open');
             document.body.classList.remove('callouts-open');
         } 
-        updateOverlay(); 
     };
 
     const applyTheme = (isToggle = false) => {
@@ -811,6 +823,10 @@
         const contentWrapper = slidesContainer;
         if (!contentWrapper) return;
         
+        const alignContentClasses = ['items-start', 'items-center', 'items-end'];
+        contentWrapper.classList.remove(...alignContentClasses);
+        contentWrapper.classList.add(state.settings.contentAlign);
+
         const alignClasses = ['text-left', 'text-center', 'text-right', 'text-justify'];
         contentWrapper.classList.remove(...alignClasses);
         contentWrapper.classList.add(state.settings.textAlign);
@@ -818,7 +834,7 @@
         const content = contentWrapper.querySelector('.slide-content');
         if (!content) return;
 
-        const fontClasses = ['font-sans','font-serif','font-display','leading-relaxed','leading-loose', 'leading-extra','max-w-xl','max-w-3xl','max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full'];
+        const fontClasses = ['font-sans','font-serif','font-display','leading-relaxed','leading-loose', 'leading-extra','max-w-xl','max-w-3xl','max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
         content.classList.remove(...fontClasses); 
         content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
         
@@ -876,7 +892,7 @@
                 settingChanged = true;
             }
         } else {
-            const newValue = (setting === 'textWidth') ? value : (isNaN(value) ? value : parseInt(value));
+            const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(value) ? value : parseInt(value));
             if (state.settings[setting] !== newValue) {
                 state.settings[setting] = newValue;
                 settingChanged = true;
@@ -1084,6 +1100,10 @@
         document.querySelector('[data-setting="textAlign"][data-value="text-center"]').innerHTML = ICONS.alignCenter;
         document.querySelector('[data-setting="textAlign"][data-value="text-right"]').innerHTML = ICONS.alignRight;
         document.querySelector('[data-setting="textAlign"][data-value="text-justify"]').innerHTML = ICONS.alignJustify;
+        
+        document.querySelector('[data-setting="contentAlign"][data-value="items-start"]').innerHTML = ICONS.alignHorizontalStart;
+        document.querySelector('[data-setting="contentAlign"][data-value="items-center"]').innerHTML = ICONS.alignHorizontalCenter;
+        document.querySelector('[data-setting="contentAlign"][data-value="items-end"]').innerHTML = ICONS.alignHorizontalEnd;
 
         const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
         if (savedSettings) state.settings = { ...state.settings, ...savedSettings };
@@ -1101,7 +1121,27 @@
         closeCalloutsBtn.addEventListener('click', () => toggleCalloutsSidebar(false));
         homeBtn.addEventListener('click', () => showView('setup'));
         autoScrollToggleBtn.addEventListener('click', toggleAutoScroll);
-        overlay.addEventListener('click', closeAllSidebars);
+        
+        document.addEventListener('click', e => {
+            const isSidebarOpen = document.body.classList.contains('history-open') || 
+                                document.body.classList.contains('callouts-open') || 
+                                document.body.classList.contains('settings-open');
+
+            if (!isSidebarOpen) return;
+
+            const target = e.target;
+            const isClickInsideSidebar = target.closest('#history-sidebar') || 
+                                        target.closest('#callouts-sidebar') || 
+                                        target.closest('#settings-panel');
+            
+            const isClickOnToggleButton = target.closest('#history-toggle-btn') || 
+                                        target.closest('#callouts-toggle-btn-footer') || 
+                                        target.closest('#settings-toggle-btn');
+            
+            if (!isClickInsideSidebar && !isClickOnToggleButton) {
+                closeAllSidebars();
+            }
+        });
         
         slidesContainer.addEventListener('scroll', updateFooterInfo);
         slidesContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -1148,4 +1188,4 @@
 </script>
 </body>
 </html>
-
+"
