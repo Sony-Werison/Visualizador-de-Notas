@@ -199,8 +199,8 @@
             display: inline;
         }
 
-        .slide-content .text-highlight.font-bold {
-            display: inline;
+        .slide-content .text-highlight > .font-bold {
+            display: inline; 
         }
 
         /* Light Theme Highlights (Vivid Colors) */
@@ -609,6 +609,11 @@
                     { type: 'text', text: { content: ' e ' } },
                     { type: 'text', text: { content: 'rosa' }, "annotations": { "color": "pink_background" } },
                     { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-p-14', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Teste de ' } },
+                    { type: 'text', text: { content: 'negrito e destaque', "annotations": { "bold": true, "color": "yellow_background" } } },
+                    { type: 'text', text: { content: ' juntos.' } }
                 ] } },
 
                  { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
@@ -1507,5 +1512,4 @@
 </script>
 </body>
 </html>
-
 
