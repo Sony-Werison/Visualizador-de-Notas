@@ -8,8 +8,8 @@
     <!-- Meta tags para "Adicionar à Tela Inicial" (PWA) -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Notion Reader">
-    <meta name="apple-mobile-web-app-title" content="Notion Reader">
+    <meta name="application-name" content="Notion Viewer">
+    <meta name="apple-mobile-web-app-title" content="Notion Viewer">
     <meta name="theme-color" content="#191919">
     <meta name="msapplication-navbutton-color" content="#191919">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,7 +17,6 @@
 
     <!-- Manifesto do Web App e Favicons -->
     <link rel="manifest" href="manifest.webmanifest">
-    <!-- ATUALIZAÇÃO: Apontando para o favicon local -->
     <link rel="icon" href="favicon.png">
     <link rel="shortcut icon" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
@@ -25,12 +24,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&family=Lora:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --font-sans: 'Inter', sans-serif;
             --font-serif: 'Merriweather', serif;
             --font-display: 'Poppins', sans-serif;
+            --font-lora: 'Lora', serif;
+            --font-baskerville: 'Libre Baskerville', serif;
             /* Variável para a altura real da viewport */
             --app-height: 100vh;
         }
@@ -40,6 +41,8 @@
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
         .font-display { font-family: var(--font-display); }
+        .font-lora { font-family: var(--font-lora); }
+        .font-baskerville { font-family: var(--font-baskerville); }
         .leading-extra { line-height: 2.5 !important; }
 
         .slide-content { animation: fadeIn 0.5s ease-in-out; }
@@ -54,11 +57,18 @@
         #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb, .settings-panel-content::-webkit-scrollbar-thumb, #callouts-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
         #doc-progress-bar, #page-progress-bar { transition: width 0.3s ease-out; }
         
+        /* Estilos para listas aninhadas */
+        .slide-content ul ul { list-style-type: circle; margin-left: 1.5rem; }
+        .slide-content ul ul ul { list-style-type: square; margin-left: 1.5rem; }
+        .slide-content ol ol { list-style-type: lower-alpha; margin-left: 1.5rem; }
+        .slide-content ol ol ol { list-style-type: lower-roman; margin-left: 1.5rem; }
+
         /* --- Dark Theme (Default) --- */
         html.theme-dark body { background-color: #191919; color: #d1d5db; }
         html.theme-dark #setup-view { background-color: #191919; }
         html.theme-dark .control-btn-group { background-color: #374151; }
         html.theme-dark .control-btn-group button.active { background-color: #4b5563; color: white; }
+        html.theme-dark .font-selector button.active { background-color: #4b5563; }
         html.theme-dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
         html.theme-dark .subtext-dark { color: #9ca3af; }
         html.theme-dark header, html.theme-dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
@@ -94,6 +104,7 @@
         html.theme-light .settings-panel, html.theme-light .history-sidebar, html.theme-light .callouts-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
         html.theme-light .control-btn-group { background-color: #e5e7eb; }
         html.theme-light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        html.theme-light .font-selector button.active { background-color: #dbeafe; color: #1e40af;}
         html.theme-light .history-item.active, html.theme-light .callout-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
         html.theme-light .history-item.active .text-gray-400, html.theme-light .history-item.active .subtext-light, html.theme-light .callout-item.active .text-gray-400 { color: #1e3a8a !important; }
         html.theme-light .history-item .text-gray-400, html.theme-light .callout-item .text-gray-400 { color: #6b7280; }
@@ -127,6 +138,7 @@
         html.theme-sepia .header-btn, html.theme-sepia .footer-btn, html.theme-sepia #wpm-decrease, html.theme-sepia #wpm-increase { background-color: #dcd1b8; color: #5b4636; }
         html.theme-sepia .control-btn-group { background-color: #dcd1b8; }
         html.theme-sepia .control-btn-group button.active { background-color: #c9bc9d; }
+        html.theme-sepia .font-selector button.active { background-color: #c9bc9d; }
         html.theme-sepia hr, html.theme-sepia blockquote, html.theme-sepia #history-container, html.theme-sepia .border-b { border-color: #c9bc9d; }
         html.theme-sepia .progress-bar-bg { background-color: #dcd1b8; }
         html.theme-sepia #page-progress-bar { background-color: #8c6f56; }
@@ -152,6 +164,7 @@
         html.theme-light-green .header-btn, html.theme-light-green .footer-btn, html.theme-light-green #wpm-decrease, html.theme-light-green #wpm-increase { background-color: #d1fae5; color: #065f46; }
         html.theme-light-green .control-btn-group { background-color: #d1fae5; }
         html.theme-light-green .control-btn-group button.active { background-color: #a7f3d0; }
+        html.theme-light-green .font-selector button.active { background-color: #a7f3d0; }
         html.theme-light-green hr, html.theme-light-green blockquote, html.theme-light-green #history-container, html.theme-light-green .border-b { border-color: #a7f3d0; }
         html.theme-light-green .progress-bar-bg { background-color: #d1fae5; }
         html.theme-light-green .notion-callout.notion-default_background { background-color: rgba(6, 95, 70, 0.08); }
@@ -176,6 +189,7 @@
         html.theme-light-blue .header-btn, html.theme-light-blue .footer-btn, html.theme-light-blue #wpm-decrease, html.theme-light-blue #wpm-increase { background-color: #bae6fd; color: #0c4a6e; }
         html.theme-light-blue .control-btn-group { background-color: #bae6fd; }
         html.theme-light-blue .control-btn-group button.active { background-color: #7dd3fc; }
+        html.theme-light-blue .font-selector button.active { background-color: #7dd3fc; }
         html.theme-light-blue hr, html.theme-light-blue blockquote, html.theme-light-blue #history-container, html.theme-light-blue .border-b { border-color: #7dd3fc; }
         html.theme-light-blue .progress-bar-bg { background-color: #bae6fd; }
         html.theme-light-blue .notion-callout.notion-default_background { background-color: rgba(12, 74, 110, 0.08); }
@@ -388,6 +402,31 @@
                         <button data-setting="theme" data-value="light-blue" class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2" title="Azul Claro"></button>
                     </div>
                 </div>
+                 <div>
+                    <h4 class="font-semibold mb-3">Fonte</h4>
+                    <div class="font-selector flex flex-wrap gap-2 justify-center">
+                        <button data-setting="fontFamily" data-value="font-sans" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-sans">Aa</div>
+                            <span class="text-xs mt-1">Inter</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-serif" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-serif">Aa</div>
+                            <span class="text-xs mt-1">Merriweather</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-display" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-display">Aa</div>
+                            <span class="text-xs mt-1">Poppins</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-lora" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-lora">Aa</div>
+                            <span class="text-xs mt-1">Lora</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-baskerville" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-baskerville">Aa</div>
+                            <span class="text-xs mt-1">Baskerville</span>
+                        </button>
+                    </div>
+                </div>
                 <div>
                     <h4 class="font-semibold mb-3">Quebras de Página</h4>
                      <div class="control-btn-group flex rounded-md p-1">
@@ -421,14 +460,7 @@
                         <button data-setting="textAlign" data-value="text-justify" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
                     </div>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-3">Fonte</h4>
-                    <div class="control-btn-group flex rounded-md p-1">
-                        <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded font-sans">Inter</button>
-                        <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded font-serif">Merriweather</button>
-                        <button data-setting="fontFamily" data-value="font-display" class="flex-1 px-2 py-1 rounded font-display">Poppins</button>
-                    </div>
-                </div>
+
                 <div>
                     <h4 class="font-semibold mb-3">Tamanho da Fonte (Texto)</h4>
                     <div class="control-btn-group flex rounded-md p-1">
@@ -587,26 +619,7 @@
                 { id: 'mock-p-11', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'E, claro, os ' } },
                     { type: 'text', text: { content: 'destaques com cor de fundo' }, "annotations": { "color": "red_background" } },
-                    { type: 'text', text: { content: ' são exibidos com o novo estilo que você pediu!' } }
-                ] } },
-                 { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [
-                    { type: 'text', text: { content: 'Aqui estão mais exemplos: ' } },
-                    { type: 'text', text: { content: 'cinza' }, "annotations": { "color": "gray_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'marrom' }, "annotations": { "color": "brown_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'laranja' }, "annotations": { "color": "orange_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'amarelo' }, "annotations": { "color": "yellow_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'verde' }, "annotations": { "color": "green_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'azul' }, "annotations": { "color": "blue_background" } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'roxo' }, "annotations": { "color": "purple_background" } },
-                    { type: 'text', text: { content: ' e ' } },
-                    { type: 'text', text: { content: 'rosa' }, "annotations": { "color": "pink_background" } },
-                    { type: 'text', text: { content: '.' } }
+                    { type: 'text', text: { content: ' são exibidos corretamente.' } }
                 ] } },
                 { id: 'mock-p-14', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'Teste de ' } },
@@ -618,6 +631,17 @@
                     { type: 'text', text: { content: 'texto em negrito com fundo colorido agora quebra a linha corretamente' }, annotations: { bold: true, color: "blue_background" } },
                     { type: 'text', text: { content: ' sem cortar nenhuma letra no final.' } }
                 ] } },
+                { 
+                    id: 'mock-list-1', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 1 da lista.' }] },
+                    children: [
+                        { id: 'mock-list-2', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 2 da lista.' }] },
+                            children: [
+                                { id: 'mock-list-3', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 3 da lista.' }] } }
+                            ]
+                        }
+                    ]
+                },
+                { id: 'mock-list-4', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Outro item de Nível 1.' }] } },
 
                  { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
                  { id: 'mock-p-13', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
@@ -915,13 +939,19 @@
             let scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
             scrollPercent = Math.max(0, Math.min(1, scrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
 
-            const wordsRead = totalWordsAll * scrollPercent;
-            const wordsRemaining = totalWordsAll - wordsRead;
+            let infoHTML = '';
+            if (state.settings.progressDisplay === 'percent') {
+                 infoHTML = `<div class="text-center text-sm font-mono mb-2">Progresso: ${Math.round(scrollPercent * 100)}%</div>`;
+            } else { // 'time' display
+                const wordsRead = totalWordsAll * scrollPercent;
+                const wordsRemaining = totalWordsAll - wordsRead;
+                
+                const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
+                const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
+                
+                infoHTML = `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
+            }
             
-            const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
-            const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
-            
-            const infoHTML = `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
             const barHTML = `<div class="w-full">${docBarHTML}</div>`;
             
             footerCenter.innerHTML = infoHTML + barHTML;
@@ -1103,7 +1133,7 @@
         const content = contentWrapper.querySelector('.slide-content');
         if (!content) return;
 
-        const fontClasses = ['font-sans','font-serif','font-display','leading-relaxed','leading-loose', 'leading-extra','max-w-xl','max-w-3xl','max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
+        const fontClasses = ['font-sans', 'font-serif', 'font-display', 'font-lora', 'font-baskerville', 'leading-relaxed', 'leading-loose', 'leading-extra', 'max-w-xl', 'max-w-3xl', 'max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
         content.classList.remove(...fontClasses); 
         content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
         
@@ -1515,6 +1545,4 @@
 </script>
 </body>
 </html>
-
-
 
