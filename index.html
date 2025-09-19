@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Notas do Notion</title>
-    <!-- Substitua pelo link direto para a sua imagem no GitHub -->
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/43f95e781ca48c4db484989786df9b1683e6c64f/favicon.png" onerror="this.style.display='none'">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Link do Favicon atualizado -->
+    <link rel="icon" type="image/png" href="[https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/c83cbcbafe16c9ab59c77aebb2a8131e7e7b1573/favicon.png](https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/c83cbcbafe16c9ab59c77aebb2a8131e7e7b1573/favicon.png)" onerror="this.style.display='none'">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap)" rel="stylesheet">
     <style>
         :root {
             --font-sans: 'Inter', sans-serif;
             --font-serif: 'Merriweather', serif;
             --font-display: 'Poppins', sans-serif;
+            /* Variável para a altura real da viewport */
+            --app-height: 100vh;
         }
         body { font-family: var(--font-sans); touch-action: pan-y; overflow: hidden; }
+        #app { height: var(--app-height); } /* Usa a altura real */
+
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
         .font-display { font-family: var(--font-display); }
@@ -165,7 +169,6 @@
             <div id="history-list" class="flex-1 overflow-y-auto"></div>
         </aside>
 
-        <!-- FIX: Moved callouts sidebar here and styled it like the other fixed sidebars -->
         <aside id="callouts-sidebar" class="callouts-sidebar fixed top-0 left-0 h-full w-80 shadow-2xl z-40 flex flex-col">
              <div class="p-4 flex justify-between items-center border-b">
                 <h3 class="font-bold text-lg">Destaques</h3>
@@ -369,7 +372,7 @@
         if (!pageId) { showError("URL ou ID da Página inválido."); return; }
         showView('loading');
         try {
-            const response = await fetch(`/.netlify/functions/notion-proxy?pageId=${pageId}`);
+            const response = await fetch(`/api/notion-proxy?pageId=${pageId}`);
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: `Erro HTTP ${response.status}` }));
                 throw new Error(errorData.message || 'Falha ao buscar a página.');
@@ -987,6 +990,14 @@
     }
     
     const init = () => {
+        // Função para ajustar a altura da aplicação à viewport visível
+        const setAppHeight = () => {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight(); // Define a altura inicial
+
         if (timerPlayPauseBtn) timerPlayPauseBtn.innerHTML = ICONS.play;
         if (settingsToggleBtn) settingsToggleBtn.innerHTML = ICONS.settings;
         if (closeSettingsBtn) closeSettingsBtn.innerHTML = ICONS.close;
