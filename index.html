@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Notas do Notion</title>
-    <!-- Link do Favicon atualizado -->
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png" onerror="this.style.display='none'">
+    <!-- Favicons para navegadores e atalhos de celular -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,69 +41,203 @@
         #doc-progress-bar, #page-progress-bar { transition: width 0.3s ease-out; }
         
         /* --- Dark Theme (Default) --- */
-        .dark body { background-color: #191919; color: #d1d5db; }
-        .dark #setup-view { background-color: #191919; }
-        .dark .control-btn-group { background-color: #374151; }
-        .dark .control-btn-group button.active { background-color: #4b5563; color: white; }
-        .dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
-        .dark .subtext-dark { color: #9ca3af; }
-        .dark header, .dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
-        .dark .settings-panel, .dark .history-sidebar, .dark .callouts-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
-        .dark #wpm-decrease, .dark #wpm-increase { background-color: #374151 }
-        .dark blockquote { border-color: #4b5563; }
-        .dark hr { border-color: #374151; }
-        .dark .progress-bar-bg { background-color: #374151; }
-        .dark #history-container { border-color: #374151; }
-        .dark #recent-history-list button { background-color: #374151; }
-        .dark #recent-history-list button:hover { background-color: #4b5563; }
+        html.theme-dark body { background-color: #191919; color: #d1d5db; }
+        html.theme-dark #setup-view { background-color: #191919; }
+        html.theme-dark .control-btn-group { background-color: #374151; }
+        html.theme-dark .control-btn-group button.active { background-color: #4b5563; color: white; }
+        html.theme-dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
+        html.theme-dark .subtext-dark { color: #9ca3af; }
+        html.theme-dark header, html.theme-dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
+        html.theme-dark .settings-panel, html.theme-dark .history-sidebar, html.theme-dark .callouts-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
+        html.theme-dark #wpm-decrease, html.theme-dark #wpm-increase { background-color: #374151 }
+        html.theme-dark blockquote { border-color: #4b5563; }
+        html.theme-dark hr { border-color: #374151; }
+        html.theme-dark .progress-bar-bg { background-color: #374151; }
+        html.theme-dark #history-container { border-color: #374151; }
+        html.theme-dark #recent-history-list button { background-color: #374151; }
+        html.theme-dark #recent-history-list button:hover { background-color: #4b5563; }
         /* Notion Colors Dark */
-        .dark .notion-callout.notion-default_background { background-color: rgba(255, 255, 255, 0.05); }
-        .dark .notion-callout.notion-gray_background { background-color: #373737; }
-        .dark .notion-callout.notion-brown_background { background-color: #4d3a2d; }
-        .dark .notion-callout.notion-orange_background { background-color: #633d24; }
-        .dark .notion-callout.notion-yellow_background { background-color: #614c1a; }
-        .dark .notion-callout.notion-green_background { background-color: #25473c; }
-        .dark .notion-callout.notion-blue_background { background-color: #203e58; }
-        .dark .notion-callout.notion-purple_background { background-color: #44325e; }
-        .dark .notion-callout.notion-pink_background { background-color: #5c2c40; }
-        .dark .notion-callout.notion-red_background { background-color: #693130; }
+        html.theme-dark .notion-callout.notion-default_background { background-color: rgba(255, 255, 255, 0.05); }
+        html.theme-dark .notion-callout.notion-gray_background { background-color: #373737; }
+        html.theme-dark .notion-callout.notion-brown_background { background-color: #4d3a2d; }
+        html.theme-dark .notion-callout.notion-orange_background { background-color: #633d24; }
+        html.theme-dark .notion-callout.notion-yellow_background { background-color: #614c1a; }
+        html.theme-dark .notion-callout.notion-green_background { background-color: #25473c; }
+        html.theme-dark .notion-callout.notion-blue_background { background-color: #203e58; }
+        html.theme-dark .notion-callout.notion-purple_background { background-color: #44325e; }
+        html.theme-dark .notion-callout.notion-pink_background { background-color: #5c2c40; }
+        html.theme-dark .notion-callout.notion-red_background { background-color: #693130; }
 
 
         /* --- Light Theme Styles --- */
-        html.light body { background-color: #f9fafb; color: #111827; }
-        html.light #setup-view { background-color: #ffffff; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        html.light h1, html.light h2, html.light h3, html.light h4, html.light #page-title { color: #111827; }
-        html.light input#pageId { background-color: #f3f4f6; color: #111827; border-color: #d1d5db; }
-        html.light header, html.light footer { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); }
-        html.light #clock, html.light #overall-timer, html.light #footer-info { color: #1f2937; }
-        html.light .header-btn, html.light .footer-btn { background-color: #e5e7eb; color: #1f2937;}
-        html.light .settings-panel, html.light .history-sidebar, html.light .callouts-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
-        html.light .control-btn-group { background-color: #e5e7eb; }
-        html.light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        html.light .history-item.active, html.light .callout-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
-        html.light .history-item.active .text-gray-400, html.light .history-item.active .subtext-light, html.light .callout-item.active .text-gray-400 { color: #1e3a8a !important; }
-        html.light .history-item .text-gray-400, html.light .callout-item .text-gray-400 { color: #6b7280; }
-        html.light .history-item .font-semibold, html.light .callout-item .font-semibold {color: #111827;}
-        html.light blockquote { color: #374151; border-color: #d1d5db; }
-        html.light hr { border-color: #e5e7eb; }
-        html.light .border-b { border-color: #e5e7eb; }
-        html.light #slides-container::-webkit-scrollbar-thumb, html.light #history-list::-webkit-scrollbar-thumb, html.light .settings-panel-content::-webkit-scrollbar-thumb, html.light #callouts-list::-webkit-scrollbar-thumb { background-color: #9ca3af; }
-        html.light #wpm-decrease, html.light #wpm-increase { background-color: #e5e7eb }
-        html.light .progress-bar-bg { background-color: #e5e7eb; }
-        html.light #history-container { border-color: #e5e7eb; }
-        html.light #recent-history-list button { background-color: #f3f4f6; color: #1f2937; }
-        html.light #recent-history-list button:hover { background-color: #e5e7eb; }
+        html.theme-light body { background-color: #f9fafb; color: #111827; }
+        html.theme-light #setup-view { background-color: #ffffff; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        html.theme-light h1, html.theme-light h2, html.theme-light h3, html.theme-light h4, html.theme-light #page-title { color: #111827; }
+        html.theme-light input#pageId { background-color: #f3f4f6; color: #111827; border-color: #d1d5db; }
+        html.theme-light header, html.theme-light footer { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light #clock, html.theme-light #overall-timer, html.theme-light #footer-info { color: #1f2937; }
+        html.theme-light .header-btn, html.theme-light .footer-btn { background-color: #e5e7eb; color: #1f2937;}
+        html.theme-light .settings-panel, html.theme-light .history-sidebar, html.theme-light .callouts-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
+        html.theme-light .control-btn-group { background-color: #e5e7eb; }
+        html.theme-light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        html.theme-light .history-item.active, html.theme-light .callout-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
+        html.theme-light .history-item.active .text-gray-400, html.theme-light .history-item.active .subtext-light, html.theme-light .callout-item.active .text-gray-400 { color: #1e3a8a !important; }
+        html.theme-light .history-item .text-gray-400, html.theme-light .callout-item .text-gray-400 { color: #6b7280; }
+        html.theme-light .history-item .font-semibold, html.theme-light .callout-item .font-semibold {color: #111827;}
+        html.theme-light blockquote { color: #374151; border-color: #d1d5db; }
+        html.theme-light hr { border-color: #e5e7eb; }
+        html.theme-light .border-b { border-color: #e5e7eb; }
+        html.theme-light #slides-container::-webkit-scrollbar-thumb, html.theme-light #history-list::-webkit-scrollbar-thumb, html.theme-light .settings-panel-content::-webkit-scrollbar-thumb, html.theme-light #callouts-list::-webkit-scrollbar-thumb { background-color: #9ca3af; }
+        html.theme-light #wpm-decrease, html.theme-light #wpm-increase { background-color: #e5e7eb }
+        html.theme-light .progress-bar-bg { background-color: #e5e7eb; }
+        html.theme-light #history-container { border-color: #e5e7eb; }
+        html.theme-light #recent-history-list button { background-color: #f3f4f6; color: #1f2937; }
+        html.theme-light #recent-history-list button:hover { background-color: #e5e7eb; }
         /* Notion Colors Light */
-        html.light .notion-callout.notion-default_background { background-color: #f3f4f6; }
-        html.light .notion-callout.notion-gray_background { background-color: #e5e7eb; }
-        html.light .notion-callout.notion-brown_background { background-color: #fef3e5; }
-        html.light .notion-callout.notion-orange_background { background-color: #feefe5; }
-        html.light .notion-callout.notion-yellow_background { background-color: #fff9e2; }
-        html.light .notion-callout.notion-green_background { background-color: #e5f7f3; }
-        html.light .notion-callout.notion-blue_background { background-color: #e4f3ff; }
-        html.light .notion-callout.notion-purple_background { background-color: #f4f0ff; }
-        html.light .notion-callout.notion-pink_background { background-color: #fff0f7; }
-        html.light .notion-callout.notion-red_background { background-color: #fff0f0; }
+        html.theme-light .notion-callout.notion-default_background { background-color: #f3f4f6; }
+        html.theme-light .notion-callout.notion-gray_background { background-color: #e5e7eb; }
+        html.theme-light .notion-callout.notion-brown_background { background-color: #fef3e5; }
+        html.theme-light .notion-callout.notion-orange_background { background-color: #feefe5; }
+        html.theme-light .notion-callout.notion-yellow_background { background-color: #fff9e2; }
+        html.theme-light .notion-callout.notion-green_background { background-color: #e5f7f3; }
+        html.theme-light .notion-callout.notion-blue_background { background-color: #e4f3ff; }
+        html.theme-light .notion-callout.notion-purple_background { background-color: #f4f0ff; }
+        html.theme-light .notion-callout.notion-pink_background { background-color: #fff0f7; }
+        html.theme-light .notion-callout.notion-red_background { background-color: #fff0f0; }
+
+        /* --- Sepia Theme --- */
+        html.theme-sepia body { background-color: #f4e8d1; color: #5b4636; }
+        html.theme-sepia #setup-view { background-color: #f4e8d1; }
+        html.theme-sepia header, html.theme-sepia footer { background-color: rgba(244, 232, 209, 0.85); backdrop-filter: blur(4px); }
+        html.theme-sepia .settings-panel, html.theme-sepia .history-sidebar, html.theme-sepia .callouts-sidebar { background-color: rgba(229, 217, 193, 0.95); }
+        html.theme-sepia .header-btn, html.theme-sepia .footer-btn, html.theme-sepia #wpm-decrease, html.theme-sepia #wpm-increase { background-color: #dcd1b8; color: #5b4636; }
+        html.theme-sepia .control-btn-group { background-color: #dcd1b8; }
+        html.theme-sepia .control-btn-group button.active { background-color: #c9bc9d; }
+        html.theme-sepia hr, html.theme-sepia blockquote, html.theme-sepia #history-container, html.theme-sepia .border-b { border-color: #c9bc9d; }
+        html.theme-sepia .progress-bar-bg { background-color: #dcd1b8; }
+        html.theme-sepia #page-progress-bar { background-color: #8c6f56; }
+        html.theme-sepia #doc-progress-bar { background-color: #6b5543; }
+        html.theme-sepia .notion-callout.notion-default_background { background-color: rgba(91, 70, 54, 0.08); }
+        html.theme-sepia #recent-history-list button { background-color: #dcd1b8; color: #5b4636;}
+        html.theme-sepia #recent-history-list button:hover { background-color: #c9bc9d; }
+
+        /* --- Light Green Theme --- */
+        html.theme-light-green body { background-color: #ecfdf5; color: #065f46; }
+        html.theme-light-green #setup-view { background-color: #ecfdf5; }
+        html.theme-light-green header, html.theme-light-green footer { background-color: rgba(236, 253, 245, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light-green .settings-panel, html.theme-light-green .history-sidebar, html.theme-light-green .callouts-sidebar { background-color: rgba(221, 250, 235, 0.95); }
+        html.theme-light-green .header-btn, html.theme-light-green .footer-btn, html.theme-light-green #wpm-decrease, html.theme-light-green #wpm-increase { background-color: #d1fae5; color: #065f46; }
+        html.theme-light-green .control-btn-group { background-color: #d1fae5; }
+        html.theme-light-green .control-btn-group button.active { background-color: #a7f3d0; }
+        html.theme-light-green hr, html.theme-light-green blockquote, html.theme-light-green #history-container, html.theme-light-green .border-b { border-color: #a7f3d0; }
+        html.theme-light-green .progress-bar-bg { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-default_background { background-color: rgba(6, 95, 70, 0.08); }
+        html.theme-light-green #recent-history-list button { background-color: #d1fae5; color: #065f46; }
+        html.theme-light-green #recent-history-list button:hover { background-color: #a7f3d0; }
+
+
+        /* --- Light Blue Theme --- */
+        html.theme-light-blue body { background-color: #e0f2fe; color: #0c4a6e; }
+        html.theme-light-blue #setup-view { background-color: #e0f2fe; }
+        html.theme-light-blue header, html.theme-light-blue footer { background-color: rgba(224, 242, 254, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light-blue .settings-panel, html.theme-light-blue .history-sidebar, html.theme-light-blue .callouts-sidebar { background-color: rgba(207, 234, 252, 0.95); }
+        html.theme-light-blue .header-btn, html.theme-light-blue .footer-btn, html.theme-light-blue #wpm-decrease, html.theme-light-blue #wpm-increase { background-color: #bae6fd; color: #0c4a6e; }
+        html.theme-light-blue .control-btn-group { background-color: #bae6fd; }
+        html.theme-light-blue .control-btn-group button.active { background-color: #7dd3fc; }
+        html.theme-light-blue hr, html.theme-light-blue blockquote, html.theme-light-blue #history-container, html.theme-light-blue .border-b { border-color: #7dd3fc; }
+        html.theme-light-blue .progress-bar-bg { background-color: #bae6fd; }
+        html.theme-light-blue .notion-callout.notion-default_background { background-color: rgba(12, 74, 110, 0.08); }
+        html.theme-light-blue #recent-history-list button { background-color: #bae6fd; color: #0c4a6e; }
+        html.theme-light-blue #recent-history-list button:hover { background-color: #7dd3fc; }
+
+        /* --- Dark Blue Theme --- */
+        html.theme-dark-blue body { background-color: #0c142c; color: #a5c9ff; }
+        html.theme-dark-blue #setup-view { background-color: #0c142c; }
+        html.theme-dark-blue header, html.theme-dark-blue footer { background-color: rgba(12, 20, 44, 0.85); backdrop-filter: blur(4px); }
+        html.theme-dark-blue .settings-panel, html.theme-dark-blue .history-sidebar, html.theme-dark-blue .callouts-sidebar { background-color: rgba(15, 25, 54, 0.95); }
+        html.theme-dark-blue .header-btn, html.theme-dark-blue .footer-btn, html.theme-dark-blue #wpm-decrease, html.theme-dark-blue #wpm-increase { background-color: #1e293b; color: #a5c9ff; }
+        html.theme-dark-blue .control-btn-group { background-color: #1e293b; }
+        html.theme-dark-blue .control-btn-group button.active { background-color: #334155; }
+        html.theme-dark-blue hr, html.theme-dark-blue blockquote, html.theme-dark-blue #history-container, html.theme-dark-blue .border-b { border-color: #334155; }
+        html.theme-dark-blue .progress-bar-bg { background-color: #1e293b; }
+        html.theme-dark-blue .notion-callout.notion-default_background { background-color: rgba(165, 201, 255, 0.1); }
+        html.theme-dark-blue #recent-history-list button { background-color: #1e293b; color: #a5c9ff; }
+        html.theme-dark-blue #recent-history-list button:hover { background-color: #334155; }
+
+        /* --- Text Highlight Styles --- */
+        .text-highlight {
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin: -2px -4px;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        /* Light Theme Highlights */
+        html.theme-light .text-highlight.notion-gray_background { background-color: #e5e7eb; }
+        html.theme-light .text-highlight.notion-brown_background { background-color: #fef3e5; }
+        html.theme-light .text-highlight.notion-orange_background { background-color: #feefe5; }
+        html.theme-light .text-highlight.notion-yellow_background { background-color: #fff9e2; }
+        html.theme-light .text-highlight.notion-green_background { background-color: #e5f7f3; }
+        html.theme-light .text-highlight.notion-blue_background { background-color: #e4f3ff; }
+        html.theme-light .text-highlight.notion-purple_background { background-color: #f4f0ff; }
+        html.theme-light .text-highlight.notion-pink_background { background-color: #fff0f7; }
+        html.theme-light .text-highlight.notion-red_background { background-color: #fff0f0; }
+
+        /* Dark Theme Highlights */
+        html.theme-dark .text-highlight.notion-gray_background { background-color: #373737; }
+        html.theme-dark .text-highlight.notion-brown_background { background-color: #4d3a2d; }
+        html.theme-dark .text-highlight.notion-orange_background { background-color: #633d24; }
+        html.theme-dark .text-highlight.notion-yellow_background { background-color: #614c1a; }
+        html.theme-dark .text-highlight.notion-green_background { background-color: #25473c; }
+        html.theme-dark .text-highlight.notion-blue_background { background-color: #203e58; }
+        html.theme-dark .text-highlight.notion-purple_background { background-color: #44325e; }
+        html.theme-dark .text-highlight.notion-pink_background { background-color: #5c2c40; }
+        html.theme-dark .text-highlight.notion-red_background { background-color: #693130; }
+
+        /* Sepia Theme Highlights */
+        html.theme-sepia .text-highlight.notion-gray_background { background-color: rgba(91, 70, 54, 0.2); }
+        html.theme-sepia .text-highlight.notion-brown_background { background-color: #d8c1ac; }
+        html.theme-sepia .text-highlight.notion-orange_background { background-color: #e6c8b4; }
+        html.theme-sepia .text-highlight.notion-yellow_background { background-color: #e6d9b4; }
+        html.theme-sepia .text-highlight.notion-green_background { background-color: #b9d1c9; }
+        html.theme-sepia .text-highlight.notion-blue_background { background-color: #b9c9d1; }
+        html.theme-sepia .text-highlight.notion-purple_background { background-color: #d1c9d9; }
+        html.theme-sepia .text-highlight.notion-pink_background { background-color: #d9c9cf; }
+        html.theme-sepia .text-highlight.notion-red_background { background-color: #d9c9c9; }
+
+        /* Light Green Theme Highlights */
+        html.theme-light-green .text-highlight.notion-gray_background { background-color: #d1fae5; }
+        html.theme-light-green .text-highlight.notion-brown_background { background-color: #bbf7d0; }
+        html.theme-light-green .text-highlight.notion-orange_background { background-color: #a7f3d0; }
+        html.theme-light-green .text-highlight.notion-yellow_background { background-color: #86efac; }
+        html.theme-light-green .text-highlight.notion-green_background { background-color: #a7f3d0; }
+        html.theme-light-green .text-highlight.notion-blue_background { background-color: #a7f3d0; }
+        html.theme-light-green .text-highlight.notion-purple_background { background-color: #a7f3d0; }
+        html.theme-light-green .text-highlight.notion-pink_background { background-color: #a7f3d0; }
+        html.theme-light-green .text-highlight.notion-red_background { background-color: #fca5a5; }
+
+        /* Light Blue Theme Highlights */
+        html.theme-light-blue .text-highlight.notion-gray_background { background-color: #bae6fd; }
+        html.theme-light-blue .text-highlight.notion-brown_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-orange_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-yellow_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-green_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-blue_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-purple_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-pink_background { background-color: #7dd3fc; }
+        html.theme-light-blue .text-highlight.notion-red_background { background-color: #fda4af; }
+
+        /* Dark Blue Theme Highlights */
+        html.theme-dark-blue .text-highlight.notion-gray_background { background-color: #1e293b; }
+        html.theme-dark-blue .text-highlight.notion-brown_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-orange_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-yellow_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-green_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-blue_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-purple_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-pink_background { background-color: #334155; }
+        html.theme-dark-blue .text-highlight.notion-red_background { background-color: #be123c; }
 
 
         /* --- Sidebar Push Effect --- */
@@ -146,7 +282,7 @@
             <input type="text" id="pageId" placeholder="Cole a URL ou ID da sua página aqui" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
             <div class="flex gap-4">
                 <button id="generate-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
-                <button id="preview-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver Prévia</button>
+                <button id="preview-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver Tutorial</button>
             </div>
             
             <div id="history-container" class="pt-4 border-t hidden">
@@ -176,7 +312,6 @@
                     <button id="timer-play-pause-btn" title="Iniciar/Pausar Tempo" class="p-0.5"></button>
                     <span id="overall-timer" class="text-lg font-mono" title="Tempo total da sessão">0:00</span>
                 </div>
-                <button id="theme-toggle-btn" title="Alternar Tema" class="header-btn p-2.5 rounded-lg transition"></button>
                 <button id="settings-toggle-btn" title="Ajustes" class="header-btn p-2.5 rounded-lg transition"></button>
             </div>
         </header>
@@ -224,6 +359,17 @@
                     <div class="control-btn-group flex rounded-md p-1">
                         <button data-setting="displayMode" data-value="slides" class="flex-1 px-2 py-1 rounded">Páginas</button>
                         <button data-setting="displayMode" data-value="scroll" class="flex-1 px-2 py-1 rounded">Rolagem</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Cor da Página</h4>
+                    <div class="flex justify-around items-center p-1">
+                        <button data-setting="theme" data-value="light" class="theme-btn w-8 h-8 rounded-full bg-white border-2" title="Claro"></button>
+                        <button data-setting="theme" data-value="dark" class="theme-btn w-8 h-8 rounded-full bg-[#191919] border-2" title="Escuro"></button>
+                        <button data-setting="theme" data-value="sepia" class="theme-btn w-8 h-8 rounded-full bg-[#f4e8d1] border-2" title="Sépia"></button>
+                        <button data-setting="theme" data-value="light-green" class="theme-btn w-8 h-8 rounded-full bg-[#ecfdf5] border-2" title="Verde Claro"></button>
+                        <button data-setting="theme" data-value="light-blue" class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2" title="Azul Claro"></button>
+                        <button data-setting="theme" data-value="dark-blue" class="theme-btn w-8 h-8 rounded-full bg-[#0c142c] border-2" title="Azul Escuro"></button>
                     </div>
                 </div>
                 <div>
@@ -365,7 +511,7 @@
         pageTimeHistory: {}, clockInterval: null,
         isAutoScrolling: false, autoScrollInterval: null,
         settings: {
-            theme: 'dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 2,
+            theme: 'theme-dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 2,
             lineHeight: 'leading-loose', textWidth: 'max-w-[66vw]', wpm: 180, progressDisplay: 'time',
             pageBreakHeadings: ['heading_1', 'heading_2'],
             textAlign: 'text-left',
@@ -379,17 +525,59 @@
         blocks: {
             results: [
                 { id: 'mock-1', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Bem-vindo ao Tutorial Interativo!' }] } },
-                { id: 'mock-2', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Esta é uma página de exemplo para você testar todas as funcionalidades da ferramenta. Use os botões e menus para ver tudo em ação.' }] } },
-                { id: 'mock-3', type: 'callout', callout: { icon: { emoji: '💡' }, rich_text: [{ plain_text: 'Dica: Use as setas do teclado ou deslize o dedo na tela para navegar entre as páginas!' }], color: 'gray_background' } },
-                { id: 'mock-4', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'No rodapé, você pode ver seu progresso de duas formas: por tempo estimado de leitura ou por porcentagem. Alterne entre elas nos Ajustes (⚙️).' }] } },
-                { id: 'mock-8', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Modos de Visualização e Layout' }] } },
-                { id: 'mock-9', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Atualmente, você está no modo "Páginas". Note como este título (H2) iniciou uma nova página. Você pode customizar quais títulos (H1, H2, H3) causam essa quebra na seção "Quebras de Página" dos Ajustes.' }] } },
-                { id: 'mock-10', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Experimente também o modo "Rolagem". Nele, todo o conteúdo se torna uma única página contínua. Nesse modo, um botão de rolagem automática (🔽) aparecerá no topo. A velocidade é sincronizada com seu PPM (Palavras por Minuto).' }] } },
-                { id: 'mock-11', type: 'callout', callout: { rich_text: [{ plain_text: 'Ainda nos Ajustes, você pode mudar a fonte, o tamanho do texto (principal e dos destaques), o espaçamento entre linhas, as margens e o alinhamento do texto.' }], color: 'blue_background' } },
-                { id: 'mock-12', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Destaques e Navegação' }] } },
-                { id: 'mock-13', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Para encontrar informações importantes rapidamente, use o painel de "Destaques". Clique no ícone de livro (📖) no canto inferior esquerdo para abrir uma lista com todos os destaques (callouts) do documento.' }] } },
-                { id: 'mock-14', type: 'callout', callout: { icon: { emoji: '🎯' }, rich_text: [{ plain_text: 'Este é um exemplo de um callout com um texto um pouco mais longo para que você possa testar a barra de rolagem dentro do painel de Destaques. Clicar nos itens desta barra lateral não te levará a lugar nenhum, ela serve como um sumário dos pontos-chave do seu texto para consulta rápida.' }], color: 'green_background' } },
-                { id: 'mock-15', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'As barras laterais de Navegação e Destaques agora são independentes e sobrepõem o conteúdo principal. Você pode fechá-las clicando no "X" ou na área escurecida fora delas.' }] } }
+                { id: 'mock-2', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Esta é uma página de exemplo para você explorar todas as funcionalidades do Visualizador de Notas. Vamos começar!' }] } },
+                { id: 'mock-3', type: 'callout', callout: { icon: { emoji: '➡️' }, rich_text: [{ plain_text: 'Use as setas do teclado, deslize o dedo na tela ou use os botões no rodapé para navegar entre as páginas do tutorial.' }], color: 'default_background' } },
+                
+                { id: 'mock-h-2', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Modos de Visualização' }] } },
+                { id: 'mock-p-1', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Existem dois modos principais. Você pode alternar entre eles no painel de Ajustes (⚙️).' }] } },
+                { id: 'mock-p-2', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: '1. Modo Páginas (Padrão):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Divide o conteúdo em "slides", usando os títulos (H1, H2, H3) como pontos de quebra. Ideal para apresentações.' } }] } },
+                { id: 'mock-p-3', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: '2. Modo Rolagem:' }, annotations: { bold: true } }, 
+                    { type: 'text', text: { content: ' Exibe todo o conteúdo como uma única página contínua, similar a um artigo. Neste modo, um botão de rolagem automática ( ' } }, 
+                    { type: 'text', text: { content: '🔽', annotations: { code: true } } }, 
+                    { type: 'text', text: { content: ' ) aparecerá no topo.' } }
+                ] } },
+                
+                { id: 'mock-h-3', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Painel de Ajustes (⚙️)' }] } },
+                { id: 'mock-p-4', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone de engrenagem no canto superior direito para abrir o painel de Ajustes. Lá você pode customizar sua experiência de leitura.' }] } },
+                { id: 'mock-callout-1', type: 'callout', callout: { icon: { emoji: '🎨' }, rich_text: [{ type: 'text', text: { content: 'Cor da Página: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Escolha entre diversos temas, como claro, escuro, sépia e outros.' } }], color: 'gray_background' } },
+                { id: 'mock-callout-2', type: 'callout', callout: { icon: { emoji: '✒️' }, rich_text: [{ type: 'text', text: { content: 'Fonte e Estilo: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Ajuste a família da fonte, tamanho, espaçamento entre linhas, margens e alinhamento do texto.' } }], color: 'yellow_background' } },
+                { id: 'mock-callout-3', type: 'callout', callout: { icon: { emoji: '⏱️' }, rich_text: [{ type: 'text', text: { content: 'Velocidade de Leitura (PPM): ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Defina suas palavras por minuto. Isso ajusta as estimativas de tempo no rodapé e a velocidade da rolagem automática.' } }], color: 'blue_background' } },
+
+                { id: 'mock-h-4', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Barras Laterais' }] } },
+                { id: 'mock-p-5', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'No canto inferior esquerdo, você encontrará botões para abrir duas barras laterais úteis:' }] } },
+                { id: 'mock-p-6', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Navegação (☰):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Disponível no modo Páginas, mostra uma lista de todas as páginas para acesso rápido.' } }] } },
+                { id: 'mock-p-7', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Destaques (📖):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Reúne todos os blocos de "callout" do documento, servindo como um sumário dos pontos mais importantes.' } }] } },
+
+                { id: 'mock-h-5', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Formatação de Texto' }] } },
+                { id: 'mock-p-8', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'O visualizador é compatível com as formatações básicas do Notion.' }] } },
+                { id: 'mock-p-9', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Você pode ter texto em ' } },
+                    { type: 'text', text: { content: 'negrito' }, annotations: { bold: true } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'itálico' }, annotations: { italic: true } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'sublinhado' }, annotations: { underline: true } },
+                    { type: 'text', text: { content: ' e ' } },
+                    { type: 'text', text: { content: 'tachado' }, annotations: { strikethrough: true } },
+                    { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-p-10', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Também é possível aplicar ' } },
+                    { type: 'text', text: { content: 'cores diferentes', "annotations": { "color": "blue" } } },
+                    { type: 'text', text: { content: ' ao texto e usar o estilo de ' } },
+                    { type: 'text', text: { content: 'código', "annotations": { "code": true } } },
+                    { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-p-11', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'E, claro, os ' } },
+                    { type: 'text', text: { content: 'destaques com cor de fundo', "annotations": { "color": "red_background" } } },
+                    { type: 'text', text: { content: ' são exibidos com o novo estilo que você pediu!' } }
+                ] } },
+
+                 { id: 'mock-h-6', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
+                 { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
+
             ]
         },
         page: {
@@ -479,8 +667,7 @@
             "blue": "text-blue-600", 
             "purple": "text-purple-600", 
             "pink": "text-pink-600", 
-            "red": "text-red-600",
-            "gray_background": "bg-gray-700/50", "brown_background": "bg-yellow-800/50", "orange_background": "bg-orange-800/50", "yellow_background": "bg-yellow-800/50", "green_background": "bg-green-800/50", "blue_background": "bg-blue-800/50", "purple_background": "bg-purple-800/50", "pink_background": "bg-pink-800/50", "red_background": "bg-red-800/50"
+            "red": "text-red-600"
         };
         
         const lightColorMap = {
@@ -505,13 +692,16 @@
             if (annotations.code) classList.push('font-mono bg-gray-200 dark:bg-gray-700/50 px-1 py-0.5 rounded text-sm text-red-500');
             
             if (annotations.color && annotations.color !== 'default') {
-                const finalColorMap = document.documentElement.classList.contains('light') ? lightColorMap : colorMap;
-                classList.push(finalColorMap[annotations.color] || colorMap[annotations.color] );
-                 if(annotations.color.includes('_background')){
-                     classList.push('px-1 rounded');
-                 }
+                if (annotations.color.includes('_background')) {
+                    classList.push('text-highlight', `notion-${annotations.color}`);
+                } else {
+                    const isLightTheme = ['theme-light', 'theme-sepia', 'theme-light-green', 'theme-light-blue'].includes(state.settings.theme);
+                    const finalColorMap = isLightTheme ? lightColorMap : colorMap;
+                    classList.push(finalColorMap[annotations.color] || colorMap[annotations.color]);
+                }
             }
-            let content = text.plain_text.replace(/\n/g, '<br>');
+            const plainText = text.plain_text || (text.text ? text.text.content : '');
+            let content = plainText.replace(/\n/g, '<br>');
             if (text.href) {
                 return `<a href="${text.href}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline ${classList.join(' ')}">${content}</a>`;
             }
@@ -662,7 +852,9 @@
         const docBarHTML = `<div class="w-full rounded-full h-2 progress-bar-bg"><div id="doc-progress-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%;"></div></div>`;
 
         if (state.settings.displayMode === 'scroll') {
-            const scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
+            let scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
+            scrollPercent = Math.max(0, Math.min(1, scrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+
             const wordsRead = totalWordsAll * scrollPercent;
             const wordsRemaining = totalWordsAll - wordsRead;
             
@@ -677,8 +869,11 @@
 
         } else { // SLIDES MODE
             const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            
+            let pageScrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : (wordsOnPage > 0 ? 1 : 0);
+            pageScrollPercent = Math.max(0, Math.min(1, pageScrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+
             const pageTimeSeconds = (wordsOnPage / wpm) * 60;
-            const pageScrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : (wordsOnPage > 0 ? 1 : 0);
             const pageWordsRead = wordsOnPage * pageScrollPercent;
             const pageWordsRemaining = wordsOnPage - pageWordsRead;
             const pageTimeRemainingSeconds = (pageWordsRemaining / wpm) * 60;
@@ -809,14 +1004,28 @@
         } 
     };
 
-    const applyTheme = (isToggle = false) => {
-        if (isToggle) {
-            state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+    const applyTheme = (newTheme) => {
+        if (newTheme) {
+            state.settings.theme = newTheme;
+        } else {
+             // Ao iniciar, garante que o tema antigo seja compatível
+            if (state.settings.theme === 'light' || state.settings.theme === 'dark') {
+                state.settings.theme = `theme-${state.settings.theme}`;
+            }
         }
-        document.documentElement.classList.remove('light', 'dark');
+
+        const themes = ['theme-light', 'theme-dark', 'theme-sepia', 'theme-light-green', 'theme-light-blue', 'theme-dark-blue'];
+        document.documentElement.className = ''; // Limpa classes para evitar conflitos
         document.documentElement.classList.add(state.settings.theme);
-        themeToggleBtn.innerHTML = state.settings.theme === 'dark' ? ICONS.sun : ICONS.moon;
-        applySettings();
+
+        // Se a mudança de tema foi intencional (newTheme existe), renderiza novamente
+        if (newTheme) {
+            if (!presentationView.classList.contains('hidden')) {
+                renderCurrentSlide();
+            } else {
+                applySettings();
+            }
+        }
     };
     
     const applySettings = () => {
@@ -867,7 +1076,18 @@
                 });
             } else {
                 document.querySelectorAll(`[data-setting="${key}"]`).forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.value == state.settings[key]);
+                    const value = key === 'theme' ? state.settings.theme.replace('theme-', '') : state.settings[key];
+                    btn.classList.toggle('active', btn.dataset.value == value);
+                     if (key === 'theme') {
+                        if (btn.dataset.value === value) {
+                            btn.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+                             // Define a cor do anel de destaque com base no tema
+                            const ringColor = document.documentElement.classList.contains('theme-light') ? '#F9FAFB' : '#1F293B';
+                            btn.style.setProperty('--tw-ring-offset-color', ringColor);
+                        } else {
+                            btn.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500');
+                        }
+                    }
                 });
             }
         }
@@ -878,6 +1098,14 @@
         if (!btn) return;
         const { setting, value } = btn.dataset;
         let settingChanged = false;
+
+        if (setting === 'theme') {
+            const newTheme = `theme-${value}`;
+            if (state.settings.theme !== newTheme) {
+                applyTheme(newTheme);
+            }
+            return;
+        }
 
         if (setting === 'pageBreakHeadings') {
             const currentBreaks = state.settings.pageBreakHeadings;
@@ -1112,7 +1340,6 @@
         
         generateBtn.addEventListener('click', () => fetchNotionContent(false));
         previewBtn.addEventListener('click', () => fetchNotionContent(true));
-        themeToggleBtn.addEventListener('click', () => applyTheme(true));
         settingsToggleBtn.addEventListener('click', () => toggleSettingsPanel(!settingsPanel.classList.contains('open')));
         closeSettingsBtn.addEventListener('click', () => toggleSettingsPanel(false));
         historyToggleBtn.addEventListener('click', () => toggleHistorySidebar(!historySidebar.classList.contains('open')));
@@ -1188,4 +1415,3 @@
 </script>
 </body>
 </html>
-"
