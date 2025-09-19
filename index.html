@@ -163,9 +163,9 @@
         html.theme-dark-blue .notion-callout.notion-default_background { background-color: rgba(165, 201, 255, 0.1); }
         html.theme-dark-blue #recent-history-list button { background-color: #1e293b; color: #a5c9ff; }
         html.theme-dark-blue #recent-history-list button:hover { background-color: #334155; }
-
+        
         /* --- Text Highlight Styles --- */
-        .text-highlight {
+        .slide-content .text-highlight {
             padding: 2px 4px;
             border-radius: 4px;
             margin: -2px -4px;
@@ -173,16 +173,16 @@
             -webkit-box-decoration-break: clone;
         }
 
-        /* Light Theme Highlights */
-        html.theme-light .text-highlight.notion-gray_background { background-color: #e5e7eb; }
-        html.theme-light .text-highlight.notion-brown_background { background-color: #fef3e5; }
-        html.theme-light .text-highlight.notion-orange_background { background-color: #feefe5; }
-        html.theme-light .text-highlight.notion-yellow_background { background-color: #fff9e2; }
-        html.theme-light .text-highlight.notion-green_background { background-color: #e5f7f3; }
-        html.theme-light .text-highlight.notion-blue_background { background-color: #e4f3ff; }
-        html.theme-light .text-highlight.notion-purple_background { background-color: #f4f0ff; }
-        html.theme-light .text-highlight.notion-pink_background { background-color: #fff0f7; }
-        html.theme-light .text-highlight.notion-red_background { background-color: #fff0f0; }
+        /* Light Theme Highlights (Vivid Colors) */
+        html.theme-light .text-highlight.notion-gray_background { background-color: #d1d5db; } /* gray-300 */
+        html.theme-light .text-highlight.notion-brown_background { background-color: #fed7aa; } /* orange-200 */
+        html.theme-light .text-highlight.notion-orange_background { background-color: #ffedd5; } /* orange-100 */
+        html.theme-light .text-highlight.notion-yellow_background { background-color: #fef08a; } /* yellow-200 */
+        html.theme-light .text-highlight.notion-green_background { background-color: #bbf7d0; } /* green-200 */
+        html.theme-light .text-highlight.notion-blue_background { background-color: #bfdbfe; } /* blue-200 */
+        html.theme-light .text-highlight.notion-purple_background { background-color: #ddd6fe; } /* purple-200 */
+        html.theme-light .text-highlight.notion-pink_background { background-color: #fbcfe8; } /* pink-200 */
+        html.theme-light .text-highlight.notion-red_background { background-color: #fecaca; } /* red-200 */
 
         /* Dark Theme Highlights */
         html.theme-dark .text-highlight.notion-gray_background { background-color: #373737; }
@@ -498,7 +498,6 @@
     const prevBtn = $('#prev-btn'), nextBtn = $('#next-btn'), footerCenter = $('#footer-center');
     const timerPlayPauseBtn = $('#timer-play-pause-btn'), overallTimerEl = $('#overall-timer');
     const settingsPanel = $('#settings-panel'), settingsToggleBtn = $('#settings-toggle-btn'), closeSettingsBtn = $('#close-settings-btn');
-    const themeToggleBtn = $('#theme-toggle-btn');
     const homeBtn = $('#home-btn');
     const wpmDecreaseBtn = $('#wpm-decrease'), wpmIncreaseBtn = $('#wpm-increase'), wpmDisplay = $('#wpm-display');
     const historySidebar = $('#history-sidebar'), historyToggleBtn = $('#history-toggle-btn'), closeHistoryBtn = $('#close-history-btn'), historyList = $('#history-list');
@@ -717,7 +716,17 @@
             case 'heading_2': el = document.createElement('h2'); el.className = 'font-semibold mt-10 leading-snug'; el.innerHTML = processRichText(content.rich_text); break;
             case 'heading_3': el = document.createElement('h3'); el.className = 'font-medium mt-8'; el.innerHTML = processRichText(content.rich_text); break;
             case 'paragraph': el = document.createElement('p'); el.innerHTML = processRichText(content.rich_text) || '&nbsp;'; break;
-            case 'bulleted_list_item': case 'numbered_list_item': el = document.createElement('li'); el.className = 'ml-6 list-disc'; el.innerHTML = processRichText(content.rich_text); break;
+            
+            case 'bulleted_list_item':
+            case 'numbered_list_item':
+                el = document.createElement('li');
+                el.innerHTML = processRichText(content.rich_text);
+                // Lida com blocos aninhados recursivamente
+                if (block.children && block.children.length > 0) {
+                    renderBlocks(block.children, el); 
+                }
+                break;
+
             case 'image': el = document.createElement('img'); el.src = content.type === 'external' ? content.external.url : content.file.url; el.className = 'max-w-full h-auto rounded-lg shadow-lg my-6 mx-auto block'; break;
             case 'divider': el = document.createElement('hr'); el.className = 'my-8'; break;
             case 'quote': el = document.createElement('blockquote'); el.className = 'pl-3 border-l-4'; el.innerHTML = processRichText(content.rich_text); break;
@@ -737,13 +746,19 @@
 
     const renderCurrentSlide = () => {
         const slideData = state.slides[state.currentSlide];
-        const wrapper = document.createElement('div'); wrapper.className = 'slide-content w-full h-full space-y-5';
-        if (!slideData || slideData.length === 0) { wrapper.innerHTML = `<p class="text-center text-gray-400">Nenhum conteúdo.</p>`;
-        } else { slideData.forEach(block => { const el = createHtmlFromBlock(block); if (el) wrapper.appendChild(el); }); }
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slide-content w-full h-full space-y-5';
+        renderBlocks(slideData, wrapper); // Usa a nova função para renderizar com aninhamento
         const spacer = document.createElement('div');
         spacer.style.height = '50vh';
         wrapper.appendChild(spacer);
-        slidesContainer.innerHTML = ''; slidesContainer.appendChild(wrapper); pageTitle.textContent = state.pageTitle; applySettings(); updateControls(); renderHistorySidebar(); renderCalloutsSidebar();
+        slidesContainer.innerHTML = ''; 
+        slidesContainer.appendChild(wrapper); 
+        pageTitle.textContent = state.pageTitle; 
+        applySettings(); 
+        updateControls(); 
+        renderHistorySidebar(); 
+        renderCalloutsSidebar();
         requestAnimationFrame(() => requestAnimationFrame(updateFooterInfo));
     };
 
@@ -1092,6 +1107,39 @@
             }
         }
     };
+
+    // Função para renderizar blocos, agrupando itens de lista
+    function renderBlocks(blocks, container) {
+        if (!blocks) return;
+
+        let i = 0;
+        while (i < blocks.length) {
+            const block = blocks[i];
+            
+            // Agrupa itens de lista consecutivos
+            if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+                const listTag = block.type === 'bulleted_list_item' ? 'ul' : 'ol';
+                const listEl = document.createElement(listTag);
+                listEl.className = 'list-outside space-y-2 mt-2';
+                if (listTag === 'ul') listEl.classList.add('list-disc', 'pl-6');
+                if (listTag === 'ol') listEl.classList.add('list-decimal', 'pl-6');
+
+                let j = i;
+                while (j < blocks.length && blocks[j].type === block.type) {
+                    const li = createHtmlFromBlock(blocks[j]);
+                    if(li) listEl.appendChild(li);
+                    j++;
+                }
+                container.appendChild(listEl);
+                i = j;
+            } else {
+                // Lida com itens que não são de lista
+                const el = createHtmlFromBlock(block);
+                if (el) container.appendChild(el);
+                i++;
+            }
+        }
+    }
     
     const handleSettingChange = (e) => {
         const btn = e.target.closest('button[data-setting]');
@@ -1334,7 +1382,14 @@
         document.querySelector('[data-setting="contentAlign"][data-value="items-end"]').innerHTML = ICONS.alignHorizontalEnd;
 
         const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
-        if (savedSettings) state.settings = { ...state.settings, ...savedSettings };
+        if (savedSettings) {
+            state.settings = { ...state.settings, ...savedSettings };
+            // Garante que uma opção de margem válida esteja sempre selecionada
+            const validWidths = ['max-w-[33vw]', 'max-w-[66vw]', 'max-w-full'];
+            if (!validWidths.includes(state.settings.textWidth)) {
+                state.settings.textWidth = 'max-w-[66vw]'; // Redefine para o padrão se for inválido
+            }
+        }
         
         applyTheme();
         
@@ -1415,3 +1470,4 @@
 </script>
 </body>
 </html>
+
