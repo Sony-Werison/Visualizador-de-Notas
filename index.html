@@ -120,6 +120,15 @@
         html.theme-sepia .notion-callout.notion-default_background { background-color: rgba(91, 70, 54, 0.08); }
         html.theme-sepia #recent-history-list button { background-color: #dcd1b8; color: #5b4636;}
         html.theme-sepia #recent-history-list button:hover { background-color: #c9bc9d; }
+        html.theme-sepia .notion-callout.notion-gray_background { background-color: #dcd1b8; }
+        html.theme-sepia .notion-callout.notion-brown_background { background-color: #eaddc7; }
+        html.theme-sepia .notion-callout.notion-orange_background { background-color: #e9dccb; }
+        html.theme-sepia .notion-callout.notion-yellow_background { background-color: #e9e3c7; }
+        html.theme-sepia .notion-callout.notion-green_background { background-color: #c7d2cc; }
+        html.theme-sepia .notion-callout.notion-blue_background { background-color: #c7d2d9; }
+        html.theme-sepia .notion-callout.notion-purple_background { background-color: #d6d2de; }
+        html.theme-sepia .notion-callout.notion-pink_background { background-color: #ded2d7; }
+        html.theme-sepia .notion-callout.notion-red_background { background-color: #ded2d2; }
 
         /* --- Light Green Theme --- */
         html.theme-light-green body { background-color: #ecfdf5; color: #065f46; }
@@ -134,6 +143,15 @@
         html.theme-light-green .notion-callout.notion-default_background { background-color: rgba(6, 95, 70, 0.08); }
         html.theme-light-green #recent-history-list button { background-color: #d1fae5; color: #065f46; }
         html.theme-light-green #recent-history-list button:hover { background-color: #a7f3d0; }
+        html.theme-light-green .notion-callout.notion-gray_background { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-brown_background { background-color: #fef3c7; }
+        html.theme-light-green .notion-callout.notion-orange_background { background-color: #ffedd5; }
+        html.theme-light-green .notion-callout.notion-yellow_background { background-color: #fef9c3; }
+        html.theme-light-green .notion-callout.notion-green_background { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-blue_background { background-color: #dbeafe; }
+        html.theme-light-green .notion-callout.notion-purple_background { background-color: #e9d5ff; }
+        html.theme-light-green .notion-callout.notion-pink_background { background-color: #fce7f3; }
+        html.theme-light-green .notion-callout.notion-red_background { background-color: #fee2e2; }
 
 
         /* --- Light Blue Theme --- */
@@ -149,26 +167,28 @@
         html.theme-light-blue .notion-callout.notion-default_background { background-color: rgba(12, 74, 110, 0.08); }
         html.theme-light-blue #recent-history-list button { background-color: #bae6fd; color: #0c4a6e; }
         html.theme-light-blue #recent-history-list button:hover { background-color: #7dd3fc; }
-
-        /* --- Dark Blue Theme --- */
-        html.theme-dark-blue body { background-color: #0c142c; color: #a5c9ff; }
-        html.theme-dark-blue #setup-view { background-color: #0c142c; }
-        html.theme-dark-blue header, html.theme-dark-blue footer { background-color: rgba(12, 20, 44, 0.85); backdrop-filter: blur(4px); }
-        html.theme-dark-blue .settings-panel, html.theme-dark-blue .history-sidebar, html.theme-dark-blue .callouts-sidebar { background-color: rgba(15, 25, 54, 0.95); }
-        html.theme-dark-blue .header-btn, html.theme-dark-blue .footer-btn, html.theme-dark-blue #wpm-decrease, html.theme-dark-blue #wpm-increase { background-color: #1e293b; color: #a5c9ff; }
-        html.theme-dark-blue .control-btn-group { background-color: #1e293b; }
-        html.theme-dark-blue .control-btn-group button.active { background-color: #334155; }
-        html.theme-dark-blue hr, html.theme-dark-blue blockquote, html.theme-dark-blue #history-container, html.theme-dark-blue .border-b { border-color: #334155; }
-        html.theme-dark-blue .progress-bar-bg { background-color: #1e293b; }
-        html.theme-dark-blue .notion-callout.notion-default_background { background-color: rgba(165, 201, 255, 0.1); }
-        html.theme-dark-blue #recent-history-list button { background-color: #1e293b; color: #a5c9ff; }
-        html.theme-dark-blue #recent-history-list button:hover { background-color: #334155; }
+        html.theme-light-blue .notion-callout.notion-gray_background { background-color: #bfdbfe; }
+        html.theme-light-blue .notion-callout.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-blue .notion-callout.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-blue .notion-callout.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-blue .notion-callout.notion-green_background { background-color: #d1fae5; }
+        html.theme-light-blue .notion-callout.notion-blue_background { background-color: #bfdbfe; }
+        html.theme-light-blue .notion-callout.notion-purple_background { background-color: #e9d5ff; }
+        html.theme-light-blue .notion-callout.notion-pink_background { background-color: #fce7f3; }
+        html.theme-light-blue .notion-callout.notion-red_background { background-color: #fee2e2; }
         
         /* --- Text Highlight Styles --- */
         .slide-content .text-highlight {
             padding: 2px 4px;
             border-radius: 4px;
             margin: -2px -4px;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+            display: inline; /* Garante que o span se comporte como esperado */
+        }
+
+        /* Aplica o estilo a elementos aninhados para corrigir o bug */
+        .slide-content .text-highlight * {
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
         }
@@ -208,36 +228,25 @@
 
         /* Light Green Theme Highlights */
         html.theme-light-green .text-highlight.notion-gray_background { background-color: #d1fae5; }
-        html.theme-light-green .text-highlight.notion-brown_background { background-color: #bbf7d0; }
-        html.theme-light-green .text-highlight.notion-orange_background { background-color: #a7f3d0; }
-        html.theme-light-green .text-highlight.notion-yellow_background { background-color: #86efac; }
-        html.theme-light-green .text-highlight.notion-green_background { background-color: #a7f3d0; }
-        html.theme-light-green .text-highlight.notion-blue_background { background-color: #a7f3d0; }
-        html.theme-light-green .text-highlight.notion-purple_background { background-color: #a7f3d0; }
-        html.theme-light-green .text-highlight.notion-pink_background { background-color: #a7f3d0; }
-        html.theme-light-green .text-highlight.notion-red_background { background-color: #fca5a5; }
+        html.theme-light-green .text-highlight.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-green .text-highlight.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-green .text-highlight.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-green .text-highlight.notion-green_background { background-color: #bbf7d0; }
+        html.theme-light-green .text-highlight.notion-blue_background { background-color: #bfdbfe; }
+        html.theme-light-green .text-highlight.notion-purple_background { background-color: #ddd6fe; }
+        html.theme-light-green .text-highlight.notion-pink_background { background-color: #fbcfe8; }
+        html.theme-light-green .text-highlight.notion-red_background { background-color: #fecaca; }
 
         /* Light Blue Theme Highlights */
         html.theme-light-blue .text-highlight.notion-gray_background { background-color: #bae6fd; }
-        html.theme-light-blue .text-highlight.notion-brown_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-orange_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-yellow_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-green_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-blue_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-purple_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-pink_background { background-color: #7dd3fc; }
-        html.theme-light-blue .text-highlight.notion-red_background { background-color: #fda4af; }
-
-        /* Dark Blue Theme Highlights */
-        html.theme-dark-blue .text-highlight.notion-gray_background { background-color: #1e293b; }
-        html.theme-dark-blue .text-highlight.notion-brown_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-orange_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-yellow_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-green_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-blue_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-purple_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-pink_background { background-color: #334155; }
-        html.theme-dark-blue .text-highlight.notion-red_background { background-color: #be123c; }
+        html.theme-light-blue .text-highlight.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-blue .text-highlight.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-blue .text-highlight.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-blue .text-highlight.notion-green_background { background-color: #bbf7d0; }
+        html.theme-light-blue .text-highlight.notion-blue_background { background-color: #93c5fd; }
+        html.theme-light-blue .text-highlight.notion-purple_background { background-color: #ddd6fe; }
+        html.theme-light-blue .text-highlight.notion-pink_background { background-color: #fbcfe8; }
+        html.theme-light-blue .text-highlight.notion-red_background { background-color: #fecaca; }
 
 
         /* --- Sidebar Push Effect --- */
@@ -369,7 +378,6 @@
                         <button data-setting="theme" data-value="sepia" class="theme-btn w-8 h-8 rounded-full bg-[#f4e8d1] border-2" title="Sépia"></button>
                         <button data-setting="theme" data-value="light-green" class="theme-btn w-8 h-8 rounded-full bg-[#ecfdf5] border-2" title="Verde Claro"></button>
                         <button data-setting="theme" data-value="light-blue" class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2" title="Azul Claro"></button>
-                        <button data-setting="theme" data-value="dark-blue" class="theme-btn w-8 h-8 rounded-full bg-[#0c142c] border-2" title="Azul Escuro"></button>
                     </div>
                 </div>
                 <div>
@@ -573,9 +581,28 @@
                     { type: 'text', text: { content: 'destaques com cor de fundo', "annotations": { "color": "red_background" } } },
                     { type: 'text', text: { content: ' são exibidos com o novo estilo que você pediu!' } }
                 ] } },
+                 { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Aqui estão mais exemplos: ' } },
+                    { type: 'text', text: { content: 'cinza', "annotations": { "color": "gray_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'marrom', "annotations": { "color": "brown_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'laranja', "annotations": { "color": "orange_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'amarelo', "annotations": { "color": "yellow_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'verde', "annotations": { "color": "green_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'azul', "annotations": { "color": "blue_background" } } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'roxo', "annotations": { "color": "purple_background" } } },
+                    { type: 'text', text: { content: ' e ' } },
+                    { type: 'text', text: { content: 'rosa', "annotations": { "color": "pink_background" } } },
+                    { type: 'text', text: { content: '.' } }
+                ] } },
 
-                 { id: 'mock-h-6', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
-                 { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
+                 { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
+                 { id: 'mock-p-13', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
 
             ]
         },
