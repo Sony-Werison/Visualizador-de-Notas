@@ -24,692 +24,1525 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&family=Lora:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .dark {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --header-bg: rgba(25, 25, 25, 0.8);
-            --card-bg: #1e1e1e;
-            --border-color: #333;
-            --input-bg: #2a2a2a;
-            --button-bg: #333;
-            --button-hover: #444;
-            --link-color: #60a5fa;
+        :root {
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Merriweather', serif;
+            --font-display: 'Poppins', sans-serif;
+            --font-lora: 'Lora', serif;
+            --font-baskerville: 'Libre Baskerville', serif;
+            /* Variável para a altura real da viewport */
+            --app-height: 100vh;
         }
-        html.dark {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-        .header-btn:hover { background-color: var(--button-hover); }
-        .sidebar { transition: transform 0.3s ease-in-out; }
-        .sidebar.open { transform: translateX(0%); }
-        .slide {
-             display: flex;
-             flex-direction: column;
-             justify-content: center;
-             align-items: center;
-             padding: 2rem;
-             text-align: center;
-             height: 100%;
-             width: 100%;
-        }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        body { font-family: var(--font-sans); touch-action: pan-y; overflow: hidden; }
+        #app { height: var(--app-height); } /* Usa a altura real */
+
+        .font-sans { font-family: var(--font-sans); }
+        .font-serif { font-family: var(--font-serif); }
+        .font-display { font-family: var(--font-display); }
+        .font-lora { font-family: var(--font-lora); }
+        .font-baskerville { font-family: var(--font-baskerville); }
+        .leading-extra { line-height: 2.5 !important; }
+
+        .slide-content { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .settings-panel, .history-sidebar, .callouts-sidebar { transition: transform 0.3s ease-in-out; }
+        .settings-panel { transform: translateX(100%); }
+        .settings-panel.open { transform: translateX(0); }
+        .history-sidebar, .callouts-sidebar { transform: translateX(-100%); }
+        .history-sidebar.open, .callouts-sidebar.open { transform: translateX(0); }
+        #slides-container::-webkit-scrollbar, #history-list::-webkit-scrollbar, .settings-panel-content::-webkit-scrollbar, #callouts-list::-webkit-scrollbar { width: 8px; }
+        #slides-container::-webkit-scrollbar-track, #history-list::-webkit-scrollbar-track, .settings-panel-content::-webkit-scrollbar-track, #callouts-list::-webkit-scrollbar-track { background: transparent; }
+        #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb, .settings-panel-content::-webkit-scrollbar-thumb, #callouts-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
+        #doc-progress-bar, #page-progress-bar { transition: width 0.3s ease-out; }
         
-        /* Estilo para versículos bíblicos destacados */
-        .highlighted-verse {
-            background-color: rgba(253, 224, 71, 0.7); /* Amarelo com transparência */
-            color: #1f2937; /* Texto escuro para contraste */
+        /* Estilos para listas aninhadas */
+        .slide-content ul ul { list-style-type: circle; margin-left: 1.5rem; }
+        .slide-content ul ul ul { list-style-type: square; margin-left: 1.5rem; }
+        .slide-content ol ol { list-style-type: lower-alpha; margin-left: 1.5rem; }
+        .slide-content ol ol ol { list-style-type: lower-roman; margin-left: 1.5rem; }
+
+        /* --- Dark Theme (Default) --- */
+        html.theme-dark body { background-color: #191919; color: #d1d5db; }
+        html.theme-dark #setup-view { background-color: #191919; }
+        html.theme-dark .control-btn-group { background-color: #374151; }
+        html.theme-dark .control-btn-group button.active { background-color: #4b5563; color: white; }
+        html.theme-dark .font-selector button.active { background-color: #4b5563; }
+        html.theme-dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
+        html.theme-dark .subtext-dark { color: #9ca3af; }
+        html.theme-dark header, html.theme-dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
+        html.theme-dark .settings-panel, html.theme-dark .history-sidebar, html.theme-dark .callouts-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
+        html.theme-dark #wpm-decrease, html.theme-dark #wpm-increase { background-color: #374151 }
+        html.theme-dark blockquote { border-color: #4b5563; }
+        html.theme-dark hr { border-color: #374151; }
+        html.theme-dark .progress-bar-bg { background-color: #374151; }
+        html.theme-dark #history-container { border-color: #374151; }
+        html.theme-dark #recent-history-list button { background-color: #374151; }
+        html.theme-dark #recent-history-list button:hover { background-color: #4b5563; }
+        /* Notion Colors Dark */
+        html.theme-dark .notion-callout.notion-default_background { background-color: rgba(255, 255, 255, 0.05); }
+        html.theme-dark .notion-callout.notion-gray_background { background-color: #373737; }
+        html.theme-dark .notion-callout.notion-brown_background { background-color: #4d3a2d; }
+        html.theme-dark .notion-callout.notion-orange_background { background-color: #633d24; }
+        html.theme-dark .notion-callout.notion-yellow_background { background-color: #614c1a; }
+        html.theme-dark .notion-callout.notion-green_background { background-color: #25473c; }
+        html.theme-dark .notion-callout.notion-blue_background { background-color: #203e58; }
+        html.theme-dark .notion-callout.notion-purple_background { background-color: #44325e; }
+        html.theme-dark .notion-callout.notion-pink_background { background-color: #5c2c40; }
+        html.theme-dark .notion-callout.notion-red_background { background-color: #693130; }
+
+
+        /* --- Light Theme Styles --- */
+        html.theme-light body { background-color: #f9fafb; color: #111827; }
+        html.theme-light #setup-view { background-color: #ffffff; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        html.theme-light h1, html.theme-light h2, html.theme-light h3, html.theme-light h4, html.theme-light #page-title { color: #111827; }
+        html.theme-light input#pageId { background-color: #f3f4f6; color: #111827; border-color: #d1d5db; }
+        html.theme-light header, html.theme-light footer { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light #clock, html.theme-light #overall-timer, html.theme-light #footer-info { color: #1f2937; }
+        html.theme-light .header-btn, html.theme-light .footer-btn { background-color: #e5e7eb; color: #1f2937;}
+        html.theme-light .settings-panel, html.theme-light .history-sidebar, html.theme-light .callouts-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
+        html.theme-light .control-btn-group { background-color: #e5e7eb; }
+        html.theme-light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        html.theme-light .font-selector button.active { background-color: #dbeafe; color: #1e40af;}
+        html.theme-light .history-item.active, html.theme-light .callout-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
+        html.theme-light .history-item.active .text-gray-400, html.theme-light .history-item.active .subtext-light, html.theme-light .callout-item.active .text-gray-400 { color: #1e3a8a !important; }
+        html.theme-light .history-item .text-gray-400, html.theme-light .callout-item .text-gray-400 { color: #6b7280; }
+        html.theme-light .history-item .font-semibold, html.theme-light .callout-item .font-semibold {color: #111827;}
+        html.theme-light blockquote { color: #374151; border-color: #d1d5db; }
+        html.theme-light hr { border-color: #e5e7eb; }
+        html.theme-light .border-b { border-color: #e5e7eb; }
+        html.theme-light #slides-container::-webkit-scrollbar-thumb, html.theme-light #history-list::-webkit-scrollbar-thumb, html.theme-light .settings-panel-content::-webkit-scrollbar-thumb, html.theme-light #callouts-list::-webkit-scrollbar-thumb { background-color: #9ca3af; }
+        html.theme-light #wpm-decrease, html.theme-light #wpm-increase { background-color: #e5e7eb }
+        html.theme-light .progress-bar-bg { background-color: #e5e7eb; }
+        html.theme-light #history-container { border-color: #e5e7eb; }
+        html.theme-light #recent-history-list button { background-color: #f3f4f6; color: #1f2937; }
+        html.theme-light #recent-history-list button:hover { background-color: #e5e7eb; }
+        /* Notion Colors Light */
+        html.theme-light .notion-callout.notion-default_background { background-color: #f3f4f6; }
+        html.theme-light .notion-callout.notion-gray_background { background-color: #e5e7eb; }
+        html.theme-light .notion-callout.notion-brown_background { background-color: #fef3e5; }
+        html.theme-light .notion-callout.notion-orange_background { background-color: #feefe5; }
+        html.theme-light .notion-callout.notion-yellow_background { background-color: #fff9e2; }
+        html.theme-light .notion-callout.notion-green_background { background-color: #e5f7f3; }
+        html.theme-light .notion-callout.notion-blue_background { background-color: #e4f3ff; }
+        html.theme-light .notion-callout.notion-purple_background { background-color: #f4f0ff; }
+        html.theme-light .notion-callout.notion-pink_background { background-color: #fff0f7; }
+        html.theme-light .notion-callout.notion-red_background { background-color: #fff0f0; }
+
+        /* --- Sepia Theme --- */
+        html.theme-sepia body { background-color: #f4e8d1; color: #5b4636; }
+        html.theme-sepia #setup-view { background-color: #f4e8d1; }
+        html.theme-sepia header, html.theme-sepia footer { background-color: rgba(244, 232, 209, 0.85); backdrop-filter: blur(4px); }
+        html.theme-sepia .settings-panel, html.theme-sepia .history-sidebar, html.theme-sepia .callouts-sidebar { background-color: rgba(229, 217, 193, 0.95); }
+        html.theme-sepia .header-btn, html.theme-sepia .footer-btn, html.theme-sepia #wpm-decrease, html.theme-sepia #wpm-increase { background-color: #dcd1b8; color: #5b4636; }
+        html.theme-sepia .control-btn-group { background-color: #dcd1b8; }
+        html.theme-sepia .control-btn-group button.active { background-color: #c9bc9d; }
+        html.theme-sepia .font-selector button.active { background-color: #c9bc9d; }
+        html.theme-sepia hr, html.theme-sepia blockquote, html.theme-sepia #history-container, html.theme-sepia .border-b { border-color: #c9bc9d; }
+        html.theme-sepia .progress-bar-bg { background-color: #dcd1b8; }
+        html.theme-sepia #page-progress-bar { background-color: #8c6f56; }
+        html.theme-sepia #doc-progress-bar { background-color: #6b5543; }
+        html.theme-sepia .notion-callout.notion-default_background { background-color: rgba(91, 70, 54, 0.08); }
+        html.theme-sepia #recent-history-list button { background-color: #dcd1b8; color: #5b4636;}
+        html.theme-sepia #recent-history-list button:hover { background-color: #c9bc9d; }
+        html.theme-sepia .notion-callout.notion-gray_background { background-color: #dcd1b8; }
+        html.theme-sepia .notion-callout.notion-brown_background { background-color: #eaddc7; }
+        html.theme-sepia .notion-callout.notion-orange_background { background-color: #e9dccb; }
+        html.theme-sepia .notion-callout.notion-yellow_background { background-color: #e9e3c7; }
+        html.theme-sepia .notion-callout.notion-green_background { background-color: #c7d2cc; }
+        html.theme-sepia .notion-callout.notion-blue_background { background-color: #c7d2d9; }
+        html.theme-sepia .notion-callout.notion-purple_background { background-color: #d6d2de; }
+        html.theme-sepia .notion-callout.notion-pink_background { background-color: #ded2d7; }
+        html.theme-sepia .notion-callout.notion-red_background { background-color: #ded2d2; }
+
+        /* --- Light Green Theme --- */
+        html.theme-light-green body { background-color: #ecfdf5; color: #065f46; }
+        html.theme-light-green #setup-view { background-color: #ecfdf5; }
+        html.theme-light-green header, html.theme-light-green footer { background-color: rgba(236, 253, 245, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light-green .settings-panel, html.theme-light-green .history-sidebar, html.theme-light-green .callouts-sidebar { background-color: rgba(221, 250, 235, 0.95); }
+        html.theme-light-green .header-btn, html.theme-light-green .footer-btn, html.theme-light-green #wpm-decrease, html.theme-light-green #wpm-increase { background-color: #d1fae5; color: #065f46; }
+        html.theme-light-green .control-btn-group { background-color: #d1fae5; }
+        html.theme-light-green .control-btn-group button.active { background-color: #a7f3d0; }
+        html.theme-light-green .font-selector button.active { background-color: #a7f3d0; }
+        html.theme-light-green hr, html.theme-light-green blockquote, html.theme-light-green #history-container, html.theme-light-green .border-b { border-color: #a7f3d0; }
+        html.theme-light-green .progress-bar-bg { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-default_background { background-color: rgba(6, 95, 70, 0.08); }
+        html.theme-light-green #recent-history-list button { background-color: #d1fae5; color: #065f46; }
+        html.theme-light-green #recent-history-list button:hover { background-color: #a7f3d0; }
+        html.theme-light-green .notion-callout.notion-gray_background { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-brown_background { background-color: #fef3c7; }
+        html.theme-light-green .notion-callout.notion-orange_background { background-color: #ffedd5; }
+        html.theme-light-green .notion-callout.notion-yellow_background { background-color: #fef9c3; }
+        html.theme-light-green .notion-callout.notion-green_background { background-color: #d1fae5; }
+        html.theme-light-green .notion-callout.notion-blue_background { background-color: #dbeafe; }
+        html.theme-light-green .notion-callout.notion-purple_background { background-color: #e9d5ff; }
+        html.theme-light-green .notion-callout.notion-pink_background { background-color: #fce7f3; }
+        html.theme-light-green .notion-callout.notion-red_background { background-color: #fee2e2; }
+
+
+        /* --- Light Blue Theme --- */
+        html.theme-light-blue body { background-color: #e0f2fe; color: #0c4a6e; }
+        html.theme-light-blue #setup-view { background-color: #e0f2fe; }
+        html.theme-light-blue header, html.theme-light-blue footer { background-color: rgba(224, 242, 254, 0.85); backdrop-filter: blur(4px); }
+        html.theme-light-blue .settings-panel, html.theme-light-blue .history-sidebar, html.theme-light-blue .callouts-sidebar { background-color: rgba(207, 234, 252, 0.95); }
+        html.theme-light-blue .header-btn, html.theme-light-blue .footer-btn, html.theme-light-blue #wpm-decrease, html.theme-light-blue #wpm-increase { background-color: #bae6fd; color: #0c4a6e; }
+        html.theme-light-blue .control-btn-group { background-color: #bae6fd; }
+        html.theme-light-blue .control-btn-group button.active { background-color: #7dd3fc; }
+        html.theme-light-blue .font-selector button.active { background-color: #7dd3fc; }
+        html.theme-light-blue hr, html.theme-light-blue blockquote, html.theme-light-blue #history-container, html.theme-light-blue .border-b { border-color: #7dd3fc; }
+        html.theme-light-blue .progress-bar-bg { background-color: #bae6fd; }
+        html.theme-light-blue .notion-callout.notion-default_background { background-color: rgba(12, 74, 110, 0.08); }
+        html.theme-light-blue #recent-history-list button { background-color: #bae6fd; color: #0c4a6e; }
+        html.theme-light-blue #recent-history-list button:hover { background-color: #7dd3fc; }
+        html.theme-light-blue .notion-callout.notion-gray_background { background-color: #bfdbfe; }
+        html.theme-light-blue .notion-callout.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-blue .notion-callout.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-blue .notion-callout.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-blue .notion-callout.notion-green_background { background-color: #d1fae5; }
+        html.theme-light-blue .notion-callout.notion-blue_background { background-color: #bfdbfe; }
+        html.theme-light-blue .notion-callout.notion-purple_background { background-color: #e9d5ff; }
+        html.theme-light-blue .notion-callout.notion-pink_background { background-color: #fce7f3; }
+        html.theme-light-blue .notion-callout.notion-red_background { background-color: #fee2e2; }
+        
+        /* --- Text Highlight Styles --- */
+        .slide-content .text-highlight {
+            padding: 2px 4px;
             border-radius: 4px;
-            padding: 0 4px;
-            transition: background-color 0.3s;
+            /* margin: -2px -4px; /* Removido para corrigir quebra de linha em texto negrito */
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+            display: inline;
         }
+
+        /* Light Theme Highlights (Vivid Colors) */
+        html.theme-light .text-highlight.notion-gray_background { background-color: #d1d5db; } /* gray-300 */
+        html.theme-light .text-highlight.notion-brown_background { background-color: #fed7aa; } /* orange-200 */
+        html.theme-light .text-highlight.notion-orange_background { background-color: #ffedd5; } /* orange-100 */
+        html.theme-light .text-highlight.notion-yellow_background { background-color: #fef08a; } /* yellow-200 */
+        html.theme-light .text-highlight.notion-green_background { background-color: #bbf7d0; } /* green-200 */
+        html.theme-light .text-highlight.notion-blue_background { background-color: #bfdbfe; } /* blue-200 */
+        html.theme-light .text-highlight.notion-purple_background { background-color: #ddd6fe; } /* purple-200 */
+        html.theme-light .text-highlight.notion-pink_background { background-color: #fbcfe8; } /* pink-200 */
+        html.theme-light .text-highlight.notion-red_background { background-color: #fecaca; } /* red-200 */
+
+        /* Dark Theme Highlights */
+        html.theme-dark .text-highlight.notion-gray_background { background-color: #373737; }
+        html.theme-dark .text-highlight.notion-brown_background { background-color: #4d3a2d; }
+        html.theme-dark .text-highlight.notion-orange_background { background-color: #633d24; }
+        html.theme-dark .text-highlight.notion-yellow_background { background-color: #614c1a; }
+        html.theme-dark .text-highlight.notion-green_background { background-color: #25473c; }
+        html.theme-dark .text-highlight.notion-blue_background { background-color: #203e58; }
+        html.theme-dark .text-highlight.notion-purple_background { background-color: #44325e; }
+        html.theme-dark .text-highlight.notion-pink_background { background-color: #5c2c40; }
+        html.theme-dark .text-highlight.notion-red_background { background-color: #693130; }
+
+        /* Sepia Theme Highlights */
+        html.theme-sepia .text-highlight.notion-gray_background { background-color: rgba(91, 70, 54, 0.2); }
+        html.theme-sepia .text-highlight.notion-brown_background { background-color: #d8c1ac; }
+        html.theme-sepia .text-highlight.notion-orange_background { background-color: #e6c8b4; }
+        html.theme-sepia .text-highlight.notion-yellow_background { background-color: #e6d9b4; }
+        html.theme-sepia .text-highlight.notion-green_background { background-color: #b9d1c9; }
+        html.theme-sepia .text-highlight.notion-blue_background { background-color: #b9c9d1; }
+        html.theme-sepia .text-highlight.notion-purple_background { background-color: #d1c9d9; }
+        html.theme-sepia .text-highlight.notion-pink_background { background-color: #d9c9cf; }
+        html.theme-sepia .text-highlight.notion-red_background { background-color: #d9c9c9; }
+
+        /* Light Green Theme Highlights */
+        html.theme-light-green .text-highlight.notion-gray_background { background-color: #d1fae5; }
+        html.theme-light-green .text-highlight.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-green .text-highlight.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-green .text-highlight.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-green .text-highlight.notion-green_background { background-color: #bbf7d0; }
+        html.theme-light-green .text-highlight.notion-blue_background { background-color: #bfdbfe; }
+        html.theme-light-green .text-highlight.notion-purple_background { background-color: #ddd6fe; }
+        html.theme-light-green .text-highlight.notion-pink_background { background-color: #fbcfe8; }
+        html.theme-light-green .text-highlight.notion-red_background { background-color: #fecaca; }
+
+        /* Light Blue Theme Highlights */
+        html.theme-light-blue .text-highlight.notion-gray_background { background-color: #bae6fd; }
+        html.theme-light-blue .text-highlight.notion-brown_background { background-color: #fde68a; }
+        html.theme-light-blue .text-highlight.notion-orange_background { background-color: #fed7aa; }
+        html.theme-light-blue .text-highlight.notion-yellow_background { background-color: #fef08a; }
+        html.theme-light-blue .text-highlight.notion-green_background { background-color: #bbf7d0; }
+        html.theme-light-blue .text-highlight.notion-blue_background { background-color: #93c5fd; }
+        html.theme-light-blue .text-highlight.notion-purple_background { background-color: #ddd6fe; }
+        html.theme-light-blue .text-highlight.notion-pink_background { background-color: #fbcfe8; }
+        html.theme-light-blue .text-highlight.notion-red_background { background-color: #fecaca; }
+
+
+        /* --- Sidebar Push Effect --- */
+        #presentation-view > header,
+        #presentation-view > footer,
+        #presentation-view > main {
+            transition: margin-left 0.3s ease-in-out, margin-right 0.3s ease-in-out, width 0.3s ease-in-out;
+            width: 100%;
+        }
+
+        body.history-open #presentation-view > header,
+        body.history-open #presentation-view > footer,
+        body.history-open #presentation-view > main {
+            margin-left: 33.3333%;
+            width: calc(100% - 33.3333%);
+        }
+
+        body.callouts-open #presentation-view > header,
+        body.callouts-open #presentation-view > footer,
+        body.callouts-open #presentation-view > main {
+            margin-left: 33.3333%;
+            width: calc(100% - 33.3333%);
+        }
+
+        body.settings-open #presentation-view > header,
+        body.settings-open #presentation-view > footer,
+        body.settings-open #presentation-view > main {
+            margin-right: 20rem; /* w-80 */
+            width: calc(100% - 20rem);
+        }
+
+        #history-sidebar, #callouts-sidebar { width: 33.3333%; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased">
-
-    <!-- Tela Inicial -->
-    <div id="home-view" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-md text-center">
-            <h1 class="text-4xl font-bold mb-2">Visualizador de Notas</h1>
-            <p class="text-gray-600 dark:text-gray-400 mb-8">Transforme suas páginas do Notion em apresentações ou cartões de estudo.</p>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <div class="mb-4">
-                    <label for="page-id-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 text-left">ID da Página do Notion</label>
-                    <input type="text" id="page-id-input" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Cole o ID da página aqui...">
-                </div>
-                <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                    Gerar Visualização
-                </button>
-                <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
+<body class="flex flex-col items-center justify-center min-h-screen">
+<div id="app" class="w-full flex flex-col">
+    <!-- Tela de Configuração Inicial -->
+    <div id="setup-view" class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full max-w-xl mx-auto p-8 rounded-xl space-y-6">
+            <h1 class="text-3xl font-bold text-center">Visualizador de Notas do Notion</h1>
+            <p class="text-center text-gray-400">Cole a URL de uma página pública do Notion para começar.</p>
+            <input type="text" id="pageId" placeholder="Cole a URL ou ID da sua página aqui" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
+            <div class="flex gap-4">
+                <button id="generate-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
+                <button id="preview-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver Tutorial</button>
             </div>
-        </div>
-        <div id="recent-history" class="w-full max-w-md mt-8">
-            <h2 class="text-xl font-semibold mb-4 text-center">Histórico Recente</h2>
-            <div id="history-list" class="space-y-2"></div>
+            
+            <div id="history-container" class="pt-4 border-t hidden">
+                <h3 class="text-sm font-semibold text-center text-gray-500 mb-3">Acessos Recentes</h3>
+                <div id="recent-history-list" class="space-y-2">
+                    <!-- Injetado via JS -->
+                </div>
+            </div>
+
+            <div id="error-message" class="text-red-500 text-center font-medium hidden"></div>
         </div>
     </div>
 
     <!-- Tela de Apresentação -->
-    <div id="presentation-view" class="hidden fixed inset-0 bg-gray-100 dark:bg-black">
-        <!-- Header -->
-        <header id="presentation-header" class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center p-2 bg-gray-100/80 dark:bg-black/80 backdrop-blur-sm">
-            <button id="back-to-home" class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <div id="page-title" class="font-semibold text-lg truncate"></div>
-            <div class="flex items-center space-x-2">
-                <button id="bible-sidebar-btn" class="header-btn p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25278C12 6.25278 6.75 3 4.5 3C2.25 3 1.5 4.5 1.5 6.75C1.5 9 1.5 15.75 1.5 15.75C1.5 18 2.25 19.5 4.5 19.5C6.75 19.5 12 21.7528 12 21.7528V6.25278Z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25278C12 6.25278 17.25 3 19.5 3C21.75 3 22.5 4.5 22.5 6.75C22.5 9 22.5 15.75 22.5 15.75C22.5 18 21.75 19.5 19.5 19.5C17.25 19.5 12 21.7528 12 21.7528V6.25278Z"></path></svg>
-                </button>
-                <button id="history-btn" class="header-btn p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </button>
-                <button id="settings-btn" class="header-btn p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                </button>
+    <div id="presentation-view" class="hidden w-full h-full flex-col relative overflow-hidden">
+        <header class="w-full p-4 flex justify-between items-center fixed top-0 left-0 z-20">
+            <div class="w-1/3 flex items-center gap-2">
+                 <button id="home-btn" title="Voltar ao Início" class="header-btn p-2.5 rounded-lg transition"></button>
+                <span id="clock" class="text-lg font-mono"></span>
+            </div>
+            <div class="w-1/3 text-center">
+                <h1 id="page-title" class="text-sm font-semibold truncate"></h1>
+            </div>
+            <div class="w-1/3 flex justify-end items-center gap-2">
+                 <button id="auto-scroll-toggle-btn" title="Rolagem Automática" class="header-btn p-2.5 rounded-lg transition"></button>
+                <div id="main-timer-controls" class="header-btn flex items-center gap-2 p-2 rounded-lg">
+                    <button id="timer-play-pause-btn" title="Iniciar/Pausar Tempo" class="p-0.5"></button>
+                    <span id="overall-timer" class="text-lg font-mono" title="Tempo total da sessão">0:00</span>
+                </div>
+                <button id="settings-toggle-btn" title="Ajustes" class="header-btn p-2.5 rounded-lg transition"></button>
             </div>
         </header>
-
-        <!-- Conteúdo do Slide -->
-        <main id="slide-container" class="w-full h-full pt-16"></main>
-
-        <!-- Navegação -->
-        <div id="slide-nav" class="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center z-30">
-            <button id="prev-slide" class="p-2 rounded-full bg-gray-500/30 hover:bg-gray-500/50 text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <div id="slide-counter" class="text-sm text-gray-800 dark:text-gray-200 bg-gray-200/50 dark:bg-gray-800/50 px-3 py-1 rounded-full"></div>
-            <button id="next-slide" class="p-2 rounded-full bg-gray-500/30 hover:bg-gray-500/50 text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-        </div>
-
-        <!-- Painel de Configurações -->
-        <div id="settings-panel" class="sidebar fixed top-0 right-0 h-full w-full md:w-96 bg-gray-100 dark:bg-gray-800 shadow-lg z-50 p-4 flex flex-col text-gray-800 dark:text-gray-200 border-l border-gray-200 dark:border-gray-700" style="transform: translateX(100%);">
-            <!-- Header do Painel -->
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold">Configurações</h2>
-                <button id="close-settings" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </div>
-            <!-- Conteúdo das Configurações -->
-            <div class="space-y-4">
-                <div>
-                    <label for="display-mode" class="block text-sm font-medium">Modo de Exibição</label>
-                    <select id="display-mode" class="w-full p-2 mt-1 border rounded bg-gray-200 dark:bg-gray-700 dark:border-gray-600">
-                        <option value="slides">Slides</option>
-                        <option value="reader">Leitura Rápida</option>
-                    </select>
-                </div>
-                <div id="wpm-setting" class="hidden">
-                     <label class="block text-sm font-medium">Palavras por Minuto (PPM)</label>
-                     <div class="flex items-center mt-1">
-                        <button id="wpm-decrease" class="px-3 py-1 border rounded-l bg-gray-200 dark:bg-gray-700">-</button>
-                        <span id="wpm-value" class="px-4 py-1 border-t border-b bg-white dark:bg-gray-800">250</span>
-                        <button id="wpm-increase" class="px-3 py-1 border rounded-r bg-gray-200 dark:bg-gray-700">+</button>
-                     </div>
-                </div>
-            </div>
-        </div>
         
-        <!-- Barra Lateral de Histórico -->
-        <div id="history-sidebar" class="sidebar fixed top-0 right-0 h-full w-full md:w-96 bg-gray-100 dark:bg-gray-800 shadow-lg z-50 p-4 flex flex-col text-gray-800 dark:text-gray-200 border-l border-gray-200 dark:border-gray-700" style="transform: translateX(100%);">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Histórico de Visualização</h2>
-                <button id="close-history-sidebar" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
+        <main id="slides-container" class="w-full h-full flex-1 flex flex-col items-center overflow-y-auto px-12 pt-24 pb-24"></main>
+        
+        <footer id="footer-bar" class="w-full p-4 flex justify-between items-center fixed bottom-0 left-0 z-20">
+            <div class="w-1/4 flex items-center gap-2">
+                <button id="history-toggle-btn" title="Navegação / Histórico" class="footer-btn hidden p-3 rounded-full transition"></button>
+                <button id="callouts-toggle-btn-footer" title="Destaques" class="footer-btn hidden p-3 rounded-full transition"></button>
             </div>
-            <div id="history-sidebar-content" class="flex-grow overflow-y-auto"></div>
-        </div>
+            <div id="footer-center" class="w-1/2 px-4">
+                <!-- Conteúdo do rodapé injetado via JS -->
+            </div>
+            <div class="w-1/4 flex justify-end items-center gap-2">
+                <button id="prev-btn" title="Anterior" class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
+                <button id="next-btn" title="Próximo" class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
+            </div>
+        </footer>
+        
+        <aside id="history-sidebar" class="history-sidebar fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
+             <div class="p-4 flex justify-between items-center border-b">
+                <h3 class="font-bold text-lg">Navegação</h3>
+                <button id="close-history-btn" title="Fechar" class="p-2"></button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto"></div>
+        </aside>
 
-        <!-- Barra Lateral da Bíblia -->
-        <div id="bible-sidebar" class="sidebar fixed top-0 left-0 h-full w-full md:w-96 bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg z-50 p-4 flex flex-col text-gray-800 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700" style="transform: translateX(-100%);">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Bíblia</h2>
-                <button id="close-bible-sidebar" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
+        <aside id="callouts-sidebar" class="callouts-sidebar fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
+             <div class="p-4 flex justify-between items-center border-b">
+                <h3 class="font-bold text-lg">Destaques</h3>
+                <button id="close-callouts-btn" title="Fechar" class="p-2"></button>
             </div>
-            <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                <select id="bible-version-select" class="w-full p-2 border rounded bg-gray-200 dark:bg-gray-700 dark:border-gray-600">
-                    <option value="NVI">NVI</option>
-                    <option value="ARA">ARA</option>
-                </select>
-                <select id="bible-book-select" class="w-full p-2 border rounded bg-gray-200 dark:bg-gray-700 dark:border-gray-600"></select>
-                <select id="bible-chapter-select" class="w-full p-2 border rounded bg-gray-200 dark:bg-gray-700 dark:border-gray-600"></select>
-            </div>
-            <div id="bible-content" class="flex-grow overflow-y-auto pr-2 text-sm space-y-2">
-                <!-- O conteúdo da Bíblia será inserido aqui -->
-            </div>
-        </div>
+            <div id="callouts-list" class="flex-1 overflow-y-auto"></div>
+        </aside>
 
+        <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 shadow-2xl z-40 flex flex-col">
+            <div class="p-4 flex justify-between items-center border-b">
+                <h3 class="font-bold text-lg">Ajustes</h3>
+                <button id="close-settings-btn" title="Fechar" class="p-2"></button>
+            </div>
+            <div class="settings-panel-content flex-1 p-6 space-y-8 overflow-y-auto">
+                <div>
+                    <h4 class="font-semibold mb-3">Modo de Exibição</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="displayMode" data-value="slides" class="flex-1 px-2 py-1 rounded">Páginas</button>
+                        <button data-setting="displayMode" data-value="scroll" class="flex-1 px-2 py-1 rounded">Rolagem</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Cor da Página</h4>
+                    <div class="flex justify-around items-center p-1">
+                        <button data-setting="theme" data-value="light" class="theme-btn w-8 h-8 rounded-full bg-white border-2" title="Claro"></button>
+                        <button data-setting="theme" data-value="dark" class="theme-btn w-8 h-8 rounded-full bg-[#191919] border-2" title="Escuro"></button>
+                        <button data-setting="theme" data-value="sepia" class="theme-btn w-8 h-8 rounded-full bg-[#f4e8d1] border-2" title="Sépia"></button>
+                        <button data-setting="theme" data-value="light-green" class="theme-btn w-8 h-8 rounded-full bg-[#ecfdf5] border-2" title="Verde Claro"></button>
+                        <button data-setting="theme" data-value="light-blue" class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2" title="Azul Claro"></button>
+                    </div>
+                </div>
+                 <div>
+                    <h4 class="font-semibold mb-3">Fonte</h4>
+                    <div class="font-selector flex flex-wrap gap-2 justify-center">
+                        <button data-setting="fontFamily" data-value="font-sans" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-sans">Aa</div>
+                            <span class="text-xs mt-1">Inter</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-serif" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-serif">Aa</div>
+                            <span class="text-xs mt-1">Merriweather</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-display" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-display">Aa</div>
+                            <span class="text-xs mt-1">Poppins</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-lora" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-lora">Aa</div>
+                            <span class="text-xs mt-1">Lora</span>
+                        </button>
+                        <button data-setting="fontFamily" data-value="font-baskerville" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
+                            <div class="text-3xl font-baskerville">Aa</div>
+                            <span class="text-xs mt-1">Baskerville</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Quebras de Página</h4>
+                     <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="pageBreakHeadings" data-value="heading_1" class="flex-1 px-2 py-1 rounded">H1</button>
+                        <button data-setting="pageBreakHeadings" data-value="heading_2" class="flex-1 px-2 py-1 rounded">H2</button>
+                        <button data-setting="pageBreakHeadings" data-value="heading_3" class="flex-1 px-2 py-1 rounded">H3</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Margens</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="textWidth" data-value="max-w-[33vw]" class="flex-1 px-2 py-1 rounded">Estreito</button>
+                        <button data-setting="textWidth" data-value="max-w-[66vw]" class="flex-1 px-2 py-1 rounded">Normal</button>
+                        <button data-setting="textWidth" data-value="max-w-full" class="flex-1 px-2 py-1 rounded">Largo</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Posicionamento Horizontal</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="contentAlign" data-value="items-start" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Alinhar à Esquerda"></button>
+                        <button data-setting="contentAlign" data-value="items-center" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Centralizar"></button>
+                        <button data-setting="contentAlign" data-value="items-end" class="flex-1 px-2 py-1 rounded flex items-center justify-center" title="Alinhar à Direita"></button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Alinhamento do Texto</h4>
+                     <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="textAlign" data-value="text-left" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
+                        <button data-setting="textAlign" data-value="text-center" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
+                        <button data-setting="textAlign" data-value="text-right" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
+                        <button data-setting="textAlign" data-value="text-justify" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-3">Tamanho da Fonte (Texto)</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                         <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
+                         <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
+                         <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
+                         <button data-setting="fontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
+                         <button data-setting="fontSize" data-value="4" class="flex-1 px-2 py-1 rounded">2XG</button>
+                    </div>
+                </div>
+                 <div>
+                    <h4 class="font-semibold mb-3">Tamanho da Fonte (Destaques)</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                         <button data-setting="calloutFontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
+                         <button data-setting="calloutFontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
+                         <button data-setting="calloutFontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
+                         <button data-setting="calloutFontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
+                         <button data-setting="calloutFontSize" data-value="4" class="flex-1 px-2 py-1 rounded">2XG</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Espaçamento entre Linhas</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="lineHeight" data-value="leading-relaxed" class="flex-1 px-2 py-1 rounded">Normal</button>
+                        <button data-setting="lineHeight" data-value="leading-loose" class="flex-1 px-2 py-1 rounded">Largo</button>
+                        <button data-setting="lineHeight" data-value="leading-extra" class="flex-1 px-2 py-1 rounded">Extra</button>
+                    </div>
+                </div>
+                 <div>
+                    <h4 class="font-semibold mb-3">Andamento no Rodapé</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="progressDisplay" data-value="time" class="flex-1 px-2 py-1 rounded">Tempo</button>
+                        <button data-setting="progressDisplay" data-value="percent" class="flex-1 px-2 py-1 rounded">%</button>
+                    </div>
+                </div>
+                <div id="wpm-controls" class="pt-4 border-t">
+                    <h4 class="font-semibold mb-2">Velocidade de Leitura (PPM)</h4>
+                     <p class="text-xs text-gray-400 mb-2">Isso também ajusta a velocidade da Rolagem Automática.</p>
+                    <div class="flex items-center justify-between">
+                         <button id="wpm-decrease" class="px-3 py-1 rounded transition">-</button>
+                         <span id="wpm-display" class="font-mono text-center text-lg">180</span>
+                         <button id="wpm-increase" class="px-3 py-1 rounded transition">+</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
     
-    <div id="loader" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
+    <div id="loading-view" class="hidden w-full h-full flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
     </div>
-
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Elementos da UI
-        const homeView = document.getElementById('home-view');
-        const presentationView = document.getElementById('presentation-view');
-        const pageIdInput = document.getElementById('page-id-input');
-        const generateBtn = document.getElementById('generate-btn');
-        const errorMessage = document.getElementById('error-message');
-        const backToHomeBtn = document.getElementById('back-to-home');
-        const slideContainer = document.getElementById('slide-container');
-        const prevSlideBtn = document.getElementById('prev-slide');
-        const nextSlideBtn = document.getElementById('next-slide');
-        const slideCounter = document.getElementById('slide-counter');
-        const pageTitle = document.getElementById('page-title');
-        const loader = document.getElementById('loader');
-        
-        const settingsBtn = document.getElementById('settings-btn');
-        const settingsPanel = document.getElementById('settings-panel');
-        const closeSettingsBtn = document.getElementById('close-settings');
-        const displayModeSelect = document.getElementById('display-mode');
-        const wpmSetting = document.getElementById('wpm-setting');
-        const wpmValue = document.getElementById('wpm-value');
-        const wpmIncreaseBtn = document.getElementById('wpm-increase');
-        const wpmDecreaseBtn = document.getElementById('wpm-decrease');
+    const ICONS = {
+        play: `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
+        pause: `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+        settings: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
+        close: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+        arrowLeft: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+        arrowRight: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+        menu: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`,
+        sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
+        moon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
+        home: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`,
+        scrollPlay: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13l-5 5-5-5M17 6l-5 5-5-5"/></svg>`,
+        scrollPause: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`,
+        book: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
+        alignLeft: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>`,
+        alignCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>`,
+        alignRight: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>`,
+        alignJustify: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>`,
+        alignHorizontalStart: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3h2v18H4zm4-4V7h12v10H8z"/></svg>`,
+        alignHorizontalCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21V3h2v18H2zm18 0V3h2v18h-2zM6 17V7h12v10H6z"/></svg>`,
+        alignHorizontalEnd: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21V3h2v18h-2zM4 17V7h12v10H4z"/></svg>`
+    };
+    
+    const $ = (selector) => document.querySelector(selector);
+    
+    const setupView = $('#setup-view'), presentationView = $('#presentation-view'), loadingView = $('#loading-view');
+    const pageIdInput = $('#pageId'), generateBtn = $('#generate-btn'), previewBtn = $('#preview-btn'), errorMessage = $('#error-message');
+    const clockEl = $('#clock'), pageTitle = $('#page-title'), slidesContainer = $('#slides-container');
+    const prevBtn = $('#prev-btn'), nextBtn = $('#next-btn'), footerCenter = $('#footer-center');
+    const timerPlayPauseBtn = $('#timer-play-pause-btn'), overallTimerEl = $('#overall-timer');
+    const settingsPanel = $('#settings-panel'), settingsToggleBtn = $('#settings-toggle-btn'), closeSettingsBtn = $('#close-settings-btn');
+    const homeBtn = $('#home-btn');
+    const wpmDecreaseBtn = $('#wpm-decrease'), wpmIncreaseBtn = $('#wpm-increase'), wpmDisplay = $('#wpm-display');
+    const historySidebar = $('#history-sidebar'), historyToggleBtn = $('#history-toggle-btn'), closeHistoryBtn = $('#close-history-btn'), historyList = $('#history-list');
+    const calloutsSidebar = $('#callouts-sidebar'), calloutsToggleBtn = $('#callouts-toggle-btn-footer'), closeCalloutsBtn = $('#close-callouts-btn'), calloutsList = $('#callouts-list');
+    const autoScrollToggleBtn = $('#auto-scroll-toggle-btn');
 
-        const historyBtn = document.getElementById('history-btn');
-        const historySidebar = document.getElementById('history-sidebar');
-        const closeHistorySidebarBtn = document.getElementById('close-history-sidebar');
-        const historySidebarContent = document.getElementById('history-sidebar-content');
-
-        // Elementos da Barra da Bíblia
-        const bibleSidebar = document.getElementById('bible-sidebar');
-        const closeBibleSidebarBtn = document.getElementById('close-bible-sidebar');
-        const bibleSidebarBtn = document.getElementById('bible-sidebar-btn');
-        const bibleVersionSelect = document.getElementById('bible-version-select');
-        const bibleBookSelect = document.getElementById('bible-book-select');
-        const bibleChapterSelect = document.getElementById('bible-chapter-select');
-        const bibleContent = document.getElementById('bible-content');
-
-        // Estado da Aplicação
-        let state = {
-            slides: [],
-            currentPage: null,
-            currentSlide: 0,
-            history: JSON.parse(localStorage.getItem('notionHistory') || '{}'),
-            settings: JSON.parse(localStorage.getItem('notionSettings') || JSON.stringify({
-                displayMode: 'slides',
-                wpm: 250
-            })),
-            readerInterval: null,
-        };
-
-        const bibleEditions = {
-            'NVI': './Bíblias/NVI.json',
-            'ARA': './Bíblias/ARA.json'
-        };
-        let currentBible = [];
-        let currentVersion = 'NVI';
-
-        // --- Funções Principais ---
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
+    let state = {
+        rawBlocks: [], slides: [], currentSlide: 0, pageTitle: '',
+        isTimerRunning: false, overallTimerInterval: null, overallSeconds: 0, pageSeconds: 0, 
+        pageTimeHistory: {}, clockInterval: null,
+        isAutoScrolling: false, autoScrollInterval: null,
+        settings: {
+            theme: 'theme-dark', displayMode: 'slides', fontFamily: 'font-sans', fontSize: 2,
+            lineHeight: 'leading-loose', textWidth: 'max-w-[66vw]', wpm: 180, progressDisplay: 'time',
+            pageBreakHeadings: ['heading_1', 'heading_2'],
+            textAlign: 'text-left',
+            contentAlign: 'items-center',
+            calloutFontSize: 2,
         }
+    };
 
-        function toggleLoader(show) {
-            loader.classList.toggle('hidden', !show);
-        }
+    const MOCK_DATA = {
+        pageTitle: "Tutorial Interativo",
+        blocks: {
+            results: [
+                { id: 'mock-1', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Bem-vindo ao Tutorial Interativo!' }] } },
+                { id: 'mock-2', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Esta é uma página de exemplo para você explorar todas as funcionalidades do Visualizador de Notas. Vamos começar!' }] } },
+                { id: 'mock-3', type: 'callout', callout: { icon: { emoji: '➡️' }, rich_text: [{ plain_text: 'Use as setas do teclado, deslize o dedo na tela ou use os botões no rodapé para navegar entre as páginas do tutorial.' }], color: 'default_background' } },
+                
+                { id: 'mock-h-2', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Modos de Visualização' }] } },
+                { id: 'mock-p-1', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Existem dois modos principais. Você pode alternar entre eles no painel de Ajustes (⚙️).' }] } },
+                { id: 'mock-p-2', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: '1. Modo Páginas (Padrão):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Divide o conteúdo em "slides", usando os títulos (H1, H2, H3) como pontos de quebra. Ideal para apresentações.' } }] } },
+                { id: 'mock-p-3', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: '2. Modo Rolagem:' }, annotations: { bold: true } }, 
+                    { type: 'text', text: { content: ' Exibe todo o conteúdo como uma única página contínua, similar a um artigo. Neste modo, um botão de rolagem automática ( ' } }, 
+                    { type: 'text', text: { content: '🔽', annotations: { code: true } } }, 
+                    { type: 'text', text: { content: ' ) aparecerá no topo.' } }
+                ] } },
+                
+                { id: 'mock-h-3', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Painel de Ajustes (⚙️)' }] } },
+                { id: 'mock-p-4', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone de engrenagem no canto superior direito para abrir o painel de Ajustes. Lá você pode customizar sua experiência de leitura.' }] } },
+                { id: 'mock-callout-1', type: 'callout', callout: { icon: { emoji: '🎨' }, rich_text: [{ type: 'text', text: { content: 'Cor da Página: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Escolha entre diversos temas, como claro, escuro, sépia e outros.' } }], color: 'gray_background' } },
+                { id: 'mock-callout-2', type: 'callout', callout: { icon: { emoji: '✒️' }, rich_text: [{ type: 'text', text: { content: 'Fonte e Estilo: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Ajuste a família da fonte, tamanho, espaçamento entre linhas, margens e alinhamento do texto.' } }], color: 'yellow_background' } },
+                { id: 'mock-callout-3', type: 'callout', callout: { icon: { emoji: '⏱️' }, rich_text: [{ type: 'text', text: { content: 'Velocidade de Leitura (PPM): ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Defina suas palavras por minuto. Isso ajusta as estimativas de tempo no rodapé e a velocidade da rolagem automática.' } }], color: 'blue_background' } },
 
-        function extractPageId(input) {
-            try {
-                const url = new URL(input);
-                const path = url.pathname;
-                const match = path.match(/([a-f0-9]{32})/);
-                if (match) return match[1];
-                const parts = path.split('-');
-                return parts[parts.length - 1];
-            } catch (e) {
-                if (input.match(/^[a-f0-9]{32}$/)) return input;
-                const parts = input.split('-');
-                return parts[parts.length - 1];
-            }
-        }
+                { id: 'mock-h-4', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Barras Laterais' }] } },
+                { id: 'mock-p-5', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'No canto inferior esquerdo, você encontrará botões para abrir duas barras laterais úteis:' }] } },
+                { id: 'mock-p-6', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Navegação (☰):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Disponível no modo Páginas, mostra uma lista de todas as páginas para acesso rápido.' } }] } },
+                { id: 'mock-p-7', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Destaques (📖):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Reúne todos os blocos de "callout" do documento, servindo como um sumário dos pontos mais importantes.' } }] } },
 
-        async function fetchNotionPage(pageId) {
-            toggleLoader(true);
-            try {
-                const response = await fetch(`/api/notion-proxy?pageId=${pageId}`);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Erro ao buscar a página.');
-                }
-                const data = await response.json();
-                state.currentPage = data;
-                processBlocks(data.blocks);
-                updateHistory(pageId, getPageTitle(data));
-                renderRecentHistory(); 
-                goToSlide(0);
-                homeView.classList.add('hidden');
-                presentationView.classList.remove('hidden');
-            } catch (error) {
-                showError(error.message);
-                console.error(error);
-            } finally {
-                toggleLoader(false);
-            }
-        }
-        
-        function getPageTitle(pageData) {
-            try {
-                return pageData.properties.title.title[0].plain_text;
-            } catch (e) {
-                return "Página sem Título";
-            }
-        }
-
-        function processBlocks(blocks) {
-            state.slides = [];
-            let currentSlideContent = '';
-
-            function blockToHtml(block) {
-                // Implementação da conversão de blocos para HTML (igual ao seu script original)
-                const richTextToHtml = (richText) => richText.map(rt => {
-                    let text = rt.plain_text;
-                    if(rt.href) text = `<a href="${rt.href}" target="_blank" class="text-blue-400 hover:underline">${text}</a>`;
-                    if(rt.annotations.bold) text = `<strong>${text}</strong>`;
-                    if(rt.annotations.italic) text = `<em>${text}</em>`;
-                    if(rt.annotations.strikethrough) text = `<s>${text}</s>`;
-                    if(rt.annotations.code) text = `<code class="bg-gray-200 dark:bg-gray-700 px-1 rounded text-sm">${text}</code>`;
-                    return text;
-                }).join('');
-
-                switch (block.type) {
-                    case 'heading_1': return `<h1 class="text-4xl font-bold mb-4">${richTextToHtml(block.heading_1.rich_text)}</h1>`;
-                    case 'heading_2': return `<h2 class="text-3xl font-bold mb-3">${richTextToHtml(block.heading_2.rich_text)}</h2>`;
-                    case 'heading_3': return `<h3 class="text-2xl font-bold mb-2">${richTextToHtml(block.heading_3.rich_text)}</h3>`;
-                    case 'paragraph': return `<p class="mb-2 max-w-prose">${richTextToHtml(block.paragraph.rich_text)}</p>`;
-                    case 'bulleted_list_item':
-                    case 'numbered_list_item':
-                        let content = `<li>${richTextToHtml(block[block.type].rich_text)}`;
-                        if (block.children) {
-                            content += block.type === 'bulleted_list_item' ? '<ul>' : '<ol>';
-                            content += block.children.map(child => blockToHtml(child)).join('');
-                            content += block.type === 'bulleted_list_item' ? '</ul>' : '</ol>';
+                { id: 'mock-h-5', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Formatação de Texto' }] } },
+                { id: 'mock-p-8', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'O visualizador é compatível com as formatações básicas do Notion.' }] } },
+                { id: 'mock-p-9', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Você pode ter texto em ' } },
+                    { type: 'text', text: { content: 'negrito' }, annotations: { bold: true } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'itálico' }, annotations: { italic: true } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'sublinhado' }, annotations: { underline: true } },
+                    { type: 'text', text: { content: ' e ' } },
+                    { type: 'text', text: { content: 'tachado' }, annotations: { strikethrough: true } },
+                    { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-p-10', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Também é possível aplicar ' } },
+                    { type: 'text', text: { content: 'cores diferentes' }, "annotations": { "color": "blue" } },
+                    { type: 'text', text: { content: ' ao texto e usar o estilo de ' } },
+                    { type: 'text', text: { content: 'código' }, "annotations": { "code": true } },
+                    { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-p-11', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'E, claro, os ' } },
+                    { type: 'text', text: { content: 'destaques com cor de fundo' }, "annotations": { "color": "red_background" } },
+                    { type: 'text', text: { content: ' são exibidos corretamente.' } }
+                ] } },
+                { id: 'mock-p-14', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Teste de ' } },
+                    { type: 'text', text: { content: 'negrito e destaque' }, annotations: { bold: true, color: "yellow_background" } },
+                    { type: 'text', text: { content: ' juntos.' } }
+                ] } },
+                { id: 'mock-p-15', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Esta frase mais longa demonstra como o ' } },
+                    { type: 'text', text: { content: 'texto em negrito com fundo colorido agora quebra a linha corretamente' }, annotations: { bold: true, color: "blue_background" } },
+                    { type: 'text', text: { content: ' sem cortar nenhuma letra no final.' } }
+                ] } },
+                { 
+                    id: 'mock-list-1', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 1 da lista.' }] },
+                    children: [
+                        { id: 'mock-list-2', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 2 da lista.' }] },
+                            children: [
+                                { id: 'mock-list-3', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 3 da lista.' }] } }
+                            ]
                         }
-                        content += '</li>';
-                        return content;
-                    case 'quote': return `<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 my-4 italic">${richTextToHtml(block.quote.rich_text)}</blockquote>`;
-                    case 'callout':
-                        return `<div class="p-4 rounded-lg my-2 flex items-start gap-3 bg-gray-200 dark:bg-gray-800"><span class="text-xl">${block.callout.icon.emoji}</span><div class="flex-1">${richTextToHtml(block.callout.rich_text)}</div></div>`;
-                    case 'divider': return '<hr class="my-6 border-gray-300 dark:border-gray-700">';
-                    case 'image':
-                        const url = block.image.type === 'external' ? block.image.external.url : block.image.file.url;
-                        return `<img src="${url}" alt="Imagem do Notion" class="max-w-full max-h-[70vh] my-4 rounded-lg shadow-md mx-auto">`;
-                    default: return '';
+                    ]
+                },
+                { id: 'mock-list-4', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Outro item de Nível 1.' }] } },
+
+                 { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
+                 { id: 'mock-p-13', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
+
+            ]
+        },
+        page: {
+            properties: {
+                title: {
+                    title: [{ plain_text: "Tutorial Interativo" }]
                 }
             }
+        }
+    };
 
-            blocks.forEach(block => {
-                if (block.type === 'divider') {
-                    if (currentSlideContent.trim()) {
-                        state.slides.push(currentSlideContent);
-                    }
-                    currentSlideContent = '';
+    const extractPageId = (input) => {
+        if (!input) return ''; try { if (input.startsWith('http')) { const url = new URL(input); const pathParts = url.pathname.split('/'); const lastPart = pathParts[pathParts.length - 1]; const idFromEnd = lastPart.split('-').pop(); if (idFromEnd && /^[0-9a-f]{32}$/.test(idFromEnd)) return idFromEnd; } const cleanId = input.split('-').pop().replace(/[^0-9a-fA-F]/g, ''); if (/^[0-9a-f]{32}$/.test(cleanId)) return cleanId; } catch (e) {} return '';
+    };
+
+    async function fetchNotionContent(isPreview = false) {
+        if (isPreview) {
+            const data = MOCK_DATA;
+            const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
+            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
+            state.rawBlocks = data.blocks.results;
+            rebuildSlidesAndRender(); 
+            showView('presentation'); 
+            return;
+        }
+        const pageId = extractPageId(pageIdInput.value.trim());
+        if (!pageId) { showError("URL ou ID da Página inválido."); return; }
+        showView('loading');
+        try {
+            const response = await fetch(`/api/notion-proxy?pageId=${pageId}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: `Erro HTTP ${response.status}` }));
+                throw new Error(errorData.message || 'Falha ao buscar a página.');
+            }
+            const data = await response.json();
+            const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
+            state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
+            state.rawBlocks = data.blocks.results;
+
+            saveToHistory(pageId, state.pageTitle);
+
+            rebuildSlidesAndRender(); 
+            showView('presentation');
+        } catch (error) { showError(`Falha ao buscar conteúdo: ${error.message}. Verifique a URL e se a página é pública.`); showView('setup'); }
+    }
+
+    const parseBlocksIntoSlides = (blocks) => {
+        if (!blocks || blocks.length === 0) return [[]];
+        if (state.settings.displayMode === 'scroll') {
+            calloutsToggleBtn.classList.remove('hidden');
+            return [blocks];
+        };
+        const slides = []; let currentSlideContent = [];
+        blocks.forEach(block => {
+            const isHeading = state.settings.pageBreakHeadings.includes(block.type);
+            if (isHeading && currentSlideContent.length > 0) { slides.push(currentSlideContent); currentSlideContent = []; }
+            currentSlideContent.push(block);
+        });
+        if (currentSlideContent.length > 0) slides.push(currentSlideContent);
+        return slides.length > 0 ? slides : [[]];
+    };
+    
+    const countPotentialSlides = (blocks) => {
+        if (!blocks || blocks.length === 0) return 1;
+        let slideCount = 0;
+        let currentSlideContent = [];
+        blocks.forEach(block => {
+            const isHeading = state.settings.pageBreakHeadings.includes(block.type);
+            if (isHeading && currentSlideContent.length > 0) { 
+                slideCount++;
+                currentSlideContent = []; 
+            }
+            currentSlideContent.push(block);
+        });
+        if (currentSlideContent.length > 0) slideCount++;
+        return slideCount > 0 ? slideCount : 1;
+    };
+
+    const processRichText = (richTextArray) => {
+        if (!richTextArray) return '';
+        const colorMap = {
+            "gray": "text-gray-500", 
+            "brown": "text-yellow-700", 
+            "orange": "text-orange-600", 
+            "yellow": "text-yellow-600", 
+            "green": "text-green-600", 
+            "blue": "text-blue-600", 
+            "purple": "text-purple-600", 
+            "pink": "text-pink-600", 
+            "red": "text-red-600"
+        };
+        
+        const lightColorMap = {
+            "gray": "text-gray-600",
+            "brown": "text-yellow-800",
+            "orange": "text-orange-700",
+            "yellow": "text-yellow-800",
+            "green": "text-green-700",
+            "blue": "text-blue-700",
+            "purple": "text-purple-700",
+            "pink": "text-pink-700",
+            "red": "text-red-700",
+        }
+
+        return richTextArray.map(text => {
+            const annotations = text.annotations || {};
+            const classList = [];
+            if (annotations.bold) classList.push('font-bold');
+            if (annotations.italic) classList.push('italic');
+            if (annotations.strikethrough) classList.push('line-through');
+            if (annotations.underline) classList.push('underline');
+            if (annotations.code) classList.push('font-mono bg-gray-200 dark:bg-gray-700/50 px-1 py-0.5 rounded text-sm text-red-500');
+            
+            if (annotations.color && annotations.color !== 'default') {
+                if (annotations.color.includes('_background')) {
+                    classList.push('text-highlight', `notion-${annotations.color}`);
                 } else {
-                    currentSlideContent += blockToHtml(block);
+                    const isLightTheme = ['theme-light', 'theme-sepia', 'theme-light-green', 'theme-light-blue'].includes(state.settings.theme);
+                    const finalColorMap = isLightTheme ? lightColorMap : colorMap;
+                    classList.push(finalColorMap[annotations.color] || colorMap[annotations.color]);
                 }
-            });
-
-            if (currentSlideContent.trim()) {
-                state.slides.push(currentSlideContent);
             }
-            if (state.slides.length === 0) {
-                 state.slides.push('<div class="text-center text-gray-500">Nenhum conteúdo encontrado. Adicione um bloco de "divisor" (---) para separar os slides.</div>');
+            const plainText = text.plain_text || (text.text ? text.text.content : '');
+            let content = plainText.replace(/\n/g, '<br>');
+            if (text.href) {
+                return `<a href="${text.href}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline ${classList.join(' ')}">${content}</a>`;
+            }
+            return `<span class="${classList.join(' ')}">${content}</span>`;
+        }).join('');
+    };
+
+    const createHtmlFromBlock = (block) => {
+        const type = block.type; const content = block[type]; if (!content) return null;
+        let el;
+        switch(type) {
+            case 'heading_1': el = document.createElement('h1'); el.className = 'font-bold leading-tight'; el.innerHTML = processRichText(content.rich_text); break;
+            case 'heading_2': el = document.createElement('h2'); el.className = 'font-semibold mt-10 leading-snug'; el.innerHTML = processRichText(content.rich_text); break;
+            case 'heading_3': el = document.createElement('h3'); el.className = 'font-medium mt-8'; el.innerHTML = processRichText(content.rich_text); break;
+            case 'paragraph': el = document.createElement('p'); el.innerHTML = processRichText(content.rich_text) || '&nbsp;'; break;
+            
+            case 'bulleted_list_item':
+            case 'numbered_list_item':
+                el = document.createElement('li');
+                el.innerHTML = processRichText(content.rich_text);
+                // Lida com blocos aninhados recursivamente
+                if (block.children && block.children.length > 0) {
+                    renderBlocks(block.children, el); 
+                }
+                break;
+
+            case 'image': el = document.createElement('img'); el.src = content.type === 'external' ? content.external.url : content.file.url; el.className = 'max-w-full h-auto rounded-lg shadow-lg my-6 mx-auto block'; break;
+            case 'divider': el = document.createElement('hr'); el.className = 'my-8'; break;
+            case 'quote': el = document.createElement('blockquote'); el.className = 'pl-3 border-l-4'; el.innerHTML = processRichText(content.rich_text); break;
+            case 'callout':
+                const iconHTML = content.icon ? `<span class="text-xl w-6 text-center">${content.icon.emoji}</span>` : '';
+                el = document.createElement('div');
+                el.className = `p-4 rounded-lg flex items-start my-4 notion-callout ${content.color ? 'notion-' + content.color : 'notion-default_background'}`;
+                el.innerHTML = `${iconHTML}<div class="flex-1 ${content.icon ? 'ml-2' : ''}">${processRichText(content.rich_text)}</div>`;
+                break;
+            default: return null;
+        }
+        if (el && block.id) {
+            el.id = `block-${block.id}`;
+        }
+        return el;
+    };
+
+    const renderCurrentSlide = () => {
+        const slideData = state.slides[state.currentSlide];
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slide-content w-full h-full space-y-5';
+        renderBlocks(slideData, wrapper); // Usa a nova função para renderizar com aninhamento
+        const spacer = document.createElement('div');
+        spacer.style.height = '50vh';
+        wrapper.appendChild(spacer);
+        slidesContainer.innerHTML = ''; 
+        slidesContainer.appendChild(wrapper); 
+        pageTitle.textContent = state.pageTitle; 
+        applySettings(); 
+        updateControls(); 
+        renderHistorySidebar(); 
+        renderCalloutsSidebar();
+        requestAnimationFrame(() => requestAnimationFrame(updateFooterInfo));
+    };
+
+    const rebuildSlidesAndRender = () => {
+        stopAutoScroll();
+
+        const pageCount = countPotentialSlides(state.rawBlocks);
+        const slidesButton = document.querySelector('[data-setting="displayMode"][data-value="slides"]');
+        
+        if (slidesButton) {
+            if (pageCount <= 1) {
+                slidesButton.disabled = true;
+                slidesButton.classList.add('opacity-50', 'cursor-not-allowed');
+                state.settings.displayMode = 'scroll';
+            } else {
+                slidesButton.disabled = false;
+                slidesButton.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
         
-        function renderSlide(slideHtml, index) {
+        state.slides = parseBlocksIntoSlides(state.rawBlocks);
+        state.currentSlide = 0;
+        state.pageSeconds = 0;
+        state.pageTimeHistory = {};
+        renderCurrentSlide();
+        slidesContainer.scrollTop = 0;
+    };
+    
+    const showView = (view) => {
+        // Hide all views first by adding 'hidden' and removing 'flex'
+        [setupView, presentationView, loadingView].forEach(v => {
+            v.classList.add('hidden');
+            v.classList.remove('flex');
+        });
+
+        clearInterval(state.clockInterval);
+
+        if (view === 'setup') {
+            setupView.classList.remove('hidden');
+            setupView.classList.add('flex'); // Make setup view visible and flex
+            renderRecentHistory();
+            stopTimer();
+            stopAutoScroll();
+            closeAllSidebars();
+        } else if (view === 'presentation') {
+            presentationView.classList.remove('hidden');
+            presentationView.classList.add('flex'); // Make presentation view visible and flex
+            updateClock();
+            state.clockInterval = setInterval(updateClock, 1000);
+        } else if (view === 'loading') {
+            loadingView.classList.remove('hidden');
+            loadingView.classList.add('flex'); // Make loading view visible and flex
+        }
+    };
+    
+    const showError = (msg) => { errorMessage.textContent = msg; errorMessage.classList.remove('hidden'); };
+    
+    const recordPageTime = () => {
+        if (state.isTimerRunning || state.overallSeconds > 0) {
+            const currentPage = state.currentSlide;
+            state.pageTimeHistory[currentPage] = (state.pageTimeHistory[currentPage] || 0) + state.pageSeconds;
+        }
+    };
+    const goToSlide = (index) => {
+        if(index >= 0 && index < state.slides.length) {
+            recordPageTime();
+            stopAutoScroll();
             state.currentSlide = index;
-            slideContainer.innerHTML = `<div class="slide fade-in">${slideHtml}</div>`;
-            slideCounter.textContent = `${index + 1} / ${state.slides.length}`;
-            updateNavButtons();
-            
-            // Lógica do modo leitor
-            if (state.readerInterval) clearInterval(state.readerInterval);
-            if (state.settings.displayMode === 'reader') {
-                const words = slideContainer.innerText.split(/\s+/).filter(Boolean);
-                let wordIndex = 0;
-                slideContainer.innerHTML = `<div id="reader-box" class="text-5xl font-semibold p-8"></div>`;
-                const readerBox = document.getElementById('reader-box');
+            state.pageSeconds = 0;
+            slidesContainer.scrollTop = 0; 
+            renderCurrentSlide();
+            toggleHistorySidebar(false);
+        }
+    };
+    const goToNextSlide = () => { if (state.currentSlide < state.slides.length - 1) { goToSlide(state.currentSlide + 1); } };
+    const goToPrevSlide = () => { if (state.currentSlide > 0) { goToSlide(state.currentSlide - 1); } };
+    
+    const updateControls = () => {
+        const isScroll = state.settings.displayMode === 'scroll';
+        prevBtn.style.visibility = isScroll ? 'hidden' : 'visible'; 
+        nextBtn.style.visibility = isScroll ? 'hidden' : 'visible';
+        
+        if (!isScroll) { 
+            prevBtn.disabled = state.currentSlide === 0; 
+            nextBtn.disabled = state.currentSlide >= state.slides.length - 1; 
+        }
+        stopAutoScroll();
+        updateFooterInfo();
+    };
+    
+    const countWordsInBlock = (block) => (block[block.type]?.rich_text || []).map(t => t.plain_text).join(' ').trim().split(/\s+/).filter(Boolean).length;
+    const formatTime = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+    
+    const updateFooterInfo = () => {
+        const wpm = state.settings.wpm;
+        const totalWordsAll = state.rawBlocks.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+        
+        if (totalWordsAll === 0) {
+            footerCenter.innerHTML = '';
+            return;
+        }
+        
+        const { scrollTop, scrollHeight, clientHeight } = slidesContainer;
+        
+        const pageBarHTML = `<div class="w-full rounded-full h-2 progress-bar-bg"><div id="page-progress-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%;"></div></div>`;
+        const docBarHTML = `<div class="w-full rounded-full h-2 progress-bar-bg"><div id="doc-progress-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%;"></div></div>`;
+
+        if (state.settings.displayMode === 'scroll') {
+            let scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
+            scrollPercent = Math.max(0, Math.min(1, scrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+
+            let infoHTML = '';
+            if (state.settings.progressDisplay === 'percent') {
+                 infoHTML = `<div class="text-center text-sm font-mono mb-2">Progresso: ${Math.round(scrollPercent * 100)}%</div>`;
+            } else { // 'time' display
+                const wordsRead = totalWordsAll * scrollPercent;
+                const wordsRemaining = totalWordsAll - wordsRead;
                 
-                state.readerInterval = setInterval(() => {
-                    if (wordIndex < words.length) {
-                        readerBox.textContent = words[wordIndex++];
-                    } else {
-                        clearInterval(state.readerInterval);
-                    }
-                }, 60000 / state.settings.wpm);
+                const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
+                const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
+                
+                infoHTML = `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
+            }
+            
+            const barHTML = `<div class="w-full">${docBarHTML}</div>`;
+            
+            footerCenter.innerHTML = infoHTML + barHTML;
+            $('#doc-progress-bar').style.width = `${scrollPercent * 100}%`;
+
+        } else { // SLIDES MODE
+            const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            
+            let pageScrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : (wordsOnPage > 0 ? 1 : 0);
+            pageScrollPercent = Math.max(0, Math.min(1, pageScrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+
+            const pageTimeSeconds = (wordsOnPage / wpm) * 60;
+            const pageWordsRead = wordsOnPage * pageScrollPercent;
+            const pageWordsRemaining = wordsOnPage - pageWordsRead;
+            const pageTimeRemainingSeconds = (pageWordsRemaining / wpm) * 60;
+
+            const wordsBeforeCurrentPage = state.slides.slice(0, state.currentSlide).flat().reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            const totalWordsRead = wordsBeforeCurrentPage + pageWordsRead;
+            const docTimeSeconds = (totalWordsAll / wpm) * 60;
+            const docTimeRemainingSeconds = (docTimeSeconds) - ((totalWordsRead / wpm) * 60);
+            const docPercent = totalWordsAll > 0 ? (totalWordsRead / totalWordsAll) * 100 : 0;
+
+            let infoHTML = '', barsHTML = '';
+
+            if (state.settings.progressDisplay === 'percent') {
+                 infoHTML = `<div class="flex justify-around items-center text-xs w-full mb-2">
+                     <div class="w-1/2 text-center"><span>Página: ${state.currentSlide + 1}/${state.slides.length} | ${Math.round(pageScrollPercent * 100)}%</span></div>
+                     <div class="w-1/2 text-center"><span>Documento: ${Math.round(docPercent)}%</span></div>
+                </div>`;
+            } else { // 'time' display
+                 infoHTML = `<div class="flex flex-col md:flex-row justify-around text-xs w-full mb-2 gap-2 md:gap-0">
+                     <div class="w-full md:w-1/2 text-center">
+                         <div class="font-bold">Página (${state.currentSlide + 1}/${state.slides.length})</div>
+                         <div>Total: ${formatTime(pageTimeSeconds)} | Restante: ${formatTime(pageTimeRemainingSeconds)}</div>
+                    </div>
+                     <div class="w-full md:w-1/2 text-center">
+                         <div class="font-bold">Documento</div>
+                         <div>Total: ${formatTime(docTimeSeconds)} | Restante: ${formatTime(docTimeRemainingSeconds)}</div>
+                    </div>
+                </div>`;
+            }
+            
+            barsHTML = `<div class="w-full flex items-center justify-center gap-4">
+                             <div class="flex-1">${pageBarHTML}</div>
+                             <div class="flex-1">${docBarHTML}</div>
+                        </div>`;
+            
+            footerCenter.innerHTML = infoHTML + barsHTML;
+            $('#page-progress-bar').style.width = `${pageScrollPercent * 100}%`;
+            $('#doc-progress-bar').style.width = `${docPercent}%`;
+        }
+    };
+
+    const renderHistorySidebar = () => {
+        const shouldShow = state.settings.displayMode === 'slides' && state.slides.length > 1;
+        historyToggleBtn.classList.toggle('hidden', !shouldShow);
+        if (!shouldShow) { toggleHistorySidebar(false); return; }
+        historyList.innerHTML = '';
+        state.slides.forEach((slide, index) => {
+            const firstBlock = slide[0];
+            let pageTitleText = `Página ${index + 1}`;
+            const headingType = ['heading_1', 'heading_2', 'heading_3'].find(h => firstBlock && firstBlock.type === h);
+            if(headingType) {
+                const richText = firstBlock[headingType].rich_text;
+                if (richText && richText.length > 0) pageTitleText = richText.map(t => t.plain_text).join('');
+            }
+            const wordsOnPage = slide.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            const estimatedTime = formatTime((wordsOnPage / state.settings.wpm) * 60);
+            const spentTimeRaw = state.pageTimeHistory[index] || 0;
+            const currentSpentTime = (state.isTimerRunning && index === state.currentSlide) ? spentTimeRaw + state.pageSeconds : spentTimeRaw;
+            const spentTime = (state.isTimerRunning || spentTimeRaw > 0) ? formatTime(currentSpentTime) : '...';
+            const item = document.createElement('button');
+            item.className = `history-item w-full text-left p-4 hover:bg-opacity-50 transition-colors border-b ${index === state.currentSlide ? 'active' : ''}`;
+            item.dataset.index = index;
+            item.innerHTML = `<div class="font-semibold truncate" title="${pageTitleText}">${pageTitleText}</div>
+                                  <div class="text-sm font-mono mt-1 ${document.documentElement.classList.contains('light') ? 'subtext-light' : 'text-gray-400'}">Gasto: ${spentTime} / Previsto: ${estimatedTime}</div>`;
+            historyList.appendChild(item);
+        });
+    };
+
+    const renderCalloutsSidebar = () => {
+        const calloutBlocks = state.rawBlocks.filter(b => b.type === 'callout');
+        calloutsToggleBtn.classList.toggle('hidden', calloutBlocks.length === 0);
+        if (calloutBlocks.length === 0) {
+            toggleCalloutsSidebar(false);
+            return;
+        }
+
+        calloutsList.innerHTML = '';
+        calloutBlocks.forEach(block => {
+            const content = block.callout;
+            const iconHTML = content.icon ? `<span class="text-xl w-6 flex-shrink-0 text-center">${content.icon.emoji}</span>` : '';
+            const text = (content.rich_text || []).map(t => t.plain_text).join('');
+            const item = document.createElement('div');
+            item.className = 'callout-item w-full text-left p-4 border-b';
+            item.innerHTML = `<div class="flex items-start">
+                                ${iconHTML}
+                                <span class="flex-1 ${content.icon ? 'ml-2' : ''}">${text}</span>
+                            </div>`;
+            calloutsList.appendChild(item);
+        });
+        applySettings(); // Re-apply font size for callouts
+    };
+    
+    const closeAllSidebars = () => {
+        document.body.classList.remove('history-open', 'callouts-open', 'settings-open');
+        historySidebar.classList.remove('open');
+        settingsPanel.classList.remove('open');
+        calloutsSidebar.classList.remove('open');
+    };
+
+    const toggleHistorySidebar = (open) => { 
+        if (open) { 
+            closeAllSidebars(); 
+            historySidebar.classList.add('open'); 
+            document.body.classList.add('history-open');
+        } else { 
+            historySidebar.classList.remove('open'); 
+            document.body.classList.remove('history-open');
+        } 
+    };
+    const toggleSettingsPanel = (open) => { 
+        if (open) { 
+            closeAllSidebars(); 
+            settingsPanel.classList.add('open'); 
+            document.body.classList.add('settings-open');
+        } else { 
+            settingsPanel.classList.remove('open'); 
+            document.body.classList.remove('settings-open');
+        } 
+    };
+    const toggleCalloutsSidebar = (open) => { 
+        if (open) { 
+            closeAllSidebars(); 
+            calloutsSidebar.classList.add('open');
+            document.body.classList.add('callouts-open');
+        } else { 
+            calloutsSidebar.classList.remove('open');
+            document.body.classList.remove('callouts-open');
+        } 
+    };
+
+    const applyTheme = (newTheme) => {
+        if (newTheme) {
+            state.settings.theme = newTheme;
+        } else {
+             // Ao iniciar, garante que o tema antigo seja compatível
+            if (state.settings.theme === 'light' || state.settings.theme === 'dark') {
+                state.settings.theme = `theme-${state.settings.theme}`;
             }
         }
 
-        const originalRenderSlide = renderSlide;
-        renderSlide = (slideHtml, index) => {
-            const linkedHtml = parseAndLinkVerses(slideHtml);
-            originalRenderSlide(linkedHtml, index);
+        const themes = ['theme-light', 'theme-dark', 'theme-sepia', 'theme-light-green', 'theme-light-blue'];
+        document.documentElement.className = ''; // Limpa classes para evitar conflitos
+        document.documentElement.classList.add(state.settings.theme);
+
+        // Se a mudança de tema foi intencional (newTheme existe), renderiza novamente
+        if (newTheme) {
+            if (!presentationView.classList.contains('hidden')) {
+                renderCurrentSlide();
+            } else {
+                applySettings();
+            }
+        }
+    };
+    
+    const applySettings = () => {
+        const contentWrapper = slidesContainer;
+        if (!contentWrapper) return;
+        
+        const alignContentClasses = ['items-start', 'items-center', 'items-end'];
+        contentWrapper.classList.remove(...alignContentClasses);
+        contentWrapper.classList.add(state.settings.contentAlign);
+
+        const alignClasses = ['text-left', 'text-center', 'text-right', 'text-justify'];
+        contentWrapper.classList.remove(...alignClasses);
+        contentWrapper.classList.add(state.settings.textAlign);
+        
+        const content = contentWrapper.querySelector('.slide-content');
+        if (!content) return;
+
+        const fontClasses = ['font-sans', 'font-serif', 'font-display', 'font-lora', 'font-baskerville', 'leading-relaxed', 'leading-loose', 'leading-extra', 'max-w-xl', 'max-w-3xl', 'max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
+        content.classList.remove(...fontClasses); 
+        content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
+        
+        const baseSizeRem = 1.25 + (state.settings.fontSize * 0.2);
+        content.style.fontSize = `${baseSizeRem}rem`;
+
+        content.querySelectorAll('h1').forEach(h => h.style.fontSize = `${baseSizeRem * 1.8}rem`);
+        content.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSizeRem * 1.5}rem`);
+        content.querySelectorAll('h3').forEach(h => h.style.fontSize = `${baseSizeRem * 1.25}rem`);
+
+        const calloutBaseSizeRem = 1.0 + (state.settings.calloutFontSize * 0.15);
+        document.querySelectorAll('.callout-item .flex-1').forEach(el => el.style.fontSize = `${calloutBaseSizeRem}rem`);
+
+        wpmDisplay.textContent = state.settings.wpm; 
+        
+        localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
+        
+        updateFooterInfo(); 
+        updateSettingsUI(); 
+        renderHistorySidebar();
+    };
+
+    const updateSettingsUI = () => {
+        for (const key in state.settings) {
+            if (key === 'wpm') continue;
+            
+            if (key === 'pageBreakHeadings') {
+                document.querySelectorAll(`[data-setting="pageBreakHeadings"]`).forEach(btn => {
+                    btn.classList.toggle('active', state.settings.pageBreakHeadings.includes(btn.dataset.value));
+                });
+            } else {
+                document.querySelectorAll(`[data-setting="${key}"]`).forEach(btn => {
+                    const value = key === 'theme' ? state.settings.theme.replace('theme-', '') : state.settings[key];
+                    btn.classList.toggle('active', btn.dataset.value == value);
+                     if (key === 'theme') {
+                        if (btn.dataset.value === value) {
+                            btn.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+                             // Define a cor do anel de destaque com base no tema
+                            const ringColor = document.documentElement.classList.contains('theme-light') ? '#F9FAFB' : '#1F293B';
+                            btn.style.setProperty('--tw-ring-offset-color', ringColor);
+                        } else {
+                            btn.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500');
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    // Função para renderizar blocos, agrupando itens de lista
+    function renderBlocks(blocks, container) {
+        if (!blocks) return;
+
+        let i = 0;
+        while (i < blocks.length) {
+            const block = blocks[i];
+            
+            // Agrupa itens de lista consecutivos
+            if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+                const listTag = block.type === 'bulleted_list_item' ? 'ul' : 'ol';
+                const listEl = document.createElement(listTag);
+                listEl.className = 'list-outside space-y-2 mt-2';
+                if (listTag === 'ul') listEl.classList.add('list-disc', 'pl-6');
+                if (listTag === 'ol') listEl.classList.add('list-decimal', 'pl-6');
+
+                let j = i;
+                while (j < blocks.length && blocks[j].type === block.type) {
+                    const li = createHtmlFromBlock(blocks[j]);
+                    if(li) listEl.appendChild(li);
+                    j++;
+                }
+                container.appendChild(listEl);
+                i = j;
+            } else {
+                // Lida com itens que não são de lista
+                const el = createHtmlFromBlock(block);
+                if (el) container.appendChild(el);
+                i++;
+            }
+        }
+    }
+    
+    const handleSettingChange = (e) => {
+        const btn = e.target.closest('button[data-setting]');
+        if (!btn) return;
+        const { setting, value } = btn.dataset;
+        let settingChanged = false;
+
+        if (setting === 'theme') {
+            const newTheme = `theme-${value}`;
+            if (state.settings.theme !== newTheme) {
+                applyTheme(newTheme);
+            }
+            return;
+        }
+
+        if (setting === 'pageBreakHeadings') {
+            const currentBreaks = state.settings.pageBreakHeadings;
+            const isCurrentlySet = currentBreaks.includes(value);
+            if (isCurrentlySet) {
+                if (currentBreaks.length > 1) {
+                    state.settings.pageBreakHeadings = currentBreaks.filter(h => h !== value);
+                    settingChanged = true;
+                }
+            } else {
+                state.settings.pageBreakHeadings.push(value);
+                settingChanged = true;
+            }
+        } else {
+            const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(value) ? value : parseInt(value));
+            if (state.settings[setting] !== newValue) {
+                state.settings[setting] = newValue;
+                settingChanged = true;
+            }
+        }
+
+        if(settingChanged) {
+             if (setting === 'displayMode' || setting === 'pageBreakHeadings') {
+                rebuildSlidesAndRender();
+            } else {
+                applySettings();
+            }
+        }
+    };
+
+    const updateClock = () => {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        clockEl.textContent = `${hours}:${minutes}`;
+    };
+
+    const startTimer = () => {
+        if (state.isTimerRunning) return;
+        state.isTimerRunning = true;
+        timerPlayPauseBtn.innerHTML = ICONS.pause;
+        state.pageSeconds = 0;
+        state.overallTimerInterval = setInterval(() => {
+            state.overallSeconds++; state.pageSeconds++;
+            overallTimerEl.textContent = formatTime(state.overallSeconds);
+            renderHistorySidebar();
+        }, 1000);
+        renderHistorySidebar();
+    };
+    
+    const stopTimer = () => {
+        if (!state.isTimerRunning) return;
+        recordPageTime();
+        state.isTimerRunning = false;
+        timerPlayPauseBtn.innerHTML = ICONS.play;
+        clearInterval(state.overallTimerInterval);
+        renderHistorySidebar();
+    };
+    const toggleTimer = () => state.isTimerRunning ? stopTimer() : startTimer();
+    
+    const startAutoScroll = () => {
+        if (state.isAutoScrolling) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = slidesContainer;
+        const scrollableHeight = scrollHeight - clientHeight;
+        const wpm = state.settings.wpm;
+
+        // Case 1: Page is NOT scrollable. We just wait and then advance.
+        if (scrollableHeight < 1 && state.settings.displayMode === 'slides') {
+            const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            const duration = ((wordsOnPage / wpm) * 60 * 1000);
+
+            if (duration < 100) return;
+
+            state.isAutoScrolling = true;
+            autoScrollToggleBtn.innerHTML = ICONS.scrollPause;
+            state.autoScrollInterval = setTimeout(() => {
+                if (state.isAutoScrolling) {
+                    stopAutoScroll();
+                    if (state.currentSlide < state.slides.length - 1) {
+                        goToNextSlide();
+                    }
+                }
+            }, duration);
+            return;
+        }
+        
+        // Case 2: Page IS scrollable.
+        const remainingScroll = scrollableHeight - scrollTop;
+        if (remainingScroll <= 1) return;
+        
+        let wordsRemaining = 0;
+
+        if (state.settings.displayMode === 'scroll') {
+            const totalWordsAll = state.rawBlocks.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            const scrollPercent = (scrollTop / scrollableHeight);
+            const wordsRead = totalWordsAll * scrollPercent;
+            wordsRemaining = totalWordsAll - wordsRead;
+        } else { // slides mode
+            const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            const pageScrollPercent = (scrollTop / scrollableHeight);
+            const pageWordsRead = wordsOnPage * pageScrollPercent;
+            wordsRemaining = wordsOnPage - pageWordsRead;
+        }
+
+        const totalDuration = ((wordsRemaining / wpm) * 60 * 1000);
+        
+        if (totalDuration <= 100) {
+            stopAutoScroll();
+            return;
+        }
+        
+        state.isAutoScrolling = true;
+        autoScrollToggleBtn.innerHTML = ICONS.scrollPause;
+        
+        let startTime = null;
+        const startScrollTop = scrollTop;
+
+        const scrollStep = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / totalDuration, 1);
+            
+            slidesContainer.scrollTop = startScrollTop + remainingScroll * progress;
+
+            if (progress < 1) {
+                state.autoScrollInterval = requestAnimationFrame(scrollStep);
+            } else {
+                stopAutoScroll();
+                if (state.settings.displayMode === 'slides' && state.currentSlide < state.slides.length - 1) {
+                    setTimeout(goToNextSlide, 1000);
+                }
+            }
         };
 
-        function goToSlide(index) {
-            if (index >= 0 && index < state.slides.length) {
-                renderSlide(state.slides[index], index);
-            }
-        }
-        function goToNextSlide() { goToSlide(state.currentSlide + 1); }
-        function goToPrevSlide() { goToSlide(state.currentSlide - 1); }
+        state.autoScrollInterval = requestAnimationFrame(scrollStep);
+    };
 
-        function updateNavButtons() {
-            prevSlideBtn.disabled = state.currentSlide === 0;
-            nextSlideBtn.disabled = state.currentSlide === state.slides.length - 1;
-            prevSlideBtn.classList.toggle('opacity-50', prevSlideBtn.disabled);
-            nextSlideBtn.classList.toggle('opacity-50', nextSlideBtn.disabled);
+    const stopAutoScroll = () => {
+        if (!state.isAutoScrolling) return;
+        state.isAutoScrolling = false;
+        autoScrollToggleBtn.innerHTML = ICONS.scrollPlay;
+        if (state.autoScrollInterval) {
+            cancelAnimationFrame(state.autoScrollInterval);
+            clearTimeout(state.autoScrollInterval); // Handles both setTimeout and rAF
         }
+        state.autoScrollInterval = null;
+    };
+    const toggleAutoScroll = () => state.isAutoScrolling ? stopAutoScroll() : startAutoScroll();
+    
+    const saveToHistory = (id, title) => {
+        if (!id || !title) return;
+        let history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
+        history = history.filter(item => item.id !== id);
+        history.unshift({ id, title });
+        history = history.slice(0, 3);
+        localStorage.setItem('notionViewerHistory', JSON.stringify(history));
+    };
 
-        // --- Funções de Histórico ---
-        function updateHistory(id, title) {
-            state.history[id] = { title, lastAccessed: new Date().toISOString() };
-            localStorage.setItem('notionHistory', JSON.stringify(state.history));
-        }
+    const renderRecentHistory = () => {
+        const historyContainer = $('#history-container');
+        const historyList = $('#recent-history-list');
+        const history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
 
-        function renderRecentHistory() {
-            const historyList = document.getElementById('history-list');
+        if (history.length > 0) {
             historyList.innerHTML = '';
-            const sortedHistory = Object.entries(state.history).sort((a, b) => new Date(b[1].lastAccessed) - new Date(a[1].lastAccessed));
-            
-            if (sortedHistory.length === 0) {
-                historyList.innerHTML = '<p class="text-center text-gray-500">Nenhuma página visitada ainda.</p>';
-                return;
-            }
-
-            sortedHistory.slice(0, 5).forEach(([id, data]) => {
-                const item = document.createElement('button');
-                item.className = 'w-full text-left p-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md shadow-sm transition-colors';
-                item.dataset.id = id;
-                item.innerHTML = `<span class="font-semibold">${data.title}</span><br><span class="text-xs text-gray-500 dark:text-gray-400">${id}</span>`;
-                item.onclick = () => {
-                    pageIdInput.value = id;
-                    fetchNotionPage(id);
-                };
-                historyList.appendChild(item);
-            });
-        }
-
-        function renderHistorySidebar() {
-             historySidebarContent.innerHTML = '';
-             const sortedHistory = Object.entries(state.history).sort((a, b) => new Date(b[1].lastAccessed) - new Date(a[1].lastAccessed));
-             sortedHistory.forEach(([id, data]) => {
-                const item = document.createElement('button');
-                item.className = 'w-full text-left p-3 mb-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors history-item';
-                item.dataset.id = id;
-                item.innerHTML = `<span class="font-semibold">${data.title}</span><br><span class="text-xs text-gray-500 dark:text-gray-400">ID: ${id}</span>`;
-                item.onclick = () => fetchNotionPage(id);
-                historySidebarContent.appendChild(item);
-             });
-        }
-        
-        // --- Funções da Bíblia ---
-        async function loadBible(version) {
-            try {
-                const response = await fetch(bibleEditions[version]);
-                currentBible = await response.json();
-                populateBookSelect();
-            } catch (error) {
-                console.error('Erro ao carregar a Bíblia:', error);
-                bibleContent.innerHTML = '<p>Não foi possível carregar o texto bíblico.</p>';
-            }
-        }
-
-        function populateBookSelect() {
-            bibleBookSelect.innerHTML = '';
-            if (!currentBible || currentBible.length === 0) return;
-            currentBible.forEach((book, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = book.name;
-                bibleBookSelect.appendChild(option);
-            });
-            populateChapterSelect();
-        }
-
-        function populateChapterSelect() {
-            const bookIndex = bibleBookSelect.value;
-            if (!currentBible[bookIndex]) return;
-            const book = currentBible[bookIndex];
-            bibleChapterSelect.innerHTML = '';
-            book.chapters.forEach((chapter, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `Cap. ${index + 1}`;
-                bibleChapterSelect.appendChild(option);
-            });
-            displayChapter();
-        }
-
-        function displayChapter() {
-            const bookIndex = bibleBookSelect.value;
-            const chapterIndex = bibleChapterSelect.value;
-             if (!currentBible[bookIndex] || !currentBible[bookIndex].chapters[chapterIndex]) return;
-            const chapter = currentBible[bookIndex].chapters[chapterIndex];
-            bibleContent.innerHTML = chapter.map((verse, index) =>
-                `<p><span class="font-bold text-blue-400 mr-2">${index + 1}</span><span id="verse-${bookIndex}-${chapterIndex}-${index}">${verse}</span></p>`
-            ).join('');
-        }
-        
-        function highlightVerse(bookIndex, chapterIndex, verseIndex) {
-            const verseElement = document.getElementById(`verse-${bookIndex}-${chapterIndex}-${verseIndex}`);
-            if (verseElement) {
-                // Limpa destaques anteriores
-                document.querySelectorAll('.highlighted-verse').forEach(el => el.classList.remove('highlighted-verse'));
-                verseElement.parentElement.classList.add('highlighted-verse');
-                verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        function getBookAbbreviations() {
-            // Mapeia abreviações para nomes completos para normalização
-            const abbrevs = {};
-            currentBible.forEach(book => {
-                abbrevs[book.abbrev.toLowerCase().replace(/\s/g, '')] = book.name;
-                abbrevs[book.name.toLowerCase().replace(/\s/g, '')] = book.name;
-            });
-            return abbrevs;
-        }
-
-        function parseAndLinkVerses(text) {
-             if (currentBible.length === 0) return text;
-            
-             const bookAbbrevs = currentBible.flatMap(b => [b.abbrev.replace('.', '\\.'), b.name]);
-             const bookRegexPart = `(?:\\d\\s*)?(${bookAbbrevs.join('|')})`;
-            
-             // Regex para capturar referências como "Jo 3.16", "1 Coríntios 13:4-7", "Gn 1.1,3,5-7"
-             const verseRegex = new RegExp(`${bookRegexPart}[\\s\\.]*(\\d+)(?:[:\\.](\\d+(?:(?:,\\d+)|(?:-\\d+))*))?`, 'gi');
-
-             return text.replace(verseRegex, (match, bookName, chapter, verses) => {
-                const book = currentBible.find(b => b.name === bookName || b.abbrev === bookName);
-                if (!book) return match;
-
-                const bookIndex = currentBible.indexOf(book);
-                const chapterIndex = parseInt(chapter, 10) - 1;
-
-                const verseRanges = (verses || '1').split(',').flatMap(part => {
-                    if (part.includes('-')) {
-                        const [start, end] = part.split('-').map(Number);
-                        const range = [];
-                        for (let i = start; i <= end; i++) range.push(i);
-                        return range;
-                    }
-                    return [Number(part)];
+            history.forEach(item => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left px-4 py-3 rounded-lg transition truncate text-white';
+                button.textContent = item.title;
+                button.title = item.title;
+                button.dataset.id = item.id;
+                button.addEventListener('click', () => {
+                    pageIdInput.value = item.id;
+                    generateBtn.click();
                 });
-                
-                const firstVerse = verseRanges[0] - 1;
-
-                return `<a href="#" class="bible-link text-blue-400 hover:underline" data-book="${bookIndex}" data-chapter="${chapterIndex}" data-verses="${JSON.stringify(verseRanges.map(v => v - 1))}">${match}</a>`;
+                historyList.appendChild(button);
             });
+            historyContainer.classList.remove('hidden');
+        } else {
+            historyContainer.classList.add('hidden');
+        }
+    };
+
+    // Swipe Gesture Handling
+    let touchStartX = 0, touchEndX = 0, touchStartY = 0, touchEndY = 0;
+    function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }
+    function handleTouchMove(e) { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; }
+    function handleTouchEnd() {
+        if (state.settings.displayMode !== 'slides') return;
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) { // Horizontal swipe
+            if (deltaX < 0) { goToNextSlide(); } else { goToPrevSlide(); }
+        }
+    }
+    
+    const init = () => {
+        // Função para ajustar a altura da aplicação à viewport visível
+        const setAppHeight = () => {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight(); // Define a altura inicial
+
+        if (timerPlayPauseBtn) timerPlayPauseBtn.innerHTML = ICONS.play;
+        if (settingsToggleBtn) settingsToggleBtn.innerHTML = ICONS.settings;
+        if (closeSettingsBtn) closeSettingsBtn.innerHTML = ICONS.close;
+        if (prevBtn) prevBtn.innerHTML = ICONS.arrowLeft;
+        if (nextBtn) nextBtn.innerHTML = ICONS.arrowRight;
+        if (historyToggleBtn) historyToggleBtn.innerHTML = ICONS.menu;
+        if (closeHistoryBtn) closeHistoryBtn.innerHTML = ICONS.close;
+        if (homeBtn) homeBtn.innerHTML = ICONS.home;
+        if (autoScrollToggleBtn) autoScrollToggleBtn.innerHTML = ICONS.scrollPlay;
+        if (calloutsToggleBtn) calloutsToggleBtn.innerHTML = ICONS.book;
+        if (closeCalloutsBtn) closeCalloutsBtn.innerHTML = ICONS.close;
+
+        document.querySelector('[data-setting="textAlign"][data-value="text-left"]').innerHTML = ICONS.alignLeft;
+        document.querySelector('[data-setting="textAlign"][data-value="text-center"]').innerHTML = ICONS.alignCenter;
+        document.querySelector('[data-setting="textAlign"][data-value="text-right"]').innerHTML = ICONS.alignRight;
+        document.querySelector('[data-setting="textAlign"][data-value="text-justify"]').innerHTML = ICONS.alignJustify;
+        
+        document.querySelector('[data-setting="contentAlign"][data-value="items-start"]').innerHTML = ICONS.alignHorizontalStart;
+        document.querySelector('[data-setting="contentAlign"][data-value="items-center"]').innerHTML = ICONS.alignHorizontalCenter;
+        document.querySelector('[data-setting="contentAlign"][data-value="items-end"]').innerHTML = ICONS.alignHorizontalEnd;
+
+        const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
+        if (savedSettings) {
+            state.settings = { ...state.settings, ...savedSettings };
+            // Garante que uma opção de margem válida esteja sempre selecionada
+            const validWidths = ['max-w-[33vw]', 'max-w-[66vw]', 'max-w-full'];
+            if (!validWidths.includes(state.settings.textWidth)) {
+                state.settings.textWidth = 'max-w-[66vw]'; // Redefine para o padrão se for inválido
+            }
         }
         
-        // --- Funções de UI e Eventos ---
+        applyTheme();
         
-        function applySettings() {
-            localStorage.setItem('notionSettings', JSON.stringify(state.settings));
-            wpmValue.textContent = state.settings.wpm;
-            wpmSetting.classList.toggle('hidden', state.settings.displayMode !== 'reader');
-            slideContainer.classList.toggle('items-start', state.settings.displayMode === 'reader');
+        generateBtn.addEventListener('click', () => fetchNotionContent(false));
+        previewBtn.addEventListener('click', () => fetchNotionContent(true));
+        settingsToggleBtn.addEventListener('click', () => toggleSettingsPanel(!settingsPanel.classList.contains('open')));
+        closeSettingsBtn.addEventListener('click', () => toggleSettingsPanel(false));
+        historyToggleBtn.addEventListener('click', () => toggleHistorySidebar(!historySidebar.classList.contains('open')));
+        closeHistoryBtn.addEventListener('click', () => toggleHistorySidebar(false));
+        calloutsToggleBtn.addEventListener('click', () => toggleCalloutsSidebar(!calloutsSidebar.classList.contains('open')));
+        closeCalloutsBtn.addEventListener('click', () => toggleCalloutsSidebar(false));
+        homeBtn.addEventListener('click', () => showView('setup'));
+        autoScrollToggleBtn.addEventListener('click', toggleAutoScroll);
+        
+        document.addEventListener('click', e => {
+            const isSidebarOpen = document.body.classList.contains('history-open') || 
+                                document.body.classList.contains('callouts-open') || 
+                                document.body.classList.contains('settings-open');
+
+            if (!isSidebarOpen) return;
+
+            const target = e.target;
+            const isClickInsideSidebar = target.closest('#history-sidebar') || 
+                                        target.closest('#callouts-sidebar') || 
+                                        target.closest('#settings-panel');
             
-            if (state.slides.length > 0) {
-                 goToSlide(state.currentSlide);
-            }
-        }
-
-        function closeAllSidebars() {
-            settingsPanel.classList.remove('open');
-            historySidebar.classList.remove('open');
-            bibleSidebar.classList.remove('open');
-        }
-
-        generateBtn.addEventListener('click', () => {
-            const pageId = extractPageId(pageIdInput.value.trim());
-            if (pageId) {
-                errorMessage.classList.add('hidden');
-                fetchNotionPage(pageId);
-            } else {
-                showError('ID da página inválido.');
-            }
-        });
-
-        backToHomeBtn.addEventListener('click', () => {
-            presentationView.classList.add('hidden');
-            homeView.classList.remove('hidden');
-            renderRecentHistory();
-        });
-
-        prevSlideBtn.addEventListener('click', goToPrevSlide);
-        nextSlideBtn.addEventListener('click', goToNextSlide);
-
-        settingsBtn.addEventListener('click', () => { closeAllSidebars(); settingsPanel.classList.add('open'); });
-        closeSettingsBtn.addEventListener('click', () => settingsPanel.classList.remove('open'));
-
-        historyBtn.addEventListener('click', () => { closeAllSidebars(); renderHistorySidebar(); historySidebar.classList.add('open'); });
-        closeHistorySidebarBtn.addEventListener('click', () => historySidebar.classList.remove('open'));
-
-        // Eventos da Bíblia
-        bibleSidebarBtn.addEventListener('click', () => { closeAllSidebars(); bibleSidebar.classList.add('open'); });
-        closeBibleSidebarBtn.addEventListener('click', () => bibleSidebar.classList.remove('open'));
-        
-        bibleVersionSelect.addEventListener('change', () => {
-            currentVersion = bibleVersionSelect.value;
-            loadBible(currentVersion);
-        });
-
-        bibleBookSelect.addEventListener('change', populateChapterSelect);
-        bibleChapterSelect.addEventListener('change', displayChapter);
-
-        document.body.addEventListener('click', e => {
-            const link = e.target.closest('.bible-link');
-            if (link) {
-                e.preventDefault();
-                const { book, chapter, verses } = link.dataset;
-                const verseList = JSON.parse(verses);
-                
+            const isClickOnToggleButton = target.closest('#history-toggle-btn') || 
+                                        target.closest('#callouts-toggle-btn-footer') || 
+                                        target.closest('#settings-toggle-btn');
+            
+            if (!isClickInsideSidebar && !isClickOnToggleButton) {
                 closeAllSidebars();
-                bibleSidebar.classList.add('open');
-
-                // Atualiza os selects e o conteúdo
-                bibleBookSelect.value = book;
-                populateChapterSelect();
-                bibleChapterSelect.value = chapter;
-                displayChapter();
-                
-                // O destaque precisa de um pequeno delay para garantir que o conteúdo foi renderizado
-                setTimeout(() => {
-                    document.querySelectorAll('.highlighted-verse').forEach(el => el.classList.remove('highlighted-verse'));
-                    verseList.forEach(verseIndex => {
-                        const verseElement = document.getElementById(`verse-${book}-${chapter}-${verseIndex}`);
-                        if (verseElement) {
-                             verseElement.parentElement.classList.add('highlighted-verse');
-                             // Rola para o primeiro versículo da seleção
-                             if (verseIndex === verseList[0]) {
-                                verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                             }
-                        }
-                    });
-                }, 100);
+            }
+        });
+        
+        slidesContainer.addEventListener('scroll', updateFooterInfo);
+        slidesContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+        slidesContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
+        slidesContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        document.querySelector('.settings-panel-content').addEventListener('click', handleSettingChange);
+        timerPlayPauseBtn.addEventListener('click', toggleTimer);
+        nextBtn.addEventListener('click', goToNextSlide);
+        prevBtn.addEventListener('click', goToPrevSlide);
+        
+        historyList.addEventListener('click', e => {
+            const button = e.target.closest('.history-item');
+            if (button && button.dataset.index) {
+                goToSlide(parseInt(button.dataset.index));
             }
         });
 
-
-        displayModeSelect.addEventListener('change', e => { state.settings.displayMode = e.target.value; applySettings(); });
         wpmIncreaseBtn.addEventListener('click', () => { state.settings.wpm = Math.min(state.settings.wpm + 10, 500); applySettings(); });
         wpmDecreaseBtn.addEventListener('click', () => { state.settings.wpm = Math.max(state.settings.wpm - 10, 20); applySettings(); });
         
         document.addEventListener('keydown', e => {
             if (presentationView.classList.contains('hidden')) return;
             if (e.key === 'Escape') { closeAllSidebars(); }
-            if (settingsPanel.classList.contains('open') || historySidebar.classList.contains('open') || bibleSidebar.classList.contains('open')) return;
+            if (settingsPanel.classList.contains('open') || historySidebar.classList.contains('open') || calloutsSidebar.classList.contains('open')) return;
             if (state.settings.displayMode === 'slides') {
                 if (e.key === 'ArrowRight' || e.key === ' ') goToNextSlide();
                 if (e.key === 'ArrowLeft') goToPrevSlide();
             }
         });
 
-        // --- Inicialização ---
-        function showTutorial() {
-            state.currentPage = { properties: { title: { title: [{ plain_text: "Bem-vindo!" }] } } };
-            state.slides = [
-                `
-                <h1 class="text-4xl font-bold mb-4">Bem-vindo ao Visualizador de Notas!</h1>
-                <p class="max-w-prose">Este é um tutorial interativo. Use as setas para navegar.</p>
-                <p class="text-sm mt-4 text-gray-500">Para começar, insira o ID de uma página do Notion na tela inicial.</p>
-                `,
-                `
-                <h2 class="text-3xl font-bold mb-4">Nova Funcionalidade: Bíblia Integrada</h2>
-                <p class="max-w-prose">Agora você pode referenciar versículos bíblicos em suas notas, e eles se tornarão links automaticamente.</p>
-                <p class="max-w-prose mt-4">Clique no ícone de livro no cabeçalho para abrir a Bíblia a qualquer momento.</p>
-                `,
-                `
-                <h2 class="text-3xl font-bold mb-4">Teste os Links da Bíblia</h2>
-                <p class="max-w-prose">Clique nas referências abaixo para vê-las na barra lateral:</p>
-                <ul class="list-disc mt-4 space-y-2 text-left max-w-sm mx-auto">
-                    <li>Nome por extenso: <strong>João 3:16</strong></li>
-                    <li>Com abreviação: <strong>Gn 1.1</strong></li>
-                    <li>Intervalo de versículos: <strong>1 Coríntios 13:4-7</strong></li>
-                    <li>Múltiplos versículos: <strong>Ef 6.11,12</strong></li>
-                </ul>
-                `
-            ];
-            goToSlide(0);
-            pageTitle.textContent = getPageTitle(state.currentPage);
-            homeView.classList.add('hidden');
-            presentationView.classList.remove('hidden');
-        }
-
-        applySettings();
         const urlParams = new URLSearchParams(window.location.search);
-        loadBible(currentVersion).then(() => {
-             if (urlParams.has('pageId')) {
-                 pageIdInput.value = urlParams.get('pageId');
-                 generateBtn.click();
-             } else {
-                 renderRecentHistory();
-                 if (Object.keys(state.history).length === 0) {
-                    showTutorial();
-                 }
-             }
-        });
-
-    });
+        if (urlParams.has('pageId')) {
+             pageIdInput.value = urlParams.get('pageId');
+             generateBtn.click();
+        } else {
+             renderRecentHistory();
+        }
+        
+        applySettings();
+    };
+    
+    document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
+
