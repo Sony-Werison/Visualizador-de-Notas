@@ -9,13 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     closeBibleBtn = document.getElementById('close-bible-btn');
     function openBibleSidebar() {
         bibleSidebar.style.transform = 'translateX(0)';
-        bibleSidebar.style.visibility = 'visible';
-        bibleSidebar.style.pointerEvents = 'auto';
     }
     function closeBibleSidebar() {
         bibleSidebar.style.transform = 'translateX(100%)';
-        bibleSidebar.style.visibility = 'hidden';
-        bibleSidebar.style.pointerEvents = 'none';
     }
     if (bibleToggleBtn) bibleToggleBtn.onclick = openBibleSidebar;
     if (closeBibleBtn) closeBibleBtn.onclick = closeBibleSidebar;

@@ -26,6 +26,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&family=Lora:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Garante que a barra lateral da Bíblia não bloqueie cliques quando fechada */
+#bible-sidebar.translate-x-full {
+    pointer-events: none;
+}
+#bible-sidebar {
+    pointer-events: auto;
+}
         :root {
             --font-sans: 'Inter', sans-serif;
             --font-serif: 'Merriweather', serif;
