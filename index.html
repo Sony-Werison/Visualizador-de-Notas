@@ -17,21 +17,18 @@
 
     <!-- Manifesto do Web App e Favicons -->
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="icon" href="favicon.png">
-    <link rel="shortcut icon" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&family=Lora:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --font-sans: 'Inter', sans-serif;
             --font-serif: 'Merriweather', serif;
             --font-display: 'Poppins', sans-serif;
-            --font-lora: 'Lora', serif;
-            --font-baskerville: 'Libre Baskerville', serif;
             /* Variável para a altura real da viewport */
             --app-height: 100vh;
         }
@@ -41,38 +38,29 @@
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
         .font-display { font-family: var(--font-display); }
-        .font-lora { font-family: var(--font-lora); }
-        .font-baskerville { font-family: var(--font-baskerville); }
         .leading-extra { line-height: 2.5 !important; }
 
         .slide-content { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .settings-panel, .history-sidebar, .callouts-sidebar { transition: transform 0.3s ease-in-out; }
+        .settings-panel, .history-sidebar, #bible-sidebar { transition: transform 0.3s ease-in-out; }
         .settings-panel { transform: translateX(100%); }
         .settings-panel.open { transform: translateX(0); }
-        .history-sidebar, .callouts-sidebar { transform: translateX(-100%); }
-        .history-sidebar.open, .callouts-sidebar.open { transform: translateX(0); }
-        #slides-container::-webkit-scrollbar, #history-list::-webkit-scrollbar, .settings-panel-content::-webkit-scrollbar, #callouts-list::-webkit-scrollbar { width: 8px; }
-        #slides-container::-webkit-scrollbar-track, #history-list::-webkit-scrollbar-track, .settings-panel-content::-webkit-scrollbar-track, #callouts-list::-webkit-scrollbar-track { background: transparent; }
-        #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb, .settings-panel-content::-webkit-scrollbar-thumb, #callouts-list::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
+        .history-sidebar, #bible-sidebar { transform: translateX(-100%); }
+        .history-sidebar.open, #bible-sidebar.open { transform: translateX(0); }
+        #slides-container::-webkit-scrollbar, #history-list::-webkit-scrollbar, .settings-panel-content::-webkit-scrollbar, #bible-verses::-webkit-scrollbar { width: 8px; }
+        #slides-container::-webkit-scrollbar-track, #history-list::-webkit-scrollbar-track, .settings-panel-content::-webkit-scrollbar-track, #bible-verses::-webkit-scrollbar-track { background: transparent; }
+        #slides-container::-webkit-scrollbar-thumb, #history-list::-webkit-scrollbar-thumb, .settings-panel-content::-webkit-scrollbar-thumb, #bible-verses::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
         #doc-progress-bar, #page-progress-bar { transition: width 0.3s ease-out; }
         
-        /* Estilos para listas aninhadas */
-        .slide-content ul ul { list-style-type: circle; margin-left: 1.5rem; }
-        .slide-content ul ul ul { list-style-type: square; margin-left: 1.5rem; }
-        .slide-content ol ol { list-style-type: lower-alpha; margin-left: 1.5rem; }
-        .slide-content ol ol ol { list-style-type: lower-roman; margin-left: 1.5rem; }
-
         /* --- Dark Theme (Default) --- */
         html.theme-dark body { background-color: #191919; color: #d1d5db; }
         html.theme-dark #setup-view { background-color: #191919; }
-        html.theme-dark .control-btn-group { background-color: #374151; }
+        html.theme-dark .control-btn-group, html.theme-dark select { background-color: #374151; }
         html.theme-dark .control-btn-group button.active { background-color: #4b5563; color: white; }
-        html.theme-dark .font-selector button.active { background-color: #4b5563; }
         html.theme-dark .history-item.active, .dark .callout-item.active { background-color: #475569 !important; color: white !important; }
         html.theme-dark .subtext-dark { color: #9ca3af; }
         html.theme-dark header, html.theme-dark footer { background-color: rgba(25, 25, 25, 0.85); backdrop-filter: blur(4px); }
-        html.theme-dark .settings-panel, html.theme-dark .history-sidebar, html.theme-dark .callouts-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
+        html.theme-dark .settings-panel, html.theme-dark .history-sidebar, html.theme-dark #bible-sidebar { background-color: rgba(31, 41, 55, 0.95); backdrop-filter: blur(4px); }
         html.theme-dark #wpm-decrease, html.theme-dark #wpm-increase { background-color: #374151 }
         html.theme-dark blockquote { border-color: #4b5563; }
         html.theme-dark hr { border-color: #374151; }
@@ -101,10 +89,9 @@
         html.theme-light header, html.theme-light footer { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); }
         html.theme-light #clock, html.theme-light #overall-timer, html.theme-light #footer-info { color: #1f2937; }
         html.theme-light .header-btn, html.theme-light .footer-btn { background-color: #e5e7eb; color: #1f2937;}
-        html.theme-light .settings-panel, html.theme-light .history-sidebar, html.theme-light .callouts-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
-        html.theme-light .control-btn-group { background-color: #e5e7eb; }
+        html.theme-light .settings-panel, html.theme-light .history-sidebar, html.theme-light #bible-sidebar { background-color: rgba(249, 250, 251, 0.95); backdrop-filter: blur(4px); }
+        html.theme-light .control-btn-group, html.theme-light select { background-color: #e5e7eb; }
         html.theme-light .control-btn-group button.active { background-color: #ffffff; color: #111827; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        html.theme-light .font-selector button.active { background-color: #dbeafe; color: #1e40af;}
         html.theme-light .history-item.active, html.theme-light .callout-item.active { background-color: #dbeafe !important; color: #1e40af !important; }
         html.theme-light .history-item.active .text-gray-400, html.theme-light .history-item.active .subtext-light, html.theme-light .callout-item.active .text-gray-400 { color: #1e3a8a !important; }
         html.theme-light .history-item .text-gray-400, html.theme-light .callout-item .text-gray-400 { color: #6b7280; }
@@ -112,7 +99,7 @@
         html.theme-light blockquote { color: #374151; border-color: #d1d5db; }
         html.theme-light hr { border-color: #e5e7eb; }
         html.theme-light .border-b { border-color: #e5e7eb; }
-        html.theme-light #slides-container::-webkit-scrollbar-thumb, html.theme-light #history-list::-webkit-scrollbar-thumb, html.theme-light .settings-panel-content::-webkit-scrollbar-thumb, html.theme-light #callouts-list::-webkit-scrollbar-thumb { background-color: #9ca3af; }
+        html.theme-light #slides-container::-webkit-scrollbar-thumb, html.theme-light #history-list::-webkit-scrollbar-thumb, html.theme-light .settings-panel-content::-webkit-scrollbar-thumb, html.theme-light #bible-verses::-webkit-scrollbar-thumb { background-color: #9ca3af; }
         html.theme-light #wpm-decrease, html.theme-light #wpm-increase { background-color: #e5e7eb }
         html.theme-light .progress-bar-bg { background-color: #e5e7eb; }
         html.theme-light #history-container { border-color: #e5e7eb; }
@@ -134,11 +121,10 @@
         html.theme-sepia body { background-color: #f4e8d1; color: #5b4636; }
         html.theme-sepia #setup-view { background-color: #f4e8d1; }
         html.theme-sepia header, html.theme-sepia footer { background-color: rgba(244, 232, 209, 0.85); backdrop-filter: blur(4px); }
-        html.theme-sepia .settings-panel, html.theme-sepia .history-sidebar, html.theme-sepia .callouts-sidebar { background-color: rgba(229, 217, 193, 0.95); }
+        html.theme-sepia .settings-panel, html.theme-sepia .history-sidebar, html.theme-sepia #bible-sidebar { background-color: rgba(229, 217, 193, 0.95); }
         html.theme-sepia .header-btn, html.theme-sepia .footer-btn, html.theme-sepia #wpm-decrease, html.theme-sepia #wpm-increase { background-color: #dcd1b8; color: #5b4636; }
-        html.theme-sepia .control-btn-group { background-color: #dcd1b8; }
+        html.theme-sepia .control-btn-group, html.theme-sepia select { background-color: #dcd1b8; }
         html.theme-sepia .control-btn-group button.active { background-color: #c9bc9d; }
-        html.theme-sepia .font-selector button.active { background-color: #c9bc9d; }
         html.theme-sepia hr, html.theme-sepia blockquote, html.theme-sepia #history-container, html.theme-sepia .border-b { border-color: #c9bc9d; }
         html.theme-sepia .progress-bar-bg { background-color: #dcd1b8; }
         html.theme-sepia #page-progress-bar { background-color: #8c6f56; }
@@ -160,11 +146,10 @@
         html.theme-light-green body { background-color: #ecfdf5; color: #065f46; }
         html.theme-light-green #setup-view { background-color: #ecfdf5; }
         html.theme-light-green header, html.theme-light-green footer { background-color: rgba(236, 253, 245, 0.85); backdrop-filter: blur(4px); }
-        html.theme-light-green .settings-panel, html.theme-light-green .history-sidebar, html.theme-light-green .callouts-sidebar { background-color: rgba(221, 250, 235, 0.95); }
+        html.theme-light-green .settings-panel, html.theme-light-green .history-sidebar, html.theme-light-green #bible-sidebar { background-color: rgba(221, 250, 235, 0.95); }
         html.theme-light-green .header-btn, html.theme-light-green .footer-btn, html.theme-light-green #wpm-decrease, html.theme-light-green #wpm-increase { background-color: #d1fae5; color: #065f46; }
-        html.theme-light-green .control-btn-group { background-color: #d1fae5; }
+        html.theme-light-green .control-btn-group, html.theme-light-green select { background-color: #d1fae5; }
         html.theme-light-green .control-btn-group button.active { background-color: #a7f3d0; }
-        html.theme-light-green .font-selector button.active { background-color: #a7f3d0; }
         html.theme-light-green hr, html.theme-light-green blockquote, html.theme-light-green #history-container, html.theme-light-green .border-b { border-color: #a7f3d0; }
         html.theme-light-green .progress-bar-bg { background-color: #d1fae5; }
         html.theme-light-green .notion-callout.notion-default_background { background-color: rgba(6, 95, 70, 0.08); }
@@ -185,11 +170,10 @@
         html.theme-light-blue body { background-color: #e0f2fe; color: #0c4a6e; }
         html.theme-light-blue #setup-view { background-color: #e0f2fe; }
         html.theme-light-blue header, html.theme-light-blue footer { background-color: rgba(224, 242, 254, 0.85); backdrop-filter: blur(4px); }
-        html.theme-light-blue .settings-panel, html.theme-light-blue .history-sidebar, html.theme-light-blue .callouts-sidebar { background-color: rgba(207, 234, 252, 0.95); }
+        html.theme-light-blue .settings-panel, html.theme-light-blue .history-sidebar, html.theme-light-blue #bible-sidebar { background-color: rgba(207, 234, 252, 0.95); }
         html.theme-light-blue .header-btn, html.theme-light-blue .footer-btn, html.theme-light-blue #wpm-decrease, html.theme-light-blue #wpm-increase { background-color: #bae6fd; color: #0c4a6e; }
-        html.theme-light-blue .control-btn-group { background-color: #bae6fd; }
+        html.theme-light-blue .control-btn-group, html.theme-light-blue select { background-color: #bae6fd; }
         html.theme-light-blue .control-btn-group button.active { background-color: #7dd3fc; }
-        html.theme-light-blue .font-selector button.active { background-color: #7dd3fc; }
         html.theme-light-blue hr, html.theme-light-blue blockquote, html.theme-light-blue #history-container, html.theme-light-blue .border-b { border-color: #7dd3fc; }
         html.theme-light-blue .progress-bar-bg { background-color: #bae6fd; }
         html.theme-light-blue .notion-callout.notion-default_background { background-color: rgba(12, 74, 110, 0.08); }
@@ -209,10 +193,14 @@
         .slide-content .text-highlight {
             padding: 2px 4px;
             border-radius: 4px;
-            /* margin: -2px -4px; /* Removido para corrigir quebra de linha em texto negrito */
+            margin: -2px -4px;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
             display: inline;
+        }
+
+        .slide-content .text-highlight > .font-bold {
+            display: inline; 
         }
 
         /* Light Theme Highlights (Vivid Colors) */
@@ -286,9 +274,9 @@
             width: calc(100% - 33.3333%);
         }
 
-        body.callouts-open #presentation-view > header,
-        body.callouts-open #presentation-view > footer,
-        body.callouts-open #presentation-view > main {
+        body.bible-open #presentation-view > header,
+        body.bible-open #presentation-view > footer,
+        body.bible-open #presentation-view > main {
             margin-left: 33.3333%;
             width: calc(100% - 33.3333%);
         }
@@ -300,7 +288,16 @@
             width: calc(100% - 20rem);
         }
 
-        #history-sidebar, #callouts-sidebar { width: 33.3333%; }
+        #history-sidebar, #bible-sidebar { width: 33.3333%; }
+        .verse.highlighted {
+            background-color: rgba(255, 255, 0, 0.3);
+            border-radius: 4px;
+        }
+        .bible-ref-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen">
@@ -352,7 +349,7 @@
         <footer id="footer-bar" class="w-full p-4 flex justify-between items-center fixed bottom-0 left-0 z-20">
             <div class="w-1/4 flex items-center gap-2">
                 <button id="history-toggle-btn" title="Navegação / Histórico" class="footer-btn hidden p-3 rounded-full transition"></button>
-                <button id="callouts-toggle-btn-footer" title="Destaques" class="footer-btn hidden p-3 rounded-full transition"></button>
+                <button id="bible-toggle-btn-footer" title="Bíblia" class="footer-btn p-3 rounded-full transition"></button>
             </div>
             <div id="footer-center" class="w-1/2 px-4">
                 <!-- Conteúdo do rodapé injetado via JS -->
@@ -371,12 +368,19 @@
             <div id="history-list" class="flex-1 overflow-y-auto"></div>
         </aside>
 
-        <aside id="callouts-sidebar" class="callouts-sidebar fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
+        <aside id="bible-sidebar" class="fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
              <div class="p-4 flex justify-between items-center border-b">
-                <h3 class="font-bold text-lg">Destaques</h3>
-                <button id="close-callouts-btn" title="Fechar" class="p-2"></button>
+                <h3 class="font-bold text-lg">Bíblia</h3>
+                <button id="close-bible-btn" title="Fechar" class="p-2"></button>
             </div>
-            <div id="callouts-list" class="flex-1 overflow-y-auto"></div>
+            <div class="p-2 space-y-2 border-b">
+                 <select id="bible-version-select" class="w-full p-2 rounded-md border-transparent focus:ring-2 focus:ring-blue-500"></select>
+                 <div class="grid grid-cols-2 gap-2">
+                    <select id="bible-book-select" class="w-full p-2 rounded-md border-transparent focus:ring-2 focus:ring-blue-500"></select>
+                    <select id="bible-chapter-select" class="w-full p-2 rounded-md border-transparent focus:ring-2 focus:ring-blue-500"></select>
+                 </div>
+            </div>
+            <div id="bible-verses" class="flex-1 overflow-y-auto p-4 space-y-3 text-sm"></div>
         </aside>
 
         <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 shadow-2xl z-40 flex flex-col">
@@ -403,29 +407,8 @@
                     </div>
                 </div>
                  <div>
-                    <h4 class="font-semibold mb-3">Fonte</h4>
-                    <div class="font-selector flex flex-wrap gap-2 justify-center">
-                        <button data-setting="fontFamily" data-value="font-sans" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
-                            <div class="text-3xl font-sans">Aa</div>
-                            <span class="text-xs mt-1">Inter</span>
-                        </button>
-                        <button data-setting="fontFamily" data-value="font-serif" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
-                            <div class="text-3xl font-serif">Aa</div>
-                            <span class="text-xs mt-1">Merriweather</span>
-                        </button>
-                        <button data-setting="fontFamily" data-value="font-display" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
-                            <div class="text-3xl font-display">Aa</div>
-                            <span class="text-xs mt-1">Poppins</span>
-                        </button>
-                        <button data-setting="fontFamily" data-value="font-lora" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
-                            <div class="text-3xl font-lora">Aa</div>
-                            <span class="text-xs mt-1">Lora</span>
-                        </button>
-                        <button data-setting="fontFamily" data-value="font-baskerville" class="w-20 h-20 flex flex-col items-center justify-center rounded-md transition">
-                            <div class="text-3xl font-baskerville">Aa</div>
-                            <span class="text-xs mt-1">Baskerville</span>
-                        </button>
-                    </div>
+                    <h4 class="font-semibold mb-3">Versão da Bíblia Padrão</h4>
+                     <select id="default-bible-version-select" data-setting="bibleVersion" class="w-full p-2 rounded-md border-transparent focus:ring-2 focus:ring-blue-500"></select>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-3">Quebras de Página</h4>
@@ -460,7 +443,14 @@
                         <button data-setting="textAlign" data-value="text-justify" class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
                     </div>
                 </div>
-
+                <div>
+                    <h4 class="font-semibold mb-3">Fonte</h4>
+                    <div class="control-btn-group flex rounded-md p-1">
+                        <button data-setting="fontFamily" data-value="font-sans" class="flex-1 px-2 py-1 rounded font-sans">Inter</button>
+                        <button data-setting="fontFamily" data-value="font-serif" class="flex-1 px-2 py-1 rounded font-serif">Merriweather</button>
+                        <button data-setting="fontFamily" data-value="font-display" class="flex-1 px-2 py-1 rounded font-display">Poppins</button>
+                    </div>
+                </div>
                 <div>
                     <h4 class="font-semibold mb-3">Tamanho da Fonte (Texto)</h4>
                     <div class="control-btn-group flex rounded-md p-1">
@@ -549,7 +539,8 @@
     const homeBtn = $('#home-btn');
     const wpmDecreaseBtn = $('#wpm-decrease'), wpmIncreaseBtn = $('#wpm-increase'), wpmDisplay = $('#wpm-display');
     const historySidebar = $('#history-sidebar'), historyToggleBtn = $('#history-toggle-btn'), closeHistoryBtn = $('#close-history-btn'), historyList = $('#history-list');
-    const calloutsSidebar = $('#callouts-sidebar'), calloutsToggleBtn = $('#callouts-toggle-btn-footer'), closeCalloutsBtn = $('#close-callouts-btn'), calloutsList = $('#callouts-list');
+    const bibleSidebar = $('#bible-sidebar'), bibleToggleBtn = $('#bible-toggle-btn-footer'), closeBibleBtn = $('#close-bible-btn');
+    const bibleVersionSelect = $('#bible-version-select'), defaultBibleVersionSelect = $('#default-bible-version-select'), bibleBookSelect = $('#bible-book-select'), bibleChapterSelect = $('#bible-chapter-select'), bibleVersesContainer = $('#bible-verses');
     const autoScrollToggleBtn = $('#auto-scroll-toggle-btn');
 
     let state = {
@@ -564,6 +555,12 @@
             textAlign: 'text-left',
             contentAlign: 'items-center',
             calloutFontSize: 2,
+            bibleVersion: 'NVI',
+        },
+        bible: {
+            versions: {}, // Armazena os dados das bíblias carregadas. Ex: { NVI: data, ARA: data }
+            currentBook: 0,
+            currentChapter: 0,
         }
     };
 
@@ -585,63 +582,51 @@
                     { type: 'text', text: { content: ' ) aparecerá no topo.' } }
                 ] } },
                 
-                { id: 'mock-h-3', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Painel de Ajustes (⚙️)' }] } },
-                { id: 'mock-p-4', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone de engrenagem no canto superior direito para abrir o painel de Ajustes. Lá você pode customizar sua experiência de leitura.' }] } },
-                { id: 'mock-callout-1', type: 'callout', callout: { icon: { emoji: '🎨' }, rich_text: [{ type: 'text', text: { content: 'Cor da Página: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Escolha entre diversos temas, como claro, escuro, sépia e outros.' } }], color: 'gray_background' } },
-                { id: 'mock-callout-2', type: 'callout', callout: { icon: { emoji: '✒️' }, rich_text: [{ type: 'text', text: { content: 'Fonte e Estilo: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Ajuste a família da fonte, tamanho, espaçamento entre linhas, margens e alinhamento do texto.' } }], color: 'yellow_background' } },
-                { id: 'mock-callout-3', type: 'callout', callout: { icon: { emoji: '⏱️' }, rich_text: [{ type: 'text', text: { content: 'Velocidade de Leitura (PPM): ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Defina suas palavras por minuto. Isso ajusta as estimativas de tempo no rodapé e a velocidade da rolagem automática.' } }], color: 'blue_background' } },
+                { id: 'mock-h-4', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Barra Lateral da Bíblia (📖)' }] } },
+                { id: 'mock-p-5', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'A antiga barra de Destaques agora é um poderoso navegador da Bíblia! As referências a versículos no seu texto são detectadas e transformadas em links automaticamente.' }] } },
+                { id: 'mock-p-6', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Clique nos exemplos para testar: ' } },
+                    { type: 'text', text: { content: 'Jo 3.16' } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: '1 Coríntios 13:4-7' } },
+                    { type: 'text', text: { content: ' ou ' } },
+                    { type: 'text', text: { content: 'Rm 8:28,31' } },
+                     { type: 'text', text: { content: '.' } }
+                ] } },
+                { id: 'mock-callout-bible', type: 'callout', callout: { icon: { emoji: '🔧' }, rich_text: [{ type: 'text', text: { content: 'Dica: ' }, annotations: { bold: true } }, { type: 'text', text: { content: 'Você pode escolher sua versão preferida da Bíblia (NVI, ARA, etc.) no painel de Ajustes.' } }], color: 'green_background' } },
 
-                { id: 'mock-h-4', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Barras Laterais' }] } },
-                { id: 'mock-p-5', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'No canto inferior esquerdo, você encontrará botões para abrir duas barras laterais úteis:' }] } },
-                { id: 'mock-p-6', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Navegação (☰):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Disponível no modo Páginas, mostra uma lista de todas as páginas para acesso rápido.' } }] } },
-                { id: 'mock-p-7', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: 'Destaques (📖):' }, annotations: { bold: true } }, { type: 'text', text: { content: ' Reúne todos os blocos de "callout" do documento, servindo como um sumário dos pontos mais importantes.' } }] } },
 
                 { id: 'mock-h-5', type: 'heading_2', heading_2: { rich_text: [{ plain_text: 'Formatação de Texto' }] } },
                 { id: 'mock-p-8', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'O visualizador é compatível com as formatações básicas do Notion.' }] } },
-                { id: 'mock-p-9', type: 'paragraph', paragraph: { rich_text: [
-                    { type: 'text', text: { content: 'Você pode ter texto em ' } },
-                    { type: 'text', text: { content: 'negrito' }, annotations: { bold: true } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'itálico' }, annotations: { italic: true } },
-                    { type: 'text', text: { content: ', ' } },
-                    { type: 'text', text: { content: 'sublinhado' }, annotations: { underline: true } },
-                    { type: 'text', text: { content: ' e ' } },
-                    { type: 'text', text: { content: 'tachado' }, annotations: { strikethrough: true } },
-                    { type: 'text', text: { content: '.' } }
-                ] } },
-                { id: 'mock-p-10', type: 'paragraph', paragraph: { rich_text: [
-                    { type: 'text', text: { content: 'Também é possível aplicar ' } },
-                    { type: 'text', text: { content: 'cores diferentes' }, "annotations": { "color": "blue" } },
-                    { type: 'text', text: { content: ' ao texto e usar o estilo de ' } },
-                    { type: 'text', text: { content: 'código' }, "annotations": { "code": true } },
-                    { type: 'text', text: { content: '.' } }
-                ] } },
                 { id: 'mock-p-11', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'E, claro, os ' } },
                     { type: 'text', text: { content: 'destaques com cor de fundo' }, "annotations": { "color": "red_background" } },
-                    { type: 'text', text: { content: ' são exibidos corretamente.' } }
+                    { type: 'text', text: { content: ' são exibidos com o novo estilo!' } }
+                ] } },
+                 { id: 'mock-p-12', type: 'paragraph', paragraph: { rich_text: [
+                    { type: 'text', text: { content: 'Aqui estão mais exemplos: ' } },
+                    { type: 'text', text: { content: 'cinza' }, "annotations": { "color": "gray_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'marrom' }, "annotations": { "color": "brown_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'laranja' }, "annotations": { "color": "orange_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'amarelo' }, "annotations": { "color": "yellow_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'verde' }, "annotations": { "color": "green_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'azul' }, "annotations": { "color": "blue_background" } },
+                    { type: 'text', text: { content: ', ' } },
+                    { type: 'text', text: { content: 'roxo' }, "annotations": { "color": "purple_background" } },
+                    { type: 'text', text: { content: ' e ' } },
+                    { type: 'text', text: { content: 'rosa' }, "annotations": { "color": "pink_background" } },
+                    { type: 'text', text: { content: '.' } }
                 ] } },
                 { id: 'mock-p-14', type: 'paragraph', paragraph: { rich_text: [
                     { type: 'text', text: { content: 'Teste de ' } },
-                    { type: 'text', text: { content: 'negrito e destaque' }, annotations: { bold: true, color: "yellow_background" } },
+                    { type: 'text', text: { content: 'negrito e destaque', "annotations": { "bold": true, "color": "yellow_background" } } },
                     { type: 'text', text: { content: ' juntos.' } }
                 ] } },
-                { id: 'mock-p-15', type: 'paragraph', paragraph: { rich_text: [
-                    { type: 'text', text: { content: 'Esta frase mais longa demonstra como o ' } },
-                    { type: 'text', text: { content: 'texto em negrito com fundo colorido agora quebra a linha corretamente' }, annotations: { bold: true, color: "blue_background" } },
-                    { type: 'text', text: { content: ' sem cortar nenhuma letra no final.' } }
-                ] } },
-                { 
-                    id: 'mock-list-1', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 1 da lista.' }] },
-                    children: [
-                        { id: 'mock-list-2', type: 'bulleted_list_item', has_children: true, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 2 da lista.' }] },
-                            children: [
-                                { id: 'mock-list-3', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Nível 3 da lista.' }] } }
-                            ]
-                        }
-                    ]
-                },
-                { id: 'mock-list-4', type: 'bulleted_list_item', has_children: false, bulleted_list_item: { rich_text: [{ plain_text: 'Outro item de Nível 1.' }] } },
 
                  { id: 'mock-h-7', type: 'heading_1', heading_1: { rich_text: [{ plain_text: 'Pronto para Começar?' }] } },
                  { id: 'mock-p-13', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!' }] } },
@@ -695,7 +680,7 @@
     const parseBlocksIntoSlides = (blocks) => {
         if (!blocks || blocks.length === 0) return [[]];
         if (state.settings.displayMode === 'scroll') {
-            calloutsToggleBtn.classList.remove('hidden');
+            bibleToggleBtn.classList.remove('hidden');
             return [blocks];
         };
         const slides = []; let currentSlideContent = [];
@@ -750,7 +735,7 @@
             "red": "text-red-700",
         }
 
-        return richTextArray.map(text => {
+        let html = richTextArray.map(text => {
             const annotations = text.annotations || {};
             const classList = [];
             if (annotations.bold) classList.push('font-bold');
@@ -775,6 +760,8 @@
             }
             return `<span class="${classList.join(' ')}">${content}</span>`;
         }).join('');
+        
+        return parseAndLinkBibleReferences(html);
     };
 
     const createHtmlFromBlock = (block) => {
@@ -827,7 +814,6 @@
         applySettings(); 
         updateControls(); 
         renderHistorySidebar(); 
-        renderCalloutsSidebar();
         requestAnimationFrame(() => requestAnimationFrame(updateFooterInfo));
     };
 
@@ -918,7 +904,12 @@
         updateFooterInfo();
     };
     
-    const countWordsInBlock = (block) => (block[block.type]?.rich_text || []).map(t => t.plain_text).join(' ').trim().split(/\s+/).filter(Boolean).length;
+    const countWordsInBlock = (block) => {
+        const richText = block[block.type]?.rich_text;
+        if (!richText) return 0;
+        return richText.map(t => t.plain_text || (t.text ? t.text.content : '')).join(' ').trim().split(/\s+/).filter(Boolean).length;
+    };
+
     const formatTime = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
     
     const updateFooterInfo = () => {
@@ -939,19 +930,13 @@
             let scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
             scrollPercent = Math.max(0, Math.min(1, scrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
 
-            let infoHTML = '';
-            if (state.settings.progressDisplay === 'percent') {
-                 infoHTML = `<div class="text-center text-sm font-mono mb-2">Progresso: ${Math.round(scrollPercent * 100)}%</div>`;
-            } else { // 'time' display
-                const wordsRead = totalWordsAll * scrollPercent;
-                const wordsRemaining = totalWordsAll - wordsRead;
-                
-                const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
-                const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
-                
-                infoHTML = `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
-            }
+            const wordsRead = totalWordsAll * scrollPercent;
+            const wordsRemaining = totalWordsAll - wordsRead;
             
+            const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
+            const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
+            
+            const infoHTML = `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
             const barHTML = `<div class="w-full">${docBarHTML}</div>`;
             
             footerCenter.innerHTML = infoHTML + barHTML;
@@ -1031,36 +1016,12 @@
             historyList.appendChild(item);
         });
     };
-
-    const renderCalloutsSidebar = () => {
-        const calloutBlocks = state.rawBlocks.filter(b => b.type === 'callout');
-        calloutsToggleBtn.classList.toggle('hidden', calloutBlocks.length === 0);
-        if (calloutBlocks.length === 0) {
-            toggleCalloutsSidebar(false);
-            return;
-        }
-
-        calloutsList.innerHTML = '';
-        calloutBlocks.forEach(block => {
-            const content = block.callout;
-            const iconHTML = content.icon ? `<span class="text-xl w-6 flex-shrink-0 text-center">${content.icon.emoji}</span>` : '';
-            const text = (content.rich_text || []).map(t => t.plain_text).join('');
-            const item = document.createElement('div');
-            item.className = 'callout-item w-full text-left p-4 border-b';
-            item.innerHTML = `<div class="flex items-start">
-                                ${iconHTML}
-                                <span class="flex-1 ${content.icon ? 'ml-2' : ''}">${text}</span>
-                            </div>`;
-            calloutsList.appendChild(item);
-        });
-        applySettings(); // Re-apply font size for callouts
-    };
     
     const closeAllSidebars = () => {
-        document.body.classList.remove('history-open', 'callouts-open', 'settings-open');
+        document.body.classList.remove('history-open', 'bible-open', 'settings-open');
         historySidebar.classList.remove('open');
         settingsPanel.classList.remove('open');
-        calloutsSidebar.classList.remove('open');
+        bibleSidebar.classList.remove('open');
     };
 
     const toggleHistorySidebar = (open) => { 
@@ -1083,14 +1044,14 @@
             document.body.classList.remove('settings-open');
         } 
     };
-    const toggleCalloutsSidebar = (open) => { 
+    const toggleBibleSidebar = (open) => { 
         if (open) { 
             closeAllSidebars(); 
-            calloutsSidebar.classList.add('open');
-            document.body.classList.add('callouts-open');
+            bibleSidebar.classList.add('open');
+            document.body.classList.add('bible-open');
         } else { 
-            calloutsSidebar.classList.remove('open');
-            document.body.classList.remove('callouts-open');
+            bibleSidebar.classList.remove('open');
+            document.body.classList.remove('bible-open');
         } 
     };
 
@@ -1133,7 +1094,7 @@
         const content = contentWrapper.querySelector('.slide-content');
         if (!content) return;
 
-        const fontClasses = ['font-sans', 'font-serif', 'font-display', 'font-lora', 'font-baskerville', 'leading-relaxed', 'leading-loose', 'leading-extra', 'max-w-xl', 'max-w-3xl', 'max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
+        const fontClasses = ['font-sans','font-serif','font-display','leading-relaxed','leading-loose', 'leading-extra','max-w-xl','max-w-3xl','max-w-5xl', 'max-w-[33%]', 'max-w-[66%]', 'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'];
         content.classList.remove(...fontClasses); 
         content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings.textWidth);
         
@@ -1165,17 +1126,24 @@
                     btn.classList.toggle('active', state.settings.pageBreakHeadings.includes(btn.dataset.value));
                 });
             } else {
-                document.querySelectorAll(`[data-setting="${key}"]`).forEach(btn => {
-                    const value = key === 'theme' ? state.settings.theme.replace('theme-', '') : state.settings[key];
-                    btn.classList.toggle('active', btn.dataset.value == value);
-                     if (key === 'theme') {
-                        if (btn.dataset.value === value) {
-                            btn.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
-                             // Define a cor do anel de destaque com base no tema
-                            const ringColor = document.documentElement.classList.contains('theme-light') ? '#F9FAFB' : '#1F293B';
-                            btn.style.setProperty('--tw-ring-offset-color', ringColor);
-                        } else {
-                            btn.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500');
+                 document.querySelectorAll(`[data-setting="${key}"]`).forEach(el => {
+                    let valueToCompare = state.settings[key];
+                    if (key === 'theme') {
+                        valueToCompare = valueToCompare.replace('theme-', '');
+                    }
+                    
+                    if (el.tagName === 'SELECT') {
+                        el.value = valueToCompare;
+                    } else if (el.tagName === 'BUTTON') {
+                         el.classList.toggle('active', el.dataset.value == valueToCompare);
+                         if (key === 'theme') {
+                            if (el.dataset.value === valueToCompare) {
+                                el.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+                                const ringColor = document.documentElement.classList.contains('theme-light') ? '#F9FAFB' : '#1F293B';
+                                el.style.setProperty('--tw-ring-offset-color', ringColor);
+                            } else {
+                                el.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500');
+                            }
                         }
                     }
                 });
@@ -1217,41 +1185,56 @@
     }
     
     const handleSettingChange = (e) => {
-        const btn = e.target.closest('button[data-setting]');
-        if (!btn) return;
-        const { setting, value } = btn.dataset;
+        const el = e.target;
+        if (!el.dataset.setting) return;
+
+        const { setting, value } = el.dataset;
         let settingChanged = false;
 
-        if (setting === 'theme') {
-            const newTheme = `theme-${value}`;
-            if (state.settings.theme !== newTheme) {
-                applyTheme(newTheme);
+        if (el.tagName === 'SELECT') {
+             if (state.settings[setting] !== el.value) {
+                state.settings[setting] = el.value;
+                settingChanged = true;
             }
-            return;
-        }
+        } else if (el.tagName === 'BUTTON') {
+            const btn = el.closest('button[data-setting]');
+            if (!btn) return;
+            const { setting, value } = btn.dataset;
+            
+            if (setting === 'theme') {
+                const newTheme = `theme-${value}`;
+                if (state.settings.theme !== newTheme) {
+                    applyTheme(newTheme);
+                }
+                return;
+            }
 
-        if (setting === 'pageBreakHeadings') {
-            const currentBreaks = state.settings.pageBreakHeadings;
-            const isCurrentlySet = currentBreaks.includes(value);
-            if (isCurrentlySet) {
-                if (currentBreaks.length > 1) {
-                    state.settings.pageBreakHeadings = currentBreaks.filter(h => h !== value);
+            if (setting === 'pageBreakHeadings') {
+                const currentBreaks = state.settings.pageBreakHeadings;
+                const isCurrentlySet = currentBreaks.includes(value);
+                if (isCurrentlySet) {
+                    if (currentBreaks.length > 1) {
+                        state.settings.pageBreakHeadings = currentBreaks.filter(h => h !== value);
+                        settingChanged = true;
+                    }
+                } else {
+                    state.settings.pageBreakHeadings.push(value);
                     settingChanged = true;
                 }
             } else {
-                state.settings.pageBreakHeadings.push(value);
-                settingChanged = true;
-            }
-        } else {
-            const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(value) ? value : parseInt(value));
-            if (state.settings[setting] !== newValue) {
-                state.settings[setting] = newValue;
-                settingChanged = true;
+                const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(value) ? value : parseInt(value));
+                if (state.settings[setting] !== newValue) {
+                    state.settings[setting] = newValue;
+                    settingChanged = true;
+                }
             }
         }
 
         if(settingChanged) {
-             if (setting === 'displayMode' || setting === 'pageBreakHeadings') {
+             if (setting === 'displayMode' || setting === 'pageBreakHeadings' || setting === 'bibleVersion') {
+                if (setting === 'bibleVersion') {
+                    loadAndDisplayBibleChapter(state.bible.currentBook, state.bible.currentChapter);
+                }
                 rebuildSlidesAndRender();
             } else {
                 applySettings();
@@ -1444,8 +1427,8 @@
         if (closeHistoryBtn) closeHistoryBtn.innerHTML = ICONS.close;
         if (homeBtn) homeBtn.innerHTML = ICONS.home;
         if (autoScrollToggleBtn) autoScrollToggleBtn.innerHTML = ICONS.scrollPlay;
-        if (calloutsToggleBtn) calloutsToggleBtn.innerHTML = ICONS.book;
-        if (closeCalloutsBtn) closeCalloutsBtn.innerHTML = ICONS.close;
+        if (bibleToggleBtn) bibleToggleBtn.innerHTML = ICONS.book;
+        if (closeBibleBtn) closeBibleBtn.innerHTML = ICONS.close;
 
         document.querySelector('[data-setting="textAlign"][data-value="text-left"]').innerHTML = ICONS.alignLeft;
         document.querySelector('[data-setting="textAlign"][data-value="text-center"]').innerHTML = ICONS.alignCenter;
@@ -1467,6 +1450,7 @@
         }
         
         applyTheme();
+        initBible();
         
         generateBtn.addEventListener('click', () => fetchNotionContent(false));
         previewBtn.addEventListener('click', () => fetchNotionContent(true));
@@ -1474,25 +1458,25 @@
         closeSettingsBtn.addEventListener('click', () => toggleSettingsPanel(false));
         historyToggleBtn.addEventListener('click', () => toggleHistorySidebar(!historySidebar.classList.contains('open')));
         closeHistoryBtn.addEventListener('click', () => toggleHistorySidebar(false));
-        calloutsToggleBtn.addEventListener('click', () => toggleCalloutsSidebar(!calloutsSidebar.classList.contains('open')));
-        closeCalloutsBtn.addEventListener('click', () => toggleCalloutsSidebar(false));
+        bibleToggleBtn.addEventListener('click', () => toggleBibleSidebar(!bibleSidebar.classList.contains('open')));
+        closeBibleBtn.addEventListener('click', () => toggleBibleSidebar(false));
         homeBtn.addEventListener('click', () => showView('setup'));
         autoScrollToggleBtn.addEventListener('click', toggleAutoScroll);
         
         document.addEventListener('click', e => {
             const isSidebarOpen = document.body.classList.contains('history-open') || 
-                                document.body.classList.contains('callouts-open') || 
+                                document.body.classList.contains('bible-open') || 
                                 document.body.classList.contains('settings-open');
 
             if (!isSidebarOpen) return;
 
             const target = e.target;
             const isClickInsideSidebar = target.closest('#history-sidebar') || 
-                                        target.closest('#callouts-sidebar') || 
+                                        target.closest('#bible-sidebar') || 
                                         target.closest('#settings-panel');
             
             const isClickOnToggleButton = target.closest('#history-toggle-btn') || 
-                                        target.closest('#callouts-toggle-btn-footer') || 
+                                        target.closest('#bible-toggle-btn-footer') || 
                                         target.closest('#settings-toggle-btn');
             
             if (!isClickInsideSidebar && !isClickOnToggleButton) {
@@ -1506,6 +1490,8 @@
         slidesContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
         
         document.querySelector('.settings-panel-content').addEventListener('click', handleSettingChange);
+        document.querySelector('.settings-panel-content').addEventListener('change', handleSettingChange);
+
         timerPlayPauseBtn.addEventListener('click', toggleTimer);
         nextBtn.addEventListener('click', goToNextSlide);
         prevBtn.addEventListener('click', goToPrevSlide);
@@ -1517,13 +1503,21 @@
             }
         });
 
+        slidesContainer.addEventListener('click', e => {
+            const refLink = e.target.closest('.bible-ref-link');
+            if (refLink) {
+                const ref = refLink.dataset.ref;
+                handleReferenceClick(ref);
+            }
+        });
+
         wpmIncreaseBtn.addEventListener('click', () => { state.settings.wpm = Math.min(state.settings.wpm + 10, 500); applySettings(); });
         wpmDecreaseBtn.addEventListener('click', () => { state.settings.wpm = Math.max(state.settings.wpm - 10, 20); applySettings(); });
         
         document.addEventListener('keydown', e => {
             if (presentationView.classList.contains('hidden')) return;
             if (e.key === 'Escape') { closeAllSidebars(); }
-            if (settingsPanel.classList.contains('open') || historySidebar.classList.contains('open') || calloutsSidebar.classList.contains('open')) return;
+            if (settingsPanel.classList.contains('open') || historySidebar.classList.contains('open') || bibleSidebar.classList.contains('open')) return;
             if (state.settings.displayMode === 'slides') {
                 if (e.key === 'ArrowRight' || e.key === ' ') goToNextSlide();
                 if (e.key === 'ArrowLeft') goToPrevSlide();
