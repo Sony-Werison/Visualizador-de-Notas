@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Debug bible-sidebar.js",
+      "program": "${workspaceFolder}/${input:jsFile}",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "pickString",
+      "id": "jsFile",
+      "description": "Selecione o arquivo JavaScript para depurar",
+      "options": [
+        "bible-sidebar.js",
+        "api/notion-proxy.js"
+      ]
+    }
+  ]
+}

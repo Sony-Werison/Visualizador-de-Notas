@@ -1,7 +1,25 @@
 // bible-sidebar.js
 // JS para barra lateral da Bíblia, navegação, parser de referências e validação de versões
 
+(() => {
 document.addEventListener('DOMContentLoaded', function() {
+    // Controle de visibilidade/interatividade da barra lateral
+    bibleSidebar = document.getElementById('bible-sidebar');
+    bibleToggleBtn = document.getElementById('bible-toggle-btn');
+    closeBibleBtn = document.getElementById('close-bible-btn');
+    function openBibleSidebar() {
+        bibleSidebar.style.transform = 'translateX(0)';
+        bibleSidebar.style.visibility = 'visible';
+        bibleSidebar.style.pointerEvents = 'auto';
+    }
+    function closeBibleSidebar() {
+        bibleSidebar.style.transform = 'translateX(100%)';
+        bibleSidebar.style.visibility = 'hidden';
+        bibleSidebar.style.pointerEvents = 'none';
+    }
+    if (bibleToggleBtn) bibleToggleBtn.onclick = openBibleSidebar;
+    if (closeBibleBtn) closeBibleBtn.onclick = closeBibleSidebar;
+    closeBibleSidebar();
     // Elementos da barra lateral da Bíblia
     const bibleSidebar = document.getElementById('bible-sidebar');
     const bibleToggleBtn = document.getElementById('bible-toggle-btn');
@@ -150,3 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
         linkifyBibleRefs(document.body);
     }, 1000);
  });
+})();
+})();
+})();

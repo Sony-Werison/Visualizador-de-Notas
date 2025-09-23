@@ -381,7 +381,29 @@
         </aside>
 
         <!-- Barra lateral da Bíblia -->
-        <aside id="bible-sidebar" class="fixed top-0 right-0 h-full w-96 shadow-2xl z-50 flex flex-col bg-gray-900 text-gray-100 transition-transform transform translate-x-full">
+    <aside id="bible-sidebar" class="fixed top-0 right-0 h-full w-96 shadow-2xl z-50 flex flex-col bg-gray-900 text-gray-100 transition-transform transform translate-x-full pointer-events-none" style="visibility:hidden;">
+<script src="bible-sidebar.js"></script>
+<script>
+// Corrige visibilidade e interatividade da barra lateral
+document.addEventListener('DOMContentLoaded', function() {
+    const bibleSidebar = document.getElementById('bible-sidebar');
+    const bibleToggleBtn = document.getElementById('bible-toggle-btn');
+    const closeBibleBtn = document.getElementById('close-bible-btn');
+    function openBibleSidebar() {
+        bibleSidebar.style.transform = 'translateX(0)';
+        bibleSidebar.style.visibility = 'visible';
+        bibleSidebar.classList.remove('pointer-events-none');
+    }
+    function closeBibleSidebar() {
+        bibleSidebar.style.transform = 'translateX(100%)';
+        bibleSidebar.style.visibility = 'hidden';
+        bibleSidebar.classList.add('pointer-events-none');
+    }
+    if (bibleToggleBtn) bibleToggleBtn.onclick = openBibleSidebar;
+    if (closeBibleBtn) closeBibleBtn.onclick = closeBibleSidebar;
+    // Garante que a barra lateral comece fechada
+    closeBibleSidebar();
+});
             <div class="p-4 flex justify-between items-center border-b border-gray-700">
                 <h3 class="font-bold text-lg">Bíblia</h3>
                 <select id="bible-version-select" class="bg-gray-800 text-gray-100 rounded px-2 py-1">
