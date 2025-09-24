@@ -1148,12 +1148,19 @@
                         class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
                     <div class="flex gap-4 mt-4">
                         <button id="generate-btn"
-                            class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
-                        <button id="preview-btn"
-                            class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver
-                            Tutorial</button>
+                            class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
                     </div>
                 </div>
+
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-600"></div>
+                    <span class="flex-shrink mx-4 text-gray-400">ou</span>
+                    <div class="flex-grow border-t border-gray-600"></div>
+                </div>
+
+                <button id="preview-btn"
+                    class="w-full bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver
+                    Tutorial</button>
 
                 <div id="history-container" class="pt-4 border-t hidden">
                     <h3 class="text-sm font-semibold text-center text-gray-500 mb-3">Acessos Recentes do Notion</h3>
@@ -1162,13 +1169,6 @@
                     </div>
                 </div>
                 <div id="error-message" class="text-red-500 text-center font-medium hidden"></div>
-
-                <div class="flex justify-center">
-                    <button id="open-tutorial-btn"
-                        class="bg-gray-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition mt-2">
-                        Abrir Tutorial
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -1460,16 +1460,6 @@
             </div>
         </div>
 
-        <!-- Modal do Tutorial -->
-        <div id="tutorial-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Tutorial do Visualizador de Notas</h3>
-                    <button id="close-tutorial-modal-btn" title="Fechar" class="p-2"></button>
-                </div>
-                <div id="tutorial-modal-content" class="p-4 overflow-y-auto text-base leading-relaxed"></div>
-            </div>
-        </div>
 
     </div>
     <script>
@@ -1588,401 +1578,96 @@
                 highlightedRef: null, // e.g., { ref: 'Gênesis 1', verses: [1, 2, 3] }
             }
         };
-        const MOCK_DATA = {
-            pageTitle: "Tutorial Interativo",
-            blocks: {
-                results: [{
-                    id: 'mock-1',
-                    type: 'heading_1',
-                    heading_1: {
-                        rich_text: [{
-                            plain_text: 'Bem-vindo ao Tutorial Interativo!'
-                        }]
+
+        const markdownToHtml = (md) => {
+            const lines = md.split('\n');
+            let html = '';
+            let inList = false;
+
+            const processInline = (text) => {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/_(.*?)_/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code>$1</code>');
+            };
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+
+                if (line.startsWith('# ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h1>${processInline(line.substring(2))}</h1>\n`;
+                } else if (line.startsWith('## ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h2>${processInline(line.substring(3))}</h2>\n`;
+                } else if (line.startsWith('### ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h3>${processInline(line.substring(4))}</h3>\n`;
+                } else if (line.startsWith('> ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<blockquote>${processInline(line.substring(2))}</blockquote>\n`;
+                } else if (line.startsWith('---')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += '<hr>\n';
+                } else if (line.startsWith('* ') || line.startsWith('- ')) {
+                    if (!inList) {
+                        html += '<ul>\n';
+                        inList = true;
                     }
-                }, {
-                    id: 'mock-2',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            plain_text: 'Esta é uma página de exemplo para você explorar todas as funcionalidades do Visualizador de Notas. Vamos começar!'
-                        }]
+                    html += `<li>${processInline(line.substring(2))}</li>\n`;
+                } else {
+                    if (inList) {
+                        html += '</ul>\n';
+                        inList = false;
                     }
-                }, {
-                    id: 'mock-3',
-                    type: 'callout',
-                    callout: {
-                        icon: {
-                            emoji: '➡️'
-                        },
-                        rich_text: [{
-                            plain_text: 'Use as setas do teclado, deslize o dedo na tela ou use os botões no rodapé para navegar entre as páginas do tutorial.'
-                        }],
-                        color: 'default_background'
-                    }
-                }, {
-                    id: 'mock-h-2',
-                    type: 'heading_2',
-                    heading_2: {
-                        rich_text: [{
-                            plain_text: 'Modos de Visualização'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-1',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            plain_text: 'Existem dois modos principais. Você pode alternar entre eles no painel de Ajustes (⚙️).'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-2',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: '1. Modo Páginas (Padrão):'
-                            },
-                            annotations: {
-                                bold: true
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' Divide o conteúdo em "slides", usando os títulos (H1, H2, H3) como pontos de quebra. Ideal para apresentações.'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-3',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: '2. Modo Rolagem:'
-                            },
-                            annotations: {
-                                bold: true
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' Exibe todo o conteúdo como uma única página contínua, similar a um artigo. Neste modo, um botão de rolagem automática ( '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: '🔽',
-                                annotations: {
-                                    code: true
-                                }
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' ) aparecerá no topo.'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-h-4',
-                    type: 'heading_2',
-                    heading_2: {
-                        rich_text: [{
-                            plain_text: 'Barra Lateral da Bíblia (📖)'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-5',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            plain_text: 'A antiga barra de Destaques agora é um poderoso navegador da Bíblia! As referências a versículos no seu texto são detectadas e transformadas em links automaticamente.'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-6',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: 'Clique nos exemplos para testar: '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'Jo 3.16'
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: '1 Coríntios 13:4-7'
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' ou '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'Rm 8:28,31'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-callout-bible',
-                    type: 'callout',
-                    callout: {
-                        icon: {
-                            emoji: '🔧'
-                        },
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: 'Dica: '
-                            },
-                            annotations: {
-                                bold: true
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'Você pode escolher sua versão preferida da Bíblia (NVI, ARA, etc.) no painel de Ajustes.'
-                            }
-                        }],
-                        color: 'green_background'
-                    }
-                }, {
-                    id: 'mock-h-5',
-                    type: 'heading_2',
-                    heading_2: {
-                        rich_text: [{
-                            plain_text: 'Formatação de Texto'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-8',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            plain_text: 'O visualizador é compatível com as formatações básicas do Notion.'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-11',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: 'E, claro, os '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'destaques com cor de fundo'
-                            },
-                            "annotations": {
-                                "color": "red_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' são exibidos com o novo estilo!'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-12',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: 'Aqui estão mais exemplos: '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'cinza'
-                            },
-                            "annotations": {
-                                "color": "gray_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'marrom'
-                            },
-                            "annotations": {
-                                "color": "brown_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'laranja'
-                            },
-                            "annotations": {
-                                "color": "orange_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'amarelo'
-                            },
-                            "annotations": {
-                                "color": "yellow_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'verde'
-                            },
-                            "annotations": {
-                                "color": "green_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'azul'
-                            },
-                            "annotations": {
-                                "color": "blue_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ', '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'roxo'
-                            },
-                            "annotations": {
-                                "color": "purple_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' e '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'rosa'
-                            },
-                            "annotations": {
-                                "color": "pink_background"
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: '.'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-14',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            type: 'text',
-                            text: {
-                                content: 'Teste de '
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: 'negrito e destaque',
-                                "annotations": {
-                                    "bold": true,
-                                    "color": "yellow_background"
-                                }
-                            }
-                        }, {
-                            type: 'text',
-                            text: {
-                                content: ' juntos.'
-                            }
-                        }]
-                    }
-                }, {
-                    id: 'mock-h-7',
-                    type: 'heading_1',
-                    heading_1: {
-                        rich_text: [{
-                            plain_text: 'Pronto para Começar?'
-                        }]
-                    }
-                }, {
-                    id: 'mock-p-13',
-                    type: 'paragraph',
-                    paragraph: {
-                        rich_text: [{
-                            plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!'
-                        }]
-                    }
-                },]
-            },
-            page: {
-                properties: {
-                    title: {
-                        title: [{
-                            plain_text: "Tutorial Interativo"
-                        }]
+                    if (line.trim().length > 0) {
+                        html += `<p>${processInline(line)}</p>\n`;
                     }
                 }
             }
+
+            if (inList) {
+                html += '</ul>\n';
+            }
+            return html;
         };
-        const extractPageId = (input) => {
-            if (!input) return '';
-            try {
-                if (input.startsWith('http')) {
-                    const url = new URL(input);
-                    const pathParts = url.pathname.split('/');
-                    const lastPart = pathParts[pathParts.length - 1];
-                    const idFromEnd = lastPart.split('-').pop();
-                    if (idFromEnd && /^[0-9a-f]{32}$/.test(idFromEnd)) return idFromEnd;
+
+        const parseNodeToRichText = (node) => {
+            const richText = [];
+            if (!node || !node.childNodes) return [];
+
+            node.childNodes.forEach(child => {
+                const annotations = {};
+                let content = child.textContent;
+
+                if (child.nodeType === Node.ELEMENT_NODE) {
+                    const tagName = child.tagName;
+                    if (tagName === 'STRONG') annotations.bold = true;
+                    if (tagName === 'EM') annotations.italic = true;
+                    if (tagName === 'CODE') annotations.code = true;
                 }
-                const cleanId = input.split('-').pop().replace(/[^0-9a-fA-F]/g, '');
-                if (/^[0-9a-f]{32}$/.test(cleanId)) return cleanId;
-            } catch (e) { }
-            return '';
+
+                if (content) {
+                    richText.push({
+                        type: 'text',
+                        text: { content: content },
+                        plain_text: content,
+                        annotations: annotations
+                    });
+                }
+            });
+
+            if (richText.length === 0 && node.textContent) {
+                richText.push({
+                    type: 'text',
+                    text: { content: node.textContent },
+                    plain_text: node.textContent,
+                    annotations: {}
+                });
+            }
+            return richText;
         };
 
         const processAndRender = (blocks, title) => {
@@ -2012,9 +1697,7 @@
                     const blockType = supportedTags[tagName];
                     const block = { type: blockType };
                     if (blockType !== 'divider') {
-                        block[blockType] = {
-                            rich_text: [{ type: 'text', text: { content: node.textContent }, plain_text: node.textContent }]
-                        };
+                        block[blockType] = { rich_text: parseNodeToRichText(node) };
                     } else {
                         block[blockType] = {};
                     }
@@ -2025,9 +1708,7 @@
                         if (li.tagName === 'LI') {
                             blocks.push({
                                 type: listType,
-                                [listType]: {
-                                    rich_text: [{ type: 'text', text: { content: li.textContent }, plain_text: li.textContent }]
-                                }
+                                [listType]: { rich_text: parseNodeToRichText(li) }
                             });
                         }
                     });
@@ -2137,16 +1818,43 @@
             return confirmationMessage;          // Para navegadores mais antigos
         };
 
+        async function fetchTutorialContent() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/tutorial.md');
+                if (!response.ok) {
+                    showError("Não foi possível carregar o tutorial.");
+                    console.error("Failed to fetch tutorial markdown");
+                    return null;
+                }
+                const markdown = await response.text();
+                const html = markdownToHtml(markdown);
+                const blocks = htmlToNotionBlocks(html);
+
+                return {
+                    pageTitle: "Tutorial Interativo",
+                    rawBlocks: blocks
+                };
+            } catch (error) {
+                showError("Erro ao processar o tutorial.");
+                console.error("Error processing tutorial:", error);
+                return null;
+            }
+        }
+
         async function fetchNotionContent(isPreview = false) {
             if (isPreview) {
-                const data = MOCK_DATA;
-                const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
-                state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
-                state.rawBlocks = data.blocks.results;
-                scanForBooksInText();
-                rebuildSlidesAndRender();
-                showView('presentation');
-                toggleSettingsPanel(true);
+                showView('loading');
+                const tutorialData = await fetchTutorialContent();
+                if (tutorialData) {
+                    state.pageTitle = tutorialData.pageTitle;
+                    state.rawBlocks = tutorialData.rawBlocks;
+                    scanForReferencesInText();
+                    rebuildSlidesAndRender();
+                    showView('presentation');
+                    toggleSettingsPanel(true);
+                } else {
+                    showView('setup');
+                }
                 return;
             }
             const pageId = extractPageId(pageIdInput.value.trim());
@@ -2655,6 +2363,23 @@
         const applySettings = () => {
             const contentWrapper = slidesContainer;
             if (!contentWrapper) return;
+            const alignContentClasses = ['items-start', 'items-center', 'items-end'];
+            contentWrapper.classList.remove(...alignContentClasses);
+            contentWrapper.classList.add(state.settings.contentAlign);
+            const alignClasses = ['text-left', 'text-center', 'text-right', 'text-justify'];
+            contentWrapper.classList.remove(...alignClasses);
+            contentWrapper.classList.add(state.settings.textAlign);
+            const content = contentWrapper.querySelector('.slide-content');
+            if (!content) return;
+            const fontClasses = ['font-sans', 'font-serif', 'font-display', 'leading-relaxed', 'leading-loose',
+                'leading-extra', 'max-w-xl', 'max-w-3xl', 'max-w-5xl', 'max-w-[33%]', 'max-w-[66%]',
+                'max-w-full', 'max-w-[33vw]', 'max-w-[66vw]'
+            ];
+            content.classList.remove(...fontClasses);
+            content.classList.add(state.settings.fontFamily, state.settings.lineHeight, state.settings
+                .textWidth);
+            const baseSizeRem = 1.25 + (state.settings.fontSize * 0.2);
+            content.style.fontSize = `${baseSizeRem}rem`;
             content.querySelectorAll('h1').forEach(h => h.style.fontSize = `${baseSizeRem * 1.8}rem`);
             content.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSizeRem * 1.5}rem`);
             content.querySelectorAll('h3').forEach(h => h.style.fontSize = `${baseSizeRem * 1.25}rem`);
