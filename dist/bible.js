@@ -1,0 +1,3 @@
+export function initBible() {
+    // ...lógica de inicialização da bíblia, listeners, carregamento de versões...
+}
