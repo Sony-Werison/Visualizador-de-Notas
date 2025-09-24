@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Notas do Notion</title>
+    <title>Leitor de esboços</title>
     <!-- Meta tags para "Adicionar à Tela Inicial" (PWA) -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,6 +21,8 @@
     <link rel="shortcut icon"
         href="https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/95f7d88494945691deb8f5fe339eaad080b56f19/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -38,8 +40,7 @@
         body {
             font-family: var(--font-sans);
             touch-action: pan-y;
-            /* Remover overflow: hidden para permitir rolagem e interação */
-            /* overflow: hidden; */
+            overflow: hidden;
         }
 
         #app {
@@ -126,6 +127,11 @@
         #doc-progress-bar,
         #page-progress-bar {
             transition: width 0.3s ease-out;
+        }
+
+        #upload-area.highlight {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
         }
 
         /* --- Dark Theme (Default) --- */
@@ -963,58 +969,132 @@
         /* --- Estilos de Destaque para Versículos --- */
 
         /* 1. Preenchimento (Fill) */
-        #bible-verses.style-fill.highlight-yellow .verse.highlighted { background-color: rgba(254, 240, 138, 0.6); }
-        #bible-verses.style-fill.highlight-blue .verse.highlighted { background-color: rgba(147, 197, 253, 0.6); }
-        #bible-verses.style-fill.highlight-green .verse.highlighted { background-color: rgba(134, 239, 172, 0.6); }
-        #bible-verses.style-fill.highlight-pink .verse.highlighted { background-color: rgba(249, 168, 212, 0.6); }
-        #bible-verses.style-fill.highlight-indigo .verse.highlighted { background-color: rgba(165, 180, 252, 0.6); }
+        #bible-verses.style-fill.highlight-yellow .verse.highlighted {
+            background-color: rgba(254, 240, 138, 0.6);
+        }
+
+        #bible-verses.style-fill.highlight-blue .verse.highlighted {
+            background-color: rgba(147, 197, 253, 0.6);
+        }
+
+        #bible-verses.style-fill.highlight-green .verse.highlighted {
+            background-color: rgba(134, 239, 172, 0.6);
+        }
+
+        #bible-verses.style-fill.highlight-pink .verse.highlighted {
+            background-color: rgba(249, 168, 212, 0.6);
+        }
+
+        #bible-verses.style-fill.highlight-indigo .verse.highlighted {
+            background-color: rgba(165, 180, 252, 0.6);
+        }
 
         /* Cores de Destaque para Versículos - Correção Tema Escuro */
         html.theme-dark #bible-verses.style-fill .verse.highlighted,
         html.theme-sepia #bible-verses.style-fill .verse.highlighted {
-            color: #111827; /* Texto escuro para melhor contraste */
+            color: #111827;
+            /* Texto escuro para melhor contraste */
         }
+
         /* Ajuste de opacidade para melhor legibilidade no tema escuro */
         html.theme-dark #bible-verses.style-fill.highlight-yellow .verse.highlighted,
-        html.theme-sepia #bible-verses.style-fill.highlight-yellow .verse.highlighted { background-color: rgba(254, 240, 138, 0.8); }
+        html.theme-sepia #bible-verses.style-fill.highlight-yellow .verse.highlighted {
+            background-color: rgba(254, 240, 138, 0.8);
+        }
+
         html.theme-dark #bible-verses.style-fill.highlight-blue .verse.highlighted,
-        html.theme-sepia #bible-verses.style-fill.highlight-blue .verse.highlighted { background-color: rgba(147, 197, 253, 0.8); }
+        html.theme-sepia #bible-verses.style-fill.highlight-blue .verse.highlighted {
+            background-color: rgba(147, 197, 253, 0.8);
+        }
+
         html.theme-dark #bible-verses.style-fill.highlight-green .verse.highlighted,
-        html.theme-sepia #bible-verses.style-fill.highlight-green .verse.highlighted { background-color: rgba(134, 239, 172, 0.8); }
+        html.theme-sepia #bible-verses.style-fill.highlight-green .verse.highlighted {
+            background-color: rgba(134, 239, 172, 0.8);
+        }
+
         html.theme-dark #bible-verses.style-fill.highlight-pink .verse.highlighted,
-        html.theme-sepia #bible-verses.style-fill.highlight-pink .verse.highlighted { background-color: rgba(249, 168, 212, 0.8); }
+        html.theme-sepia #bible-verses.style-fill.highlight-pink .verse.highlighted {
+            background-color: rgba(249, 168, 212, 0.8);
+        }
+
         html.theme-dark #bible-verses.style-fill.highlight-indigo .verse.highlighted,
-        html.theme-sepia #bible-verses.style-fill.highlight-indigo .verse.highlighted { background-color: rgba(165, 180, 252, 0.8); }
+        html.theme-sepia #bible-verses.style-fill.highlight-indigo .verse.highlighted {
+            background-color: rgba(165, 180, 252, 0.8);
+        }
 
 
         /* 2. Cor da Fonte (Font Color) */
         /* Cores para temas escuros */
         html.theme-dark #bible-verses.style-font.highlight-yellow .verse.highlighted,
-        html.theme-sepia #bible-verses.style-font.highlight-yellow .verse.highlighted { color: #fef08a; }
+        html.theme-sepia #bible-verses.style-font.highlight-yellow .verse.highlighted {
+            color: #fef08a;
+        }
+
         html.theme-dark #bible-verses.style-font.highlight-blue .verse.highlighted,
-        html.theme-sepia #bible-verses.style-font.highlight-blue .verse.highlighted { color: #93c5fd; }
+        html.theme-sepia #bible-verses.style-font.highlight-blue .verse.highlighted {
+            color: #93c5fd;
+        }
+
         html.theme-dark #bible-verses.style-font.highlight-green .verse.highlighted,
-        html.theme-sepia #bible-verses.style-font.highlight-green .verse.highlighted { color: #86efac; }
+        html.theme-sepia #bible-verses.style-font.highlight-green .verse.highlighted {
+            color: #86efac;
+        }
+
         html.theme-dark #bible-verses.style-font.highlight-pink .verse.highlighted,
-        html.theme-sepia #bible-verses.style-font.highlight-pink .verse.highlighted { color: #f9a8d4; }
+        html.theme-sepia #bible-verses.style-font.highlight-pink .verse.highlighted {
+            color: #f9a8d4;
+        }
+
         html.theme-dark #bible-verses.style-font.highlight-indigo .verse.highlighted,
-        html.theme-sepia #bible-verses.style-font.highlight-indigo .verse.highlighted { color: #a5b4fc; }
+        html.theme-sepia #bible-verses.style-font.highlight-indigo .verse.highlighted {
+            color: #a5b4fc;
+        }
+
         /* Cores para temas claros */
-        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-yellow .verse.highlighted { color: #ca8a04; }
-        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-blue .verse.highlighted { color: #2563eb; }
-        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-green .verse.highlighted { color: #16a34a; }
-        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-pink .verse.highlighted { color: #db2777; }
-        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-indigo .verse.highlighted { color: #4f46e5; }
+        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-yellow .verse.highlighted {
+            color: #ca8a04;
+        }
+
+        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-blue .verse.highlighted {
+            color: #2563eb;
+        }
+
+        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-green .verse.highlighted {
+            color: #16a34a;
+        }
+
+        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-pink .verse.highlighted {
+            color: #db2777;
+        }
+
+        html:not(.theme-dark):not(.theme-sepia) #bible-verses.style-font.highlight-indigo .verse.highlighted {
+            color: #4f46e5;
+        }
 
         /* 3. Contorno (Outline) */
         #bible-verses.style-outline .verse.highlighted {
             box-shadow: 0 0 0 2px var(--highlight-color);
         }
-        #bible-verses.style-outline.highlight-yellow { --highlight-color: #facc15; }
-        #bible-verses.style-outline.highlight-blue { --highlight-color: #60a5fa; }
-        #bible-verses.style-outline.highlight-green { --highlight-color: #4ade80; }
-        #bible-verses.style-outline.highlight-pink { --highlight-color: #f472b6; }
-        #bible-verses.style-outline.highlight-indigo { --highlight-color: #818cf8; }
+
+        #bible-verses.style-outline.highlight-yellow {
+            --highlight-color: #facc15;
+        }
+
+        #bible-verses.style-outline.highlight-blue {
+            --highlight-color: #60a5fa;
+        }
+
+        #bible-verses.style-outline.highlight-green {
+            --highlight-color: #4ade80;
+        }
+
+        #bible-verses.style-outline.highlight-pink {
+            --highlight-color: #f472b6;
+        }
+
+        #bible-verses.style-outline.highlight-indigo {
+            --highlight-color: #818cf8;
+        }
 
         .bible-ref-link {
             cursor: pointer;
@@ -1027,55 +1107,77 @@
 </head>
 
 <body class="flex flex-col items-center justify-center min-h-screen">
-    <!-- Remover flex do body, pois o #app já é flex -->
-    <div id="app" class="w-full flex flex-col min-h-screen">
+    <div id="app" class="w-full flex flex-col">
         <!-- Tela de Configuração Inicial -->
         <div id="setup-view" class="w-full h-full flex flex-col items-center justify-center">
             <div class="w-full max-w-xl mx-auto p-8 rounded-xl space-y-6">
                 <h1 class="text-3xl font-bold text-center">Leitor de esboços</h1>
-                <p class="text-center text-gray-400">
-                    Carregue seu esboço a partir de um arquivo .docx, .pdf ou uma página do Notion.
-                </p>
-                <div class="flex justify-center gap-8 mb-4">
-                    <button id="upload-doc-btn" title="Carregar DOCX" class="flex flex-col items-center focus:outline-none">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg/512px-Microsoft_Office_Word_%282019%E2%80%93present%29.svg.png" alt="DOCX" class="w-12 h-12 mb-1">
-                        <span class="text-xs text-gray-500">DOCX</span>
-                    </button>
-                    <button id="upload-pdf-btn" title="Carregar PDF" class="flex flex-col items-center focus:outline-none">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/267px-PDF_file_icon.svg.png?20220802235851" alt="PDF" class="w-12 h-12 mb-1">
-                        <span class="text-xs text-gray-500">PDF</span>
-                    </button>
-                    <button id="notion-btn" title="Carregar do Notion" class="flex flex-col items-center focus:outline-none">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/2048px-Notion-logo.svg.png" alt="Notion" class="w-12 h-12 mb-1">
-                        <span class="text-xs text-gray-500">Notion</span>
-                    </button>
+                <p class="text-center text-gray-400">Carregue seu esboço a partir de um arquivo .docx, .pdf ou uma página
+                    do Notion.</p>
+
+                <!-- Área de Upload -->
+                <div id="upload-area"
+                    class="border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-300">
+                    <div class="flex justify-around items-center">
+                        <!-- Opção DOCX -->
+                        <div id="upload-docx"
+                            class="flex flex-col items-center space-y-2 cursor-pointer p-4 rounded-lg hover:bg-gray-500/10">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg/512px-Microsoft_Office_Word_%282019%E2%80%93present%29.svg.png"
+                                alt="Ícone do Microsoft Word" class="h-16 w-16">
+                        </div>
+                        <!-- Opção PDF -->
+                        <div id="upload-pdf"
+                            class="flex flex-col items-center space-y-2 cursor-pointer p-4 rounded-lg hover:bg-gray-500/10">
+                            <img src="https://cdn-icons-png.flaticon.com/512/9496/9496432.png"
+                                alt="Ícone de arquivo PDF" class="h-16 w-16">
+                        </div>
+                        <!-- Opção Notion -->
+                        <div id="upload-notion"
+                            class="flex flex-col items-center space-y-2 cursor-pointer p-4 rounded-lg hover:bg-gray-500/10">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/2048px-Notion-logo.svg.png"
+                                alt="Ícone do Notion" class="h-16 w-16">
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-500">Arraste e solte um arquivo ou clique em um ícone</p>
                 </div>
-                <input type="file" id="file-input" accept=".doc,.docx,.pdf" class="hidden">
-                <div id="drop-zone" class="w-full border-2 border-dashed border-gray-400 rounded-lg p-6 text-center text-gray-400 cursor-pointer transition hover:border-blue-500">
-                    Arraste e solte seu arquivo aqui (.docx ou .pdf)
+                <input type="file" id="file-input" class="hidden" accept=".docx,.pdf">
+
+                <!-- Input do Notion (inicialmente oculto) -->
+                <div id="notion-input-container" class="hidden">
+                    <input type="text" id="pageId" placeholder="Cole a URL ou ID da sua página aqui"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition">
+                    <div class="flex gap-4 mt-4">
+                        <button id="generate-btn"
+                            class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
+                        <button id="preview-btn"
+                            class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver
+                            Tutorial</button>
+                    </div>
                 </div>
-                <input type="text" id="pageId" placeholder="Cole a URL ou ID da sua página do Notion aqui"
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition mt-4">
-                <div class="flex gap-4">
-                    <button id="generate-btn"
-                        class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Visualizar</button>
-                    <button id="preview-btn"
-                        class="flex-1 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">Ver
-                        Tutorial</button>
-                </div>
+
                 <div id="history-container" class="pt-4 border-t hidden">
-                    <h3 class="text-sm font-semibold text-center text-gray-500 mb-3">Acessos Recentes</h3>
+                    <h3 class="text-sm font-semibold text-center text-gray-500 mb-3">Acessos Recentes do Notion</h3>
                     <div id="recent-history-list" class="space-y-2">
                         <!-- Injetado via JS -->
                     </div>
                 </div>
                 <div id="error-message" class="text-red-500 text-center font-medium hidden"></div>
+
+                <div class="flex justify-center">
+                    <button id="open-tutorial-btn"
+                        class="bg-gray-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition mt-2">
+                        Abrir Tutorial
+                    </button>
+                </div>
             </div>
-        </div><!-- Tela de Apresentação -->
+        </div>
+
+        <!-- Tela de Apresentação -->
         <div id="presentation-view" class="hidden w-full h-full flex-col relative overflow-hidden">
             <header class="w-full p-4 flex justify-between items-center fixed top-0 left-0 z-20">
                 <div class="w-1/3 flex items-center gap-2">
-                    <button id="home-btn" title="Voltar ao Início" class="header-btn p-2.5 rounded-lg transition"></button>
+                    <button id="home-btn" title="Voltar ao Início"
+                        class="header-btn p-2.5 rounded-lg transition"></button>
                     <span id="clock" class="text-lg font-mono"></span>
                 </div>
                 <div class="w-1/3 text-center">
@@ -1088,7 +1190,7 @@
                         <button id="timer-play-pause-btn" title="Iniciar/Pausar Tempo" class="p-0.5"></button>
                         <span id="overall-timer" class="text-lg font-mono" title="Tempo total da sessão">0:00</span>
                     </div>
-                    <button id="settings-toggle-btn" type="button" title="Ajustes"
+                    <button id="settings-toggle-btn" title="Ajustes"
                         class="header-btn p-2.5 rounded-lg transition"></button>
                 </div>
             </header>
@@ -1096,32 +1198,32 @@
                 class="w-full h-full flex-1 flex flex-col items-center overflow-y-auto px-12 pt-24 pb-24"></main>
             <footer id="footer-bar" class="w-full p-4 flex justify-between items-center fixed bottom-0 left-0 z-20">
                 <div class="w-1/4 flex items-center gap-2">
-                    <button id="history-toggle-btn" type="button" title="Navegação / Histórico"
+                    <button id="history-toggle-btn" title="Navegação / Histórico"
                         class="footer-btn hidden p-3 rounded-full transition"></button>
-                    <button id="bible-toggle-btn-footer" type="button" title="Bíblia"
+                    <button id="bible-toggle-btn-footer" title="Bíblia"
                         class="footer-btn p-3 rounded-full transition"></button>
                 </div>
                 <div id="footer-center" class="w-1/2 px-4">
                     <!-- Conteúdo do rodapé injetado via JS -->
                 </div>
                 <div class="w-1/4 flex justify-end items-center gap-2">
-                    <button id="prev-btn" type="button" title="Anterior"
+                    <button id="prev-btn" title="Anterior"
                         class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
-                    <button id="next-btn" type="button" title="Próximo"
+                    <button id="next-btn" title="Próximo"
                         class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
                 </div>
             </footer>
             <aside id="history-sidebar" class="history-sidebar fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
                 <div class="p-4 flex justify-between items-center border-b">
                     <h3 class="font-bold text-lg">Navegação</h3>
-                    <button id="close-history-btn" type="button" title="Fechar" class="p-2"></button>
+                    <button id="close-history-btn" title="Fechar" class="p-2"></button>
                 </div>
                 <div id="history-list" class="flex-1 overflow-y-auto"></div>
             </aside>
             <aside id="bible-sidebar" class="fixed top-0 left-0 h-full shadow-2xl z-40 flex flex-col">
                 <div class="p-4 flex justify-between items-center border-b">
                     <h3 class="font-bold text-lg">Bíblia</h3>
-                    <button id="close-bible-btn" type="button" title="Fechar" class="p-2"></button>
+                    <button id="close-bible-btn" title="Fechar" class="p-2"></button>
                 </div>
                 <div class="p-2 space-y-2 border-b">
                     <select id="bible-version-select"
@@ -1135,22 +1237,25 @@
                 </div>
                 <div id="bible-verses" class="flex-1 overflow-y-auto p-4 space-y-3 text-sm pb-20"></div>
                 <div id="bible-nav-footer" class="p-2 border-t flex justify-between items-center">
-                    <button id="bible-prev-chapter-btn" type="button" title="Capítulo Anterior" class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
-                    <button id="bible-next-chapter-btn" type="button" title="Próximo Capítulo" class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
+                    <button id="bible-prev-chapter-btn" title="Capítulo Anterior"
+                        class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
+                    <button id="bible-next-chapter-btn" title="Próximo Capítulo"
+                        class="footer-btn p-3 rounded-full disabled:opacity-20 transition"></button>
                 </div>
             </aside>
-            <aside id="settings-panel" class="settings-panel fixed top-0 right-0 h-full w-80 shadow-2xl z-40 flex flex-col">
+            <aside id="settings-panel"
+                class="settings-panel fixed top-0 right-0 h-full w-80 shadow-2xl z-40 flex flex-col">
                 <div class="p-4 flex justify-between items-center border-b">
                     <h3 class="font-bold text-lg">Ajustes</h3>
-                    <button id="close-settings-btn" type="button" title="Fechar" class="p-2"></button>
+                    <button id="close-settings-btn" title="Fechar" class="p-2"></button>
                 </div>
                 <div class="settings-panel-content flex-1 p-6 space-y-8 overflow-y-auto">
                     <div>
                         <h4 class="font-semibold mb-3">Modo de Exibição</h4>
                         <div class="control-btn-group flex rounded-md p-1">
-                            <button data-setting="displayMode" data-value="slides" type="button"
+                            <button data-setting="displayMode" data-value="slides"
                                 class="flex-1 px-2 py-1 rounded">Páginas</button>
-                            <button data-setting="displayMode" data-value="scroll" type="button"
+                            <button data-setting="displayMode" data-value="scroll"
                                 class="flex-1 px-2 py-1 rounded">Rolagem</button>
                         </div>
                     </div>
@@ -1164,32 +1269,43 @@
                             <button data-setting="theme" data-value="sepia"
                                 class="theme-btn w-8 h-8 rounded-full bg-[#f4e8d1] border-2" title="Sépia"></button>
                             <button data-setting="theme" data-value="light-green"
-                                class="theme-btn w-8 h-8 rounded-full bg-[#ecfdf5] border-2" title="Verde Claro"></button>
+                                class="theme-btn w-8 h-8 rounded-full bg-[#ecfdf5] border-2"
+                                title="Verde Claro"></button>
                             <button data-setting="theme" data-value="light-blue"
-                                class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2" title="Azul Claro"></button>
+                                class="theme-btn w-8 h-8 rounded-full bg-[#e0f2fe] border-2"
+                                title="Azul Claro"></button>
                         </div>
                     </div>
                     <div>
                         <h4 class="font-semibold mb-3">Versão da Bíblia Padrão</h4>
-                         <select id="default-bible-version-select" data-setting="bibleVersion"
+                        <select id="default-bible-version-select" data-setting="bibleVersion"
                             class="w-full p-2 rounded-md border-transparent focus:ring-2 focus:ring-blue-500"></select>
                     </div>
                     <div>
                         <h4 class="font-semibold mb-3">Estilo de Destaque (Versículo)</h4>
                         <div class="control-btn-group flex rounded-md p-1">
-                            <button data-setting="verseHighlightStyle" data-value="fill" class="flex-1 px-2 py-1 rounded">Preencher</button>
-                            <button data-setting="verseHighlightStyle" data-value="font" class="flex-1 px-2 py-1 rounded">Fonte</button>
-                            <button data-setting="verseHighlightStyle" data-value="outline" class="flex-1 px-2 py-1 rounded">Contorno</button>
+                            <button data-setting="verseHighlightStyle" data-value="fill"
+                                class="flex-1 px-2 py-1 rounded">Preencher</button>
+                            <button data-setting="verseHighlightStyle" data-value="font"
+                                class="flex-1 px-2 py-1 rounded">Fonte</button>
+                            <button data-setting="verseHighlightStyle" data-value="outline"
+                                class="flex-1 px-2 py-1 rounded">Contorno</button>
                         </div>
                     </div>
                     <div>
                         <h4 class="font-semibold mb-3">Cor de Destaque (Versículo)</h4>
                         <div class="flex justify-around items-center p-1">
-                            <button data-setting="verseHighlightColor" data-value="highlight-yellow" class="theme-btn w-8 h-8 rounded-full bg-yellow-300 border-2" title="Amarelo"></button>
-                            <button data-setting="verseHighlightColor" data-value="highlight-green" class="theme-btn w-8 h-8 rounded-full bg-green-300 border-2" title="Verde"></button>
-                            <button data-setting="verseHighlightColor" data-value="highlight-blue" class="theme-btn w-8 h-8 rounded-full bg-blue-300 border-2" title="Azul"></button>
-                            <button data-setting="verseHighlightColor" data-value="highlight-indigo" class="theme-btn w-8 h-8 rounded-full bg-indigo-300 border-2" title="Índigo"></button>
-                            <button data-setting="verseHighlightColor" data-value="highlight-pink" class="theme-btn w-8 h-8 rounded-full bg-pink-300 border-2" title="Rosa"></button>
+                            <button data-setting="verseHighlightColor" data-value="highlight-yellow"
+                                class="theme-btn w-8 h-8 rounded-full bg-yellow-300 border-2"
+                                title="Amarelo"></button>
+                            <button data-setting="verseHighlightColor" data-value="highlight-green"
+                                class="theme-btn w-8 h-8 rounded-full bg-green-300 border-2" title="Verde"></button>
+                            <button data-setting="verseHighlightColor" data-value="highlight-blue"
+                                class="theme-btn w-8 h-8 rounded-full bg-blue-300 border-2" title="Azul"></button>
+                            <button data-setting="verseHighlightColor" data-value="highlight-indigo"
+                                class="theme-btn w-8 h-8 rounded-full bg-indigo-300 border-2" title="Índigo"></button>
+                            <button data-setting="verseHighlightColor" data-value="highlight-pink"
+                                class="theme-btn w-8 h-8 rounded-full bg-pink-300 border-2" title="Rosa"></button>
                         </div>
                     </div>
                     <div>
@@ -1219,7 +1335,7 @@
                     </div>
                     <div>
                         <h4 class="font-semibold mb-3">Alinhamento do Texto</h4>
-                         <div class="control-btn-group flex rounded-md p-1">
+                        <div class="control-btn-group flex rounded-md p-1">
                             <button data-setting="textAlign" data-value="text-left"
                                 class="flex-1 px-2 py-1 rounded flex items-center justify-center"></button>
                             <button data-setting="textAlign" data-value="text-center"
@@ -1244,25 +1360,11 @@
                     <div>
                         <h4 class="font-semibold mb-3">Tamanho da Fonte (Texto)</h4>
                         <div class="control-btn-group flex rounded-md p-1">
-                             <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
-                             <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
-                             <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
-                             <button data-setting="fontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
-                             <button data-setting="fontSize" data-value="4" class="flex-1 px-2 py-1 rounded">2XG</button>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-3">Tamanho da Fonte (Destaques)</h4>
-                        <div class="control-btn-group flex rounded-md p-1">
-                            <button data-setting="calloutFontSize" data-value="0"
-                                class="flex-1 px-2 py-1 rounded">P</button>
-                            <button data-setting="calloutFontSize" data-value="1"
-                                class="flex-1 px-2 py-1 rounded">M</button>
-                            <button data-setting="calloutFontSize" data-value="2"
-                                class="flex-1 px-2 py-1 rounded">G</button>
-                            <button data-setting="calloutFontSize" data-value="3"
-                                class="flex-1 px-2 py-1 rounded">XG</button>
-                            <button data-setting="calloutFontSize" data-value="4"
+                            <button data-setting="fontSize" data-value="0" class="flex-1 px-2 py-1 rounded">P</button>
+                            <button data-setting="fontSize" data-value="1" class="flex-1 px-2 py-1 rounded">M</button>
+                            <button data-setting="fontSize" data-value="2" class="flex-1 px-2 py-1 rounded">G</button>
+                            <button data-setting="fontSize" data-value="3" class="flex-1 px-2 py-1 rounded">XG</button>
+                            <button data-setting="fontSize" data-value="4"
                                 class="flex-1 px-2 py-1 rounded">2XG</button>
                         </div>
                     </div>
@@ -1317,9 +1419,2221 @@
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
         </div>
 
+        <div id="context-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+            <div id="context-modal-content"
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm max-h-[80vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Selecionar Contexto</h3>
+                    <button id="close-context-modal-btn" title="Fechar" class="p-2"></button>
+                </div>
+                <div id="context-options" class="p-4 overflow-y-auto">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">A referência está incompleta. Escolha um
+                        livro do seu esboço para completar:</p>
+                    <div id="context-book-list" class="space-y-2">
+                        <!-- Book buttons will be injected here -->
+                    </div>
+                    <hr class="my-4 border-gray-200 dark:border-gray-700">
+                    <button id="context-other-btn"
+                        class="w-full text-center px-4 py-3 rounded-lg transition bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
+                        Outro (Abrir a Bíblia)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+            <div id="confirm-modal-content"
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm flex flex-col">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Atenção</h3>
+                    <button id="close-confirm-modal-btn" title="Fechar" class="p-2"></button>
+                </div>
+                <div class="p-6">
+                    <p id="confirm-modal-message" class="text-center"></p>
+                </div>
+                <div class="p-4 flex justify-end gap-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
+                    <button id="confirm-cancel-btn"
+                        class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500">Cancelar</button>
+                    <button id="confirm-ok-btn"
+                        class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal do Tutorial -->
+        <div id="tutorial-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Tutorial do Visualizador de Notas</h3>
+                    <button id="close-tutorial-modal-btn" title="Fechar" class="p-2"></button>
+                </div>
+                <div id="tutorial-modal-content" class="p-4 overflow-y-auto text-base leading-relaxed"></div>
+            </div>
+        </div>
 
     </div>
-    <script src="dist/app.js"></script>
+    <script>
+        const ICONS = {
+            play: `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
+            pause: `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+            settings: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
+            close: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+            arrowLeft: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+            arrowRight: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+            menu: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`,
+            sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
+            moon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
+            home: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`,
+            scrollPlay: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13l-5 5-5-5M17 6l-5 5-5-5"/></svg>`,
+            scrollPause: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`,
+            book: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
+            alignLeft: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>`,
+            alignCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>`,
+            alignRight: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>`,
+            alignJustify: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>`,
+            alignHorizontalStart: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3h2v18H4zm4-4V7h12v10H8z"/></svg>`,
+            alignHorizontalCenter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21V3h2v18H2zm18 0V3h2v18h-2zM6 17V7h12v10H6z"/></svg>`,
+            alignHorizontalEnd: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21V3h2v18h-2zM4 17V7h12v10H4z"/></svg>`
+        };
+        const $ = (selector) => document.querySelector(selector);
+        const setupView = $('#setup-view'),
+            presentationView = $('#presentation-view'),
+            loadingView = $('#loading-view');
+        const pageIdInput = $('#pageId'),
+            generateBtn = $('#generate-btn'),
+            previewBtn = $('#preview-btn'),
+            errorMessage = $('#error-message');
+        const uploadArea = $('#upload-area'),
+            uploadDocx = $('#upload-docx'),
+            uploadPdf = $('#upload-pdf'),
+            uploadNotion = $('#upload-notion'),
+            fileInput = $('#file-input'),
+            notionInputContainer = $('#notion-input-container');
+        const clockEl = $('#clock'),
+            pageTitle = $('#page-title'),
+            slidesContainer = $('#slides-container');
+        const prevBtn = $('#prev-btn'),
+            nextBtn = $('#next-btn'),
+            footerCenter = $('#footer-center');
+        const timerPlayPauseBtn = $('#timer-play-pause-btn'),
+            overallTimerEl = $('#overall-timer');
+        const settingsPanel = $('#settings-panel'),
+            settingsToggleBtn = $('#settings-toggle-btn'),
+            closeSettingsBtn = $('#close-settings-btn');
+        const homeBtn = $('#home-btn');
+        const wpmDecreaseBtn = $('#wpm-decrease'),
+            wpmIncreaseBtn = $('#wpm-increase'),
+            wpmDisplay = $('#wpm-display');
+        const historySidebar = $('#history-sidebar'),
+            historyToggleBtn = $('#history-toggle-btn'),
+            closeHistoryBtn = $('#close-history-btn'),
+            historyList = $('#history-list');
+        const bibleSidebar = $('#bible-sidebar'),
+            bibleToggleBtn = $('#bible-toggle-btn-footer'),
+            closeBibleBtn = $('#close-bible-btn');
+        const bibleVersionSelect = $('#bible-version-select'),
+            defaultBibleVersionSelect = $('#default-bible-version-select'),
+            bibleBookSelect = $('#bible-book-select'),
+            bibleChapterSelect = $('#bible-chapter-select'),
+            bibleVersesContainer = $('#bible-verses');
+        const biblePrevChapterBtn = $('#bible-prev-chapter-btn');
+        const bibleNextChapterBtn = $('#bible-next-chapter-btn');
+        const autoScrollToggleBtn = $('#auto-scroll-toggle-btn');
+        const contextModal = $('#context-modal');
+        const closeContextModalBtn = $('#close-context-modal-btn');
+        const contextBookList = $('#context-book-list');
+        const contextOtherBtn = $('#context-other-btn');
+        const confirmModal = $('#confirm-modal');
+        const closeConfirmModalBtn = $('#close-confirm-modal-btn');
+        const confirmModalMessage = $('#confirm-modal-message');
+        const confirmCancelBtn = $('#confirm-cancel-btn');
+        const confirmOkBtn = $('#confirm-ok-btn');
+
+
+        let state = {
+            rawBlocks: [],
+            slides: [],
+            currentSlide: 0,
+            pageTitle: '',
+            isTimerRunning: false,
+            overallTimerInterval: null,
+            overallSeconds: 0,
+            pageSeconds: 0,
+            pageTimeHistory: {},
+            clockInterval: null,
+            isAutoScrolling: false,
+            autoScrollInterval: null,
+            mentionedBooksInText: new Set(),
+            mentionedChaptersInText: new Set(),
+            settings: {
+                theme: 'theme-dark',
+                displayMode: 'scroll',
+                fontFamily: 'font-sans',
+                fontSize: 2,
+                lineHeight: 'leading-loose',
+                textWidth: 'max-w-[66vw]',
+                wpm: 180,
+                progressDisplay: 'percent',
+                textAlign: 'text-left',
+                contentAlign: 'items-center',
+                bibleFontSize: 2,
+                verseHighlightColor: 'highlight-yellow',
+                verseHighlightStyle: 'fill',
+                bibleVersion: 'NVI',
+            },
+            bible: {
+                versions: {}, // Armazena os dados das bíblias carregadas. Ex: { NVI: data, ARA: data }
+                currentBook: 0,
+                currentChapter: 0,
+                highlightedRef: null, // e.g., { ref: 'Gênesis 1', verses: [1, 2, 3] }
+            }
+        };
+        const MOCK_DATA = {
+            pageTitle: "Tutorial Interativo",
+            blocks: {
+                results: [{
+                    id: 'mock-1',
+                    type: 'heading_1',
+                    heading_1: {
+                        rich_text: [{
+                            plain_text: 'Bem-vindo ao Tutorial Interativo!'
+                        }]
+                    }
+                }, {
+                    id: 'mock-2',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            plain_text: 'Esta é uma página de exemplo para você explorar todas as funcionalidades do Visualizador de Notas. Vamos começar!'
+                        }]
+                    }
+                }, {
+                    id: 'mock-3',
+                    type: 'callout',
+                    callout: {
+                        icon: {
+                            emoji: '➡️'
+                        },
+                        rich_text: [{
+                            plain_text: 'Use as setas do teclado, deslize o dedo na tela ou use os botões no rodapé para navegar entre as páginas do tutorial.'
+                        }],
+                        color: 'default_background'
+                    }
+                }, {
+                    id: 'mock-h-2',
+                    type: 'heading_2',
+                    heading_2: {
+                        rich_text: [{
+                            plain_text: 'Modos de Visualização'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-1',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            plain_text: 'Existem dois modos principais. Você pode alternar entre eles no painel de Ajustes (⚙️).'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-2',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: '1. Modo Páginas (Padrão):'
+                            },
+                            annotations: {
+                                bold: true
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' Divide o conteúdo em "slides", usando os títulos (H1, H2, H3) como pontos de quebra. Ideal para apresentações.'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-3',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: '2. Modo Rolagem:'
+                            },
+                            annotations: {
+                                bold: true
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' Exibe todo o conteúdo como uma única página contínua, similar a um artigo. Neste modo, um botão de rolagem automática ( '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: '🔽',
+                                annotations: {
+                                    code: true
+                                }
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' ) aparecerá no topo.'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-h-4',
+                    type: 'heading_2',
+                    heading_2: {
+                        rich_text: [{
+                            plain_text: 'Barra Lateral da Bíblia (📖)'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-5',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            plain_text: 'A antiga barra de Destaques agora é um poderoso navegador da Bíblia! As referências a versículos no seu texto são detectadas e transformadas em links automaticamente.'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-6',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: 'Clique nos exemplos para testar: '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'Jo 3.16'
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: '1 Coríntios 13:4-7'
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' ou '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'Rm 8:28,31'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-callout-bible',
+                    type: 'callout',
+                    callout: {
+                        icon: {
+                            emoji: '🔧'
+                        },
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: 'Dica: '
+                            },
+                            annotations: {
+                                bold: true
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'Você pode escolher sua versão preferida da Bíblia (NVI, ARA, etc.) no painel de Ajustes.'
+                            }
+                        }],
+                        color: 'green_background'
+                    }
+                }, {
+                    id: 'mock-h-5',
+                    type: 'heading_2',
+                    heading_2: {
+                        rich_text: [{
+                            plain_text: 'Formatação de Texto'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-8',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            plain_text: 'O visualizador é compatível com as formatações básicas do Notion.'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-11',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: 'E, claro, os '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'destaques com cor de fundo'
+                            },
+                            "annotations": {
+                                "color": "red_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' são exibidos com o novo estilo!'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-12',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: 'Aqui estão mais exemplos: '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'cinza'
+                            },
+                            "annotations": {
+                                "color": "gray_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'marrom'
+                            },
+                            "annotations": {
+                                "color": "brown_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'laranja'
+                            },
+                            "annotations": {
+                                "color": "orange_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'amarelo'
+                            },
+                            "annotations": {
+                                "color": "yellow_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'verde'
+                            },
+                            "annotations": {
+                                "color": "green_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'azul'
+                            },
+                            "annotations": {
+                                "color": "blue_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ', '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'roxo'
+                            },
+                            "annotations": {
+                                "color": "purple_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' e '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'rosa'
+                            },
+                            "annotations": {
+                                "color": "pink_background"
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: '.'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-14',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            type: 'text',
+                            text: {
+                                content: 'Teste de '
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: 'negrito e destaque',
+                                "annotations": {
+                                    "bold": true,
+                                    "color": "yellow_background"
+                                }
+                            }
+                        }, {
+                            type: 'text',
+                            text: {
+                                content: ' juntos.'
+                            }
+                        }]
+                    }
+                }, {
+                    id: 'mock-h-7',
+                    type: 'heading_1',
+                    heading_1: {
+                        rich_text: [{
+                            plain_text: 'Pronto para Começar?'
+                        }]
+                    }
+                }, {
+                    id: 'mock-p-13',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{
+                            plain_text: 'Clique no ícone (🏠) no canto superior esquerdo para voltar à tela inicial, cole a URL de uma página pública do Notion e aproveite a leitura!'
+                        }]
+                    }
+                },]
+            },
+            page: {
+                properties: {
+                    title: {
+                        title: [{
+                            plain_text: "Tutorial Interativo"
+                        }]
+                    }
+                }
+            }
+        };
+        const extractPageId = (input) => {
+            if (!input) return '';
+            try {
+                if (input.startsWith('http')) {
+                    const url = new URL(input);
+                    const pathParts = url.pathname.split('/');
+                    const lastPart = pathParts[pathParts.length - 1];
+                    const idFromEnd = lastPart.split('-').pop();
+                    if (idFromEnd && /^[0-9a-f]{32}$/.test(idFromEnd)) return idFromEnd;
+                }
+                const cleanId = input.split('-').pop().replace(/[^0-9a-fA-F]/g, '');
+                if (/^[0-9a-f]{32}$/.test(cleanId)) return cleanId;
+            } catch (e) { }
+            return '';
+        };
+
+        const processAndRender = (blocks, title) => {
+            state.pageTitle = title;
+            state.rawBlocks = blocks;
+            scanForReferencesInText();
+            rebuildSlidesAndRender();
+            showView('presentation');
+        };
+
+        const htmlToNotionBlocks = (html) => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const blocks = [];
+            const supportedTags = {
+                'H1': 'heading_1',
+                'H2': 'heading_2',
+                'H3': 'heading_3',
+                'P': 'paragraph',
+                'BLOCKQUOTE': 'quote',
+                'HR': 'divider'
+            };
+
+            tempDiv.childNodes.forEach(node => {
+                const tagName = node.tagName;
+                if (supportedTags[tagName]) {
+                    const blockType = supportedTags[tagName];
+                    const block = { type: blockType };
+                    if (blockType !== 'divider') {
+                        block[blockType] = {
+                            rich_text: [{ type: 'text', text: { content: node.textContent }, plain_text: node.textContent }]
+                        };
+                    } else {
+                        block[blockType] = {};
+                    }
+                    blocks.push(block);
+                } else if (tagName === 'UL' || tagName === 'OL') {
+                    const listType = tagName === 'UL' ? 'bulleted_list_item' : 'numbered_list_item';
+                    node.childNodes.forEach(li => {
+                        if (li.tagName === 'LI') {
+                            blocks.push({
+                                type: listType,
+                                [listType]: {
+                                    rich_text: [{ type: 'text', text: { content: li.textContent }, plain_text: li.textContent }]
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            return blocks;
+        };
+
+        const textToNotionBlocks = (text) => {
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim() !== '');
+            return paragraphs.map(p => ({
+                type: 'paragraph',
+                paragraph: {
+                    rich_text: [{ type: 'text', text: { content: p }, plain_text: p }]
+                }
+            }));
+        };
+
+        const processDocx = (file) => {
+            showView('loading');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const arrayBuffer = e.target.result;
+                mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+                    .then(result => {
+                        const blocks = htmlToNotionBlocks(result.value);
+                        processAndRender(blocks, file.name);
+                    })
+                    .catch(err => {
+                        showError("Erro ao processar o arquivo .docx.");
+                        showView('setup');
+                        console.error(err);
+                    });
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        const processPdf = (file) => {
+            showView('loading');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const arrayBuffer = e.target.result;
+                pdfjsLib.getDocument(arrayBuffer).promise.then(async (pdf) => {
+                    let fullText = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
+                    }
+                    const blocks = textToNotionBlocks(fullText);
+                    processAndRender(blocks, file.name);
+                }).catch(err => {
+                    showError("Erro ao processar o arquivo .pdf.");
+                    showView('setup');
+                    console.error(err);
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        const handleFile = (file) => {
+            if (!file) return;
+            showError('');
+            const fileType = file.name.split('.').pop().toLowerCase();
+            if (fileType === 'docx') {
+                processDocx(file);
+            } else if (fileType === 'pdf') {
+                processPdf(file);
+            } else {
+                showError("Formato de arquivo não suportado. Use .docx ou .pdf.");
+            }
+        };
+
+        const showConfirmationModal = (message, onConfirm) => {
+            confirmModalMessage.textContent = message;
+
+            const cleanup = () => {
+                confirmOkBtn.removeEventListener('click', handleConfirm);
+                confirmCancelBtn.removeEventListener('click', handleCancel);
+                closeConfirmModalBtn.removeEventListener('click', handleCancel);
+            };
+
+            const handleConfirm = () => {
+                confirmModal.classList.add('hidden');
+                cleanup();
+                onConfirm();
+            };
+
+            const handleCancel = () => {
+                confirmModal.classList.add('hidden');
+                cleanup();
+            };
+
+            confirmOkBtn.addEventListener('click', handleConfirm);
+            confirmCancelBtn.addEventListener('click', handleCancel);
+            closeConfirmModalBtn.addEventListener('click', handleCancel);
+
+            confirmModal.classList.remove('hidden');
+        };
+
+        // Adiciona uma mensagem de aviso antes de o usuário sair da página
+        const handleBeforeUnload = (e) => {
+            e.preventDefault();
+            const confirmationMessage = 'Tem certeza que deseja sair e encerrar a leitura do esboço?';
+            e.returnValue = confirmationMessage; // Para navegadores modernos
+            return confirmationMessage;          // Para navegadores mais antigos
+        };
+
+        async function fetchNotionContent(isPreview = false) {
+            if (isPreview) {
+                const data = MOCK_DATA;
+                const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
+                state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
+                state.rawBlocks = data.blocks.results;
+                scanForBooksInText();
+                rebuildSlidesAndRender();
+                showView('presentation');
+                toggleSettingsPanel(true);
+                return;
+            }
+            const pageId = extractPageId(pageIdInput.value.trim());
+            if (!pageId) {
+                showError("URL ou ID da Página inválido.");
+                return;
+            }
+            showView('loading');
+            try {
+                const response = await fetch(`/api/notion-proxy?pageId=${pageId}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({
+                        message: `Erro HTTP ${response.status}`
+                    }));
+                    throw new Error(errorData.message || 'Falha ao buscar a página.');
+                }
+                const data = await response.json();
+                const titleProperty = Object.values(data.page.properties).find(p => p.type === 'title');
+                state.pageTitle = titleProperty ? titleProperty.title[0].plain_text : 'Tutorial Interativo';
+                state.rawBlocks = data.blocks.results;
+                saveToHistory(pageId, state.pageTitle);
+                scanForReferencesInText();
+                rebuildSlidesAndRender();
+                showView('presentation');
+            } catch (error) {
+                showError(`Falha ao buscar conteúdo: ${error.message}. Verifique a URL e se a página é pública.`);
+                showView('setup');
+            }
+        }
+        const isPageBreak = (block) => {
+            if (!block) return false;
+            // A page break is a heading, a divider, or a paragraph that is just '---'
+            if (['heading_1', 'heading_2', 'heading_3', 'divider'].includes(block.type)) {
+                return true;
+            }
+            if (block.type === 'paragraph') {
+                const richText = block.paragraph.rich_text;
+                if (richText && richText.length > 0) {
+                    const fullText = richText.map(t => t.plain_text || '').join('').trim();
+                    if (fullText === '---') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        const parseBlocksIntoSlides = (blocks) => {
+            if (!blocks || blocks.length === 0) return [
+                []
+            ];
+            if (state.settings.displayMode === 'scroll') {
+                bibleToggleBtn.classList.remove('hidden');
+                return [blocks];
+            };
+            const slides = [];
+            let currentSlideContent = [];
+            blocks.forEach(block => {
+                const shouldBreak = isPageBreak(block);
+
+                if (shouldBreak) {
+                    // Finalize the previous slide if it has content
+                    if (currentSlideContent.length > 0) {
+                        slides.push(currentSlideContent);
+                    }
+                    // Start a new slide
+                    currentSlideContent = [];
+
+                    // If the break is a heading, it's the first element of the new slide.
+                    // If it's a divider, it's ignored.
+                    if (['heading_1', 'heading_2', 'heading_3'].includes(block.type)) {
+                        currentSlideContent.push(block);
+                    }
+                } else {
+                    // Add regular content to the current slide
+                    currentSlideContent.push(block);
+                }
+            });
+            if (currentSlideContent.length > 0) slides.push(currentSlideContent);
+            return slides.length > 0 ? slides : [
+                []
+            ];
+        };
+        const countPotentialSlides = (blocks) => {
+            if (!blocks || blocks.length === 0) return 1;
+            let slideCount = 0;
+            let currentSlideContent = [];
+            blocks.forEach(block => {
+                const shouldBreak = isPageBreak(block);
+                
+                if (shouldBreak) {
+                    if (currentSlideContent.length > 0) {
+                        slideCount++;
+                    }
+                    currentSlideContent = [];
+                    if (['heading_1', 'heading_2', 'heading_3'].includes(block.type)) {
+                        currentSlideContent.push(block); // This item starts the new slide's content
+                    }
+                } else {
+                     currentSlideContent.push(block);
+                }
+            });
+            if (currentSlideContent.length > 0) slideCount++;
+            return slideCount > 0 ? slideCount : 1;
+        };
+        const processRichText = (richTextArray) => {
+            if (!richTextArray) return '';
+            const colorMap = {
+                "gray": "text-gray-500",
+                "brown": "text-yellow-700",
+                "orange": "text-orange-600",
+                "yellow": "text-yellow-600",
+                "green": "text-green-600",
+                "blue": "text-blue-600",
+                "purple": "text-purple-600",
+                "pink": "text-pink-600",
+                "red": "text-red-600"
+            };
+            const lightColorMap = {
+                "gray": "text-gray-600",
+                "brown": "text-yellow-800",
+                "orange": "text-orange-700",
+                "yellow": "text-yellow-800",
+                "green": "text-green-700",
+                "blue": "text-blue-700",
+                "purple": "text-purple-700",
+                "pink": "text-pink-700",
+                "red": "text-red-700",
+            }
+            let html = richTextArray.map(text => {
+                const annotations = text.annotations || {};
+                const classList = [];
+                if (annotations.bold) classList.push('font-bold');
+                if (annotations.italic) classList.push('italic');
+                if (annotations.strikethrough) classList.push('line-through');
+                if (annotations.underline) classList.push('underline');
+                if (annotations.code) classList.push(
+                    'font-mono bg-gray-200 dark:bg-gray-700/50 px-1 py-0.5 rounded text-sm text-red-500');
+                if (annotations.color && annotations.color !== 'default') {
+                    if (annotations.color.includes('_background')) {
+                        classList.push('text-highlight', `notion-${annotations.color}`);
+                    } else {
+                        const isLightTheme = ['theme-light', 'theme-sepia', 'theme-light-green',
+                            'theme-light-blue'
+                        ].includes(state.settings.theme);
+                        const finalColorMap = isLightTheme ? lightColorMap : colorMap;
+                        classList.push(finalColorMap[annotations.color] || colorMap[annotations
+                            .color]);
+                    }
+                }
+                const plainText = text.plain_text || (text.text ? text.text.content : '');
+                let content = plainText.replace(/\n/g, '<br>');
+                if (text.href) {
+                    return `<a href="${text.href}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline ${classList.join(' ')}">${content}</a>`;
+                }
+                return `<span class="${classList.join(' ')}">${content}</span>`;
+            }).join('');
+            return parseAndLinkBibleReferences(html);
+        };
+        const createHtmlFromBlock = (block) => {
+            const type = block.type;
+            const content = block[type];
+            if (!content) return null;
+            let el;
+            switch (type) {
+                case 'heading_1':
+                    el = document.createElement('h1');
+                    el.className = 'font-bold leading-tight';
+                    el.innerHTML = processRichText(content.rich_text);
+                    break;
+                case 'heading_2':
+                    el = document.createElement('h2');
+                    el.className = 'font-semibold mt-10 leading-snug';
+                    el.innerHTML = processRichText(content.rich_text);
+                    break;
+                case 'heading_3':
+                    el = document.createElement('h3');
+                    el.className = 'font-medium mt-8';
+                    el.innerHTML = processRichText(content.rich_text);
+                    break;
+                case 'paragraph':
+                    el = document.createElement('p');
+                    el.innerHTML = processRichText(content.rich_text) || '&nbsp;';
+                    break;
+                case 'bulleted_list_item':
+                case 'numbered_list_item':
+                    el = document.createElement('li');
+                    el.innerHTML = processRichText(content.rich_text);
+                    // Lida com blocos aninhados recursivamente
+                    if (block.children && block.children.length > 0) {
+                        renderBlocks(block.children, el);
+                    }
+                    break;
+                case 'image':
+                    el = document.createElement('img');
+                    el.src = content.type === 'external' ? content.external.url : content.file.url;
+                    el.className = 'max-w-full h-auto rounded-lg shadow-lg my-6 mx-auto block';
+                    break;
+                case 'divider':
+                    el = document.createElement('hr');
+                    el.className = 'my-8';
+                    break;
+                case 'quote':
+                    el = document.createElement('blockquote');
+                    el.className = 'pl-3 border-l-4';
+                    el.innerHTML = processRichText(content.rich_text);
+                    break;
+                case 'callout':
+                    const iconHTML = content.icon ?
+                        `<span class="text-xl w-6 text-center">${content.icon.emoji}</span>` : '';
+                    el = document.createElement('div');
+                    el.className =
+                        `p-4 rounded-lg flex items-start my-4 notion-callout ${content.color ? 'notion-' + content.color : 'notion-default_background'}`;
+                    el.innerHTML =
+                        `${iconHTML}<div class="flex-1 ${content.icon ? 'ml-2' : ''}">${processRichText(content.rich_text)}</div>`;
+                    break;
+                default:
+                    return null;
+            }
+            if (el && block.id) {
+                el.id = `block-${block.id}`;
+            }
+            return el;
+        };
+        const renderCurrentSlide = () => {
+            const slideData = state.slides[state.currentSlide];
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-content w-full h-full space-y-5';
+            renderBlocks(slideData, wrapper); // Usa a nova função para renderizar com aninhamento
+            const spacer = document.createElement('div');
+            spacer.style.height = '50vh';
+            wrapper.appendChild(spacer);
+            slidesContainer.innerHTML = '';
+            slidesContainer.appendChild(wrapper);
+            pageTitle.textContent = state.pageTitle;
+            applySettings();
+            updateControls();
+            renderHistorySidebar();
+            requestAnimationFrame(() => requestAnimationFrame(updateFooterInfo));
+        };
+        const rebuildSlidesAndRender = () => {
+            stopAutoScroll();
+            const pageCount = countPotentialSlides(state.rawBlocks);
+            const slidesButton = document.querySelector('[data-setting="displayMode"][data-value="slides"]');
+            if (slidesButton) {
+                if (pageCount <= 1) {
+                    slidesButton.disabled = true;
+                    slidesButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    state.settings.displayMode = 'scroll';
+                } else {
+                    slidesButton.disabled = false;
+                    slidesButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            state.slides = parseBlocksIntoSlides(state.rawBlocks);
+            state.currentSlide = 0;
+            state.pageSeconds = 0;
+            state.pageTimeHistory = {};
+            renderCurrentSlide();
+            slidesContainer.scrollTop = 0;
+        };
+        const showView = (view) => {
+            // Hide all views first by adding 'hidden' and removing 'flex'
+            [setupView, presentationView, loadingView].forEach(v => {
+                v.classList.add('hidden');
+                v.classList.remove('flex');
+            });
+            clearInterval(state.clockInterval);
+
+            // Controla o evento de aviso ao sair da página
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+
+            if (view === 'setup') {
+                setupView.classList.remove('hidden');
+                setupView.classList.add('flex'); // Make setup view visible and flex
+                notionInputContainer.classList.add('hidden');
+                uploadArea.classList.remove('hidden');
+                pageIdInput.value = '';
+                errorMessage.classList.add('hidden');
+                renderRecentHistory();
+                stopTimer();
+                stopAutoScroll();
+                closeAllSidebars();
+            } else if (view === 'presentation') {
+                presentationView.classList.remove('hidden');
+                presentationView.classList.add('flex'); // Make presentation view visible and flex
+                window.addEventListener('beforeunload', handleBeforeUnload); // Adiciona o aviso
+                updateClock();
+                state.clockInterval = setInterval(updateClock, 1000);
+            } else if (view === 'loading') {
+                loadingView.classList.remove('hidden');
+                loadingView.classList.add('flex'); // Make loading view visible and flex
+            }
+        };
+        const showError = (msg) => {
+            errorMessage.textContent = msg;
+            if (msg) {
+                errorMessage.classList.remove('hidden');
+            } else {
+                errorMessage.classList.add('hidden');
+            }
+        };
+        const recordPageTime = () => {
+            if (state.isTimerRunning || state.overallSeconds > 0) {
+                const currentPage = state.currentSlide;
+                state.pageTimeHistory[currentPage] = (state.pageTimeHistory[currentPage] || 0) + state.pageSeconds;
+            }
+        };
+        const goToSlide = (index) => {
+            if (index >= 0 && index < state.slides.length) {
+                recordPageTime();
+                stopAutoScroll();
+                state.currentSlide = index;
+                state.pageSeconds = 0;
+                slidesContainer.scrollTop = 0;
+                renderCurrentSlide();
+                toggleHistorySidebar(false);
+            }
+        };
+        const goToNextSlide = () => {
+            if (state.currentSlide < state.slides.length - 1) {
+                goToSlide(state.currentSlide + 1);
+            }
+        };
+        const goToPrevSlide = () => {
+            if (state.currentSlide > 0) {
+                goToSlide(state.currentSlide - 1);
+            }
+        };
+        const updateControls = () => {
+            const isScroll = state.settings.displayMode === 'scroll';
+            prevBtn.style.visibility = isScroll ? 'hidden' : 'visible';
+            nextBtn.style.visibility = isScroll ? 'hidden' : 'visible';
+            if (!isScroll) {
+                prevBtn.disabled = state.currentSlide === 0;
+                nextBtn.disabled = state.currentSlide >= state.slides.length - 1;
+            }
+            stopAutoScroll();
+            updateFooterInfo();
+        };
+        const countWordsInBlock = (block) => {
+            const richText = block[block.type]?.rich_text;
+            if (!richText) return 0;
+            return richText.map(t => t.plain_text || (t.text ? t.text.content : '')).join(' ').trim().split(
+                /\s+/).filter(Boolean).length;
+        };
+        const formatTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+        const updateFooterInfo = () => {
+            const wpm = state.settings.wpm;
+            const totalWordsAll = state.rawBlocks.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+            if (totalWordsAll === 0) {
+                footerCenter.innerHTML = '';
+                return;
+            }
+            const {
+                scrollTop,
+                scrollHeight,
+                clientHeight
+            } = slidesContainer;
+            const pageBarHTML =
+                `<div class="w-full rounded-full h-2 progress-bar-bg"><div id="page-progress-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%;"></div></div>`;
+            const docBarHTML =
+                `<div class="w-full rounded-full h-2 progress-bar-bg"><div id="doc-progress-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%;"></div></div>`;
+            if (state.settings.displayMode === 'scroll') {
+                let scrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : 1;
+                scrollPercent = Math.max(0, Math.min(1, scrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+                
+                let infoHTML = '';
+                if (state.settings.progressDisplay === 'percent') {
+                     infoHTML = `<div class="text-center text-sm font-mono mb-2">Progresso: ${Math.round(scrollPercent * 100)}%</div>`;
+                } else { // 'time' display
+                    const totalTimeInSeconds = (totalWordsAll / wpm) * 60;
+                    const wordsRead = totalWordsAll * scrollPercent;
+                    const wordsRemaining = totalWordsAll - wordsRead;
+                    const remainingTimeInSeconds = (wordsRemaining / wpm) * 60;
+                    infoHTML =
+                        `<div class="text-center text-sm font-mono mb-2">Total: ${formatTime(totalTimeInSeconds)} | Restante: ${formatTime(remainingTimeInSeconds)}</div>`;
+                }
+
+                const barHTML = `<div class="w-full">${docBarHTML}</div>`;
+                footerCenter.innerHTML = infoHTML + barHTML;
+                $('#doc-progress-bar').style.width = `${scrollPercent * 100}%`;
+            } else { // SLIDES MODE
+                const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc +
+                    countWordsInBlock(b), 0);
+                let pageScrollPercent = scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) : (
+                    wordsOnPage > 0 ? 1 : 0);
+                pageScrollPercent = Math.max(0, Math.min(1,
+                    pageScrollPercent)); // Garante que a porcentagem esteja entre 0 e 1
+                const pageTimeSeconds = (wordsOnPage / wpm) * 60;
+                const pageWordsRead = wordsOnPage * pageScrollPercent;
+                const pageWordsRemaining = wordsOnPage - pageWordsRead;
+                const pageTimeRemainingSeconds = (pageWordsRemaining / wpm) * 60;
+                const wordsBeforeCurrentPage = state.slides.slice(0, state.currentSlide).flat().reduce((acc, b) =>
+                    acc + countWordsInBlock(b), 0);
+                const totalWordsRead = wordsBeforeCurrentPage + pageWordsRead;
+                const docTimeSeconds = (totalWordsAll / wpm) * 60;
+                const docTimeRemainingSeconds = (docTimeSeconds) - ((totalWordsRead / wpm) * 60);
+                const docPercent = totalWordsAll > 0 ? (totalWordsRead / totalWordsAll) * 100 : 0;
+                let infoHTML = '',
+                    barsHTML = '';
+                if (state.settings.progressDisplay === 'percent') {
+                    infoHTML =
+                        `<div class="flex justify-around items-center text-xs w-full mb-2"> <div class="w-1/2 text-center"><span>Página: ${state.currentSlide + 1}/${state.slides.length} | ${Math.round(pageScrollPercent * 100)}%</span></div> <div class="w-1/2 text-center"><span>Documento: ${Math.round(docPercent)}%</span></div> </div>`;
+                } else { // 'time' display
+                    infoHTML =
+                        `<div class="flex flex-col md:flex-row justify-around text-xs w-full mb-2 gap-2 md:gap-0"> <div class="w-full md:w-1/2 text-center"> <div class="font-bold">Página (${state.currentSlide + 1}/${state.slides.length})</div> <div>Total: ${formatTime(pageTimeSeconds)} | Restante: ${formatTime(pageTimeRemainingSeconds)}</div> </div> <div class="w-full md:w-1/2 text-center"> <div class="font-bold">Documento</div> <div>Total: ${formatTime(docTimeSeconds)} | Restante: ${formatTime(docTimeRemainingSeconds)}</div> </div> </div>`;
+                }
+                barsHTML =
+                    `<div class="w-full flex items-center justify-center gap-4"> <div class="flex-1">${pageBarHTML}</div> <div class="flex-1">${docBarHTML}</div> </div>`;
+                footerCenter.innerHTML = infoHTML + barsHTML;
+                $('#page-progress-bar').style.width = `${pageScrollPercent * 100}%`;
+                $('#doc-progress-bar').style.width = `${docPercent}%`;
+            }
+        };
+        const renderHistorySidebar = () => {
+            const shouldShow = state.settings.displayMode === 'slides' && state.slides.length > 1;
+            historyToggleBtn.classList.toggle('hidden', !shouldShow);
+            if (!shouldShow) {
+                toggleHistorySidebar(false);
+                return;
+            }
+            historyList.innerHTML = '';
+            state.slides.forEach((slide, index) => {
+                const firstBlock = slide[0];
+                let pageTitleText = `Página ${index + 1}`;
+                const headingType = ['heading_1', 'heading_2', 'heading_3'].find(h => firstBlock &&
+                    firstBlock.type === h);
+                if (headingType) {
+                    const richText = firstBlock[headingType].rich_text;
+                    if (richText && richText.length > 0) pageTitleText = richText.map(t => t
+                        .plain_text).join('');
+                }
+                const wordsOnPage = slide.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+                const estimatedTime = formatTime((wordsOnPage / state.settings.wpm) * 60);
+                const spentTimeRaw = state.pageTimeHistory[index] || 0;
+                const currentSpentTime = (state.isTimerRunning && index === state.currentSlide) ?
+                    spentTimeRaw + state.pageSeconds : spentTimeRaw;
+                const spentTime = (state.isTimerRunning || spentTimeRaw > 0) ? formatTime(
+                    currentSpentTime) : '...';
+                const item = document.createElement('button');
+                item.className =
+                    `history-item w-full text-left p-4 hover:bg-opacity-50 transition-colors border-b ${index === state.currentSlide ? 'active' : ''}`;
+                item.dataset.index = index;
+                item.innerHTML =
+                    `<div class="font-semibold truncate" title="${pageTitleText}">${pageTitleText}</div> <div class="text-sm font-mono mt-1 ${document.documentElement.classList.contains('light') ? 'subtext-light' : 'text-gray-400'}">Gasto: ${spentTime} / Previsto: ${estimatedTime}</div>`;
+                historyList.appendChild(item);
+            });
+        };
+        const closeAllSidebars = () => {
+            document.body.classList.remove('history-open', 'bible-open', 'settings-open');
+            historySidebar.classList.remove('open');
+            settingsPanel.classList.remove('open');
+            bibleSidebar.classList.remove('open');
+        };
+        const toggleHistorySidebar = (open) => {
+            if (open) {
+                closeAllSidebars();
+                historySidebar.classList.add('open');
+                document.body.classList.add('history-open');
+            } else {
+                historySidebar.classList.remove('open');
+                document.body.classList.remove('history-open');
+            }
+        };
+        const toggleSettingsPanel = (open) => {
+            if (open) {
+                closeAllSidebars();
+                settingsPanel.classList.add('open');
+                document.body.classList.add('settings-open');
+            } else {
+                settingsPanel.classList.remove('open');
+                document.body.classList.remove('settings-open');
+            }
+        };
+        const toggleBibleSidebar = (open) => {
+            if (open) {
+                closeAllSidebars();
+                bibleSidebar.classList.add('open');
+                document.body.classList.add('bible-open');
+            } else {
+                bibleSidebar.classList.remove('open');
+                document.body.classList.remove('bible-open');
+            }
+        };
+        const applyTheme = (newTheme) => {
+            if (newTheme) {
+                state.settings.theme = newTheme;
+            } else {
+                // Ao iniciar, garante que o tema antigo seja compatível
+                if (state.settings.theme === 'light' || state.settings.theme === 'dark') {
+                    state.settings.theme = `theme-${state.settings.theme}`;
+                }
+            }
+            const themes = ['theme-light', 'theme-dark', 'theme-sepia', 'theme-light-green', 'theme-light-blue'];
+            document.documentElement.className = ''; // Limpa classes para evitar conflitos
+            document.documentElement.classList.add(state.settings.theme);
+            // Se a mudança de tema foi intencional (newTheme existe), renderiza novamente
+            if (newTheme) {
+                if (!presentationView.classList.contains('hidden')) {
+                    renderCurrentSlide();
+                } else {
+                    applySettings();
+                }
+            }
+        };
+        const applySettings = () => {
+            const contentWrapper = slidesContainer;
+            if (!contentWrapper) return;
+            content.querySelectorAll('h1').forEach(h => h.style.fontSize = `${baseSizeRem * 1.8}rem`);
+            content.querySelectorAll('h2').forEach(h => h.style.fontSize = `${baseSizeRem * 1.5}rem`);
+            content.querySelectorAll('h3').forEach(h => h.style.fontSize = `${baseSizeRem * 1.25}rem`);
+            
+            const calloutBaseSizeRem = baseSizeRem * 0.9;
+            document.querySelectorAll('.notion-callout .flex-1').forEach(el => el.style.fontSize = `${calloutBaseSizeRem}rem`);
+
+            const bibleBaseSizeRem = 1.0 + (state.settings.bibleFontSize * 0.15);
+            if (bibleVersesContainer) {
+                bibleVersesContainer.style.fontSize = `${bibleBaseSizeRem}rem`;
+            }
+
+            // Aplicar cor e estilo de destaque do versículo
+            const highlightColorClasses = ['highlight-yellow', 'highlight-green', 'highlight-blue', 'highlight-indigo', 'highlight-pink'];
+            const highlightStyleClasses = ['style-fill', 'style-font', 'style-outline'];
+            if (bibleVersesContainer) {
+                bibleVersesContainer.classList.remove(...highlightColorClasses);
+                bibleVersesContainer.classList.add(state.settings.verseHighlightColor);
+
+                bibleVersesContainer.classList.remove(...highlightStyleClasses);
+                bibleVersesContainer.classList.add(`style-${state.settings.verseHighlightStyle}`);
+            }
+
+            wpmDisplay.textContent = state.settings.wpm;
+            localStorage.setItem('notionViewerSettings', JSON.stringify(state.settings));
+            updateFooterInfo();
+            updateSettingsUI();
+            renderHistorySidebar();
+        };
+        const updateSettingsUI = () => {
+            for (const key in state.settings) {
+                if (key === 'wpm') continue;
+                document.querySelectorAll(`[data-setting="${key}"]`).forEach(el => {
+                    let valueToCompare = state.settings[key];
+                    if (key === 'theme') {
+                        valueToCompare = valueToCompare.replace('theme-', '');
+                    }
+                    if (el.tagName === 'SELECT') {
+                        el.value = valueToCompare;
+                    } else if (el.tagName === 'BUTTON') {
+                        el.classList.toggle('active', el.dataset.value == valueToCompare);
+                        if (key === 'theme' || key === 'verseHighlightColor') {
+                            if (el.dataset.value === valueToCompare) {
+                                el.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+                                const ringColor = document.documentElement.classList.contains(
+                                    'theme-light') ? '#F9FAFB' : '#1F293B';
+                                el.style.setProperty('--tw-ring-offset-color', ringColor);
+                            } else {
+                                el.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500');
+                            }
+                        }
+                    }
+                });
+            }
+        };
+        // Função para renderizar blocos, agrupando itens de lista
+        function renderBlocks(blocks, container) {
+            if (!blocks) return;
+            let i = 0;
+            while (i < blocks.length) {
+                const block = blocks[i];
+                // Agrupa itens de lista consecutivos
+                if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+                    const listTag = block.type === 'bulleted_list_item' ? 'ul' : 'ol';
+                    const listEl = document.createElement(listTag);
+                    listEl.className = 'list-outside space-y-2 mt-2';
+                    if (listTag === 'ul') listEl.classList.add('list-disc', 'pl-6');
+                    if (listTag === 'ol') listEl.classList.add('list-decimal', 'pl-6');
+                    let j = i;
+                    while (j < blocks.length && blocks[j].type === block.type) {
+                        const li = createHtmlFromBlock(blocks[j]);
+                        if (li) listEl.appendChild(li);
+                        j++;
+                    }
+                    container.appendChild(listEl);
+                    i = j;
+                } else {
+                    // Lida com itens que não são de lista
+                    const el = createHtmlFromBlock(block);
+                    if (el) container.appendChild(el);
+                    i++;
+                }
+            }
+        }
+        const handleSettingChange = (e) => {
+            const el = e.target;
+            if (!el.dataset.setting) return;
+            const {
+                setting,
+                value
+            } = el.dataset;
+            let settingChanged = false;
+            if (el.tagName === 'SELECT') {
+                if (state.settings[setting] !== el.value) {
+                    state.settings[setting] = el.value;
+                    settingChanged = true;
+                }
+            } else if (el.tagName === 'BUTTON') {
+                const btn = el.closest('button[data-setting]');
+                if (!btn) return;
+                const {
+                    setting,
+                    value
+                } = btn.dataset;
+                if (setting === 'theme') {
+                    const newTheme = `theme-${value}`;
+                    if (state.settings.theme !== newTheme) {
+                        applyTheme(newTheme);
+                    }
+                    return;
+                }
+                const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(
+                    value) ? value : parseInt(value));
+                if (state.settings[setting] !== newValue) {
+                    state.settings[setting] = newValue;
+                    settingChanged = true;
+                }
+            }
+            if (settingChanged) {
+                if (setting === 'displayMode' || setting === 'bibleVersion') {
+                    if (setting === 'bibleVersion') {
+                        loadAndDisplayBibleChapter(state.bible.currentBook, state.bible.currentChapter);
+                    }
+                    rebuildSlidesAndRender();
+                } else {
+                    applySettings();
+                }
+            }
+        };
+        const updateClock = () => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            clockEl.textContent = `${hours}:${minutes}`;
+        };
+        const startTimer = () => {
+            if (state.isTimerRunning) return;
+            state.isTimerRunning = true;
+            timerPlayPauseBtn.innerHTML = ICONS.pause;
+            state.pageSeconds = 0;
+            state.overallTimerInterval = setInterval(() => {
+                state.overallSeconds++;
+                state.pageSeconds++;
+                overallTimerEl.textContent = formatTime(state.overallSeconds);
+                renderHistorySidebar();
+            }, 1000);
+            renderHistorySidebar();
+        };
+        const stopTimer = () => {
+            if (!state.isTimerRunning) return;
+            recordPageTime();
+            state.isTimerRunning = false;
+            timerPlayPauseBtn.innerHTML = ICONS.play;
+            clearInterval(state.overallTimerInterval);
+            renderHistorySidebar();
+        };
+        const toggleTimer = () => state.isTimerRunning ? stopTimer() : startTimer();
+        const startAutoScroll = () => {
+            if (state.isAutoScrolling) return;
+            const {
+                scrollTop,
+                scrollHeight,
+                clientHeight
+            } = slidesContainer;
+            const scrollableHeight = scrollHeight - clientHeight;
+            const wpm = state.settings.wpm;
+            // Case 1: Page is NOT scrollable. We just wait and then advance.
+            if (scrollableHeight < 1 && state.settings.displayMode === 'slides') {
+                const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc +
+                    countWordsInBlock(b), 0);
+                const duration = ((wordsOnPage / wpm) * 60 * 1000);
+                if (duration < 100) return;
+                state.isAutoScrolling = true;
+                autoScrollToggleBtn.innerHTML = ICONS.scrollPause;
+                state.autoScrollInterval = setTimeout(() => {
+                    if (state.isAutoScrolling) {
+                        stopAutoScroll();
+                        if (state.currentSlide < state.slides.length - 1) {
+                            goToNextSlide();
+                        }
+                    }
+                }, duration);
+                return;
+            }
+            // Case 2: Page IS scrollable.
+            const remainingScroll = scrollableHeight - scrollTop;
+            if (remainingScroll <= 1) return;
+            let wordsRemaining = 0;
+            if (state.settings.displayMode === 'scroll') {
+                const totalWordsAll = state.rawBlocks.reduce((acc, b) => acc + countWordsInBlock(b), 0);
+                const scrollPercent = (scrollTop / scrollableHeight);
+                const wordsRead = totalWordsAll * scrollPercent;
+                wordsRemaining = totalWordsAll - wordsRead;
+            } else { // slides mode
+                const wordsOnPage = (state.slides[state.currentSlide] || []).reduce((acc, b) => acc +
+                    countWordsInBlock(b), 0);
+                const pageScrollPercent = (scrollTop / scrollableHeight);
+                const pageWordsRead = wordsOnPage * pageScrollPercent;
+                wordsRemaining = wordsOnPage - pageWordsRead;
+            }
+            const totalDuration = ((wordsRemaining / wpm) * 60 * 1000);
+            if (totalDuration <= 100) {
+                stopAutoScroll();
+                return;
+            }
+            state.isAutoScrolling = true;
+            autoScrollToggleBtn.innerHTML = ICONS.scrollPause;
+            let startTime = null;
+            const startScrollTop = scrollTop;
+            const scrollStep = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / totalDuration, 1);
+                slidesContainer.scrollTop = startScrollTop + remainingScroll * progress;
+                if (progress < 1) {
+                    state.autoScrollInterval = requestAnimationFrame(scrollStep);
+                } else {
+                    stopAutoScroll();
+                    if (state.settings.displayMode === 'slides' && state.currentSlide < state.slides.length - 1) {
+                        setTimeout(goToNextSlide, 1000);
+                    }
+                }
+            };
+            state.autoScrollInterval = requestAnimationFrame(scrollStep);
+        };
+        const stopAutoScroll = () => {
+            if (!state.isAutoScrolling) return;
+            state.isAutoScrolling = false;
+            autoScrollToggleBtn.innerHTML = ICONS.scrollPlay;
+            if (state.autoScrollInterval) {
+                cancelAnimationFrame(state.autoScrollInterval);
+                clearTimeout(state.autoScrollInterval); // Handles both setTimeout and rAF
+            }
+            state.autoScrollInterval = null;
+        };
+        const toggleAutoScroll = () => state.isAutoScrolling ? stopAutoScroll() : startAutoScroll();
+        const saveToHistory = (id, title) => {
+            if (!id || !title) return;
+            let history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
+            history = history.filter(item => item.id !== id);
+            history.unshift({
+                id,
+                title
+            });
+            history = history.slice(0, 3);
+            localStorage.setItem('notionViewerHistory', JSON.stringify(history));
+        };
+        const renderRecentHistory = () => {
+            const historyContainer = $('#history-container');
+            const historyList = $('#recent-history-list');
+            const history = JSON.parse(localStorage.getItem('notionViewerHistory')) || [];
+            if (history.length > 0) {
+                historyList.innerHTML = '';
+                history.forEach(item => {
+                    const button = document.createElement('button');
+                    button.className =
+                        'w-full text-left px-4 py-3 rounded-lg transition truncate text-white';
+                    button.textContent = item.title;
+                    button.title = item.title;
+                    button.dataset.id = item.id;
+                    button.addEventListener('click', () => {
+                        pageIdInput.value = item.id;
+                        generateBtn.click();
+                    });
+                    historyList.appendChild(button);
+                });
+                historyContainer.classList.remove('hidden');
+            } else {
+                historyContainer.classList.add('hidden');
+            }
+        };
+        // Swipe Gesture Handling
+        let touchStartX = 0,
+            touchEndX = 0,
+            touchStartY = 0,
+            touchEndY = 0;
+
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }
+
+        function handleTouchMove(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+        }
+
+        function handleTouchEnd() {
+            if (state.settings.displayMode !== 'slides') return;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) { // Horizontal swipe
+                if (deltaX < 0) {
+                    goToNextSlide();
+                } else {
+                    goToPrevSlide();
+                }
+            }
+        }
+
+        // --- BIBLE FUNCTIONS ---
+        const BIBLE_METADATA = {
+            versions: [{
+                id: 'NVI',
+                name: 'Nova Versão Internacional',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/NVI.json'
+            }, {
+                id: 'ACF',
+                name: 'Almeida Corrigida Fiel',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/ACF.json'
+            }, {
+                id: 'ARA',
+                name: 'Almeida Revista e Atualizada',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/ARA.json'
+            }, {
+                id: 'ARC',
+                name: 'Almeida Revista e Corrigida',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/ARC.json'
+            }, {
+                id: 'NAA',
+                name: 'Nova Almeida Atualizada',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/NAA.json'
+            }, {
+                id: 'NBV',
+                name: 'Nova Bíblia Viva',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/NBV.json'
+            }, {
+                id: 'NTLH',
+                name: 'Nova Tradução na Linguagem de Hoje',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/NTLH.json'
+            }, {
+                id: 'NVT',
+                name: 'Nova Versão Transformadora',
+                url: 'https://raw.githubusercontent.com/Sony-Werison/Visualizador-de-Notas-Notion/main/B%C3%ADblias/NVT.json'
+            }],
+            books: ["Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio", "Josué", "Juízes", "Rute",
+                "1 Samuel", "2 Samuel", "1 Reis", "2 Reis", "1 Crônicas", "2 Crônicas", "Esdras", "Neemias",
+                "Ester", "Jó", "Salmos", "Provérbios", "Eclesiastes", "Cânticos", "Isaías", "Jeremias",
+                "Lamentações", "Ezequiel", "Daniel", "Oséias", "Joel", "Amós", "Obadias", "Jonas", "Miquéias",
+                "Naum", "Habacuque", "Sofonias", "Ageu", "Zacarias", "Malaquias", "Mateus", "Marcos", "Lucas",
+                "João", "Atos", "Romanos", "1 Coríntios", "2 Coríntios", "Gálatas", "Efésios", "Filipenses",
+                "Colossenses", "1 Tessalonicenses", "2 Tessalonicenses", "1 Timóteo", "2 Timóteo", "Tito",
+                "Filemom", "Hebreus", "Tiago", "1 Pedro", "2 Pedro", "1 João", "2 João", "3 João", "Judas",
+                "Apocalipse"
+            ],
+            abbreviations: {
+                "Gn": "Gênesis", "Êx": "Êxodo", "Lv": "Levítico", "Nm": "Números", "Dt": "Deuteronômio",
+                "Js": "Josué", "Jz": "Juízes", "Rt": "Rute", "1Sm": "1 Samuel", "2Sm": "2 Samuel",
+                "1Rs": "1 Reis", "2Rs": "2 Reis", "1Cr": "1 Crônicas", "2Cr": "2 Crônicas", "Ed": "Esdras",
+                "Ne": "Neemias", "Et": "Ester", "Jó": "Jó", "Sl": "Salmos", "Pv": "Provérbios",
+                "Ec": "Eclesiastes", "Ct": "Cânticos", "Is": "Isaías", "Jr": "Jeremias",
+                "Lm": "Lamentações", "Ez": "Ezequiel", "Dn": "Daniel", "Os": "Oséias", "Jl": "Joel",
+                "Am": "Amós", "Ob": "Obadias", "Jn": "Jonas", "Mq": "Miquéias", "Na": "Naum", "Hc": "Habacuque",
+                "Sf": "Sofonias", "Ag": "Ageu", "Zc": "Zacarias", "Ml": "Malaquias",
+                "Mt": "Mateus", "Mc": "Marcos", "Lc": "Lucas", "Jo": "João", "At": "Atos", "Rm": "Romanos",
+                "1Co": "1 Coríntios", "2Co": "2 Coríntios", "Gl": "Gálatas", "Ef": "Efésios", "Fp": "Filipenses",
+                "Cl": "Colossenses", "1Ts": "1 Tessalonicenses", "2Ts": "2 Tessalonicenses", "1Tm": "1 Timóteo",
+                "2Tm": "2 Timóteo", "Tt": "Tito", "Fm": "Filemom", "Hb": "Hebreus", "Tg": "Tiago",
+                "1Pe": "1 Pedro", "2Pe": "2 Pedro", "1Jo": "1 João", "2Jo": "2 João", "3Jo": "3 João",
+                "Jd": "Judas", "Ap": "Apocalipse"
+            }
+        };
+
+        const resolveVersionAlias = (alias) => {
+            if (!alias) return null;
+            const upperAlias = alias.toUpperCase();
+            if (upperAlias === 'RC') return 'ARC';
+            if (upperAlias === 'RA') return 'ARA';
+            if (BIBLE_METADATA.versions.some(v => v.id === upperAlias)) {
+                return upperAlias;
+            }
+            console.warn(`Versão da Bíblia desconhecida: ${alias}`);
+            return null;
+        };
+
+        const scanForReferencesInText = () => {
+            state.mentionedBooksInText.clear();
+            state.mentionedChaptersInText.clear();
+            // Regex for Book + Chapter + optional verses
+            const fullRefRegex = new RegExp(`((?:\\d\\s*)?${BIBLE_METADATA.bookRegex})\\s+(\\d+)(?:[:.](\\d+(?:(?:\\s*[-–—eE,]\\s*\\d+)*)?))?`, 'gi');
+
+            const textContent = state.rawBlocks.map(block => {
+                const richText = block[block.type]?.rich_text;
+                if (!richText) return '';
+                return richText.map(t => t.plain_text || (t.text ? t.text.content : '')).join(' ');
+            }).join('\n');
+
+            let match;
+            while ((match = fullRefRegex.exec(textContent)) !== null) {
+                const book = match[1];
+                const chapter = match[2];
+
+                const normalizedBook = book.trim().replace(/\s+/g, '').toLowerCase();
+                const fullBookName = BIBLE_METADATA.spacelessMap.get(normalizedBook);
+
+                if (fullBookName) {
+                    state.mentionedBooksInText.add(fullBookName);
+                    state.mentionedChaptersInText.add(`${fullBookName} ${chapter}`);
+                }
+            }
+        };
+
+        async function loadBibleData(versionId) {
+            if (!versionId || !BIBLE_METADATA.versions.some(v => v.id === versionId)) {
+                versionId = state.settings.bibleVersion; // Fallback to default
+            }
+            if (state.bible.versions[versionId]) {
+                return state.bible.versions[versionId];
+            }
+            const versionInfo = BIBLE_METADATA.versions.find(v => v.id === versionId);
+            if (!versionInfo) {
+                console.error(`Versão da Bíblia não encontrada: ${versionId}`);
+                return null;
+            }
+            try {
+                const response = await fetch(versionInfo.url);
+                if (!response.ok) throw new Error(`Falha ao carregar a Bíblia (status: ${response.status})`);
+                const data = await response.json();
+                state.bible.versions[versionId] = data;
+                return data;
+            } catch (error) {
+                console.error(`Erro ao carregar os dados da Bíblia (${versionId}):`, error);
+                bibleVersesContainer.innerHTML =
+                    `<p class="text-red-500 p-4">Não foi possível carregar a versão ${versionId}. Verifique sua conexão.</p>`;
+                return null;
+            }
+        }
+        async function loadAndDisplayBibleChapter(bookIndex, chapterIndex, versionOverride = null) {
+            state.bible.currentBook = bookIndex;
+            state.bible.currentChapter = chapterIndex;
+            bibleVersesContainer.innerHTML = '<div class="animate-pulse p-4">Carregando versículos...</div>';
+            
+            const versionToLoad = versionOverride || state.settings.bibleVersion;
+            bibleVersionSelect.value = versionToLoad;
+
+            const bibleData = await loadBibleData(versionToLoad);
+            if (!bibleData || !bibleData[bookIndex] || !bibleData[bookIndex].chapters[chapterIndex]) {
+                bibleVersesContainer.innerHTML = '<p class="text-red-500 p-4">Capítulo não encontrado.</p>';
+                return;
+            }
+            const chapter = bibleData[bookIndex].chapters[chapterIndex];
+            bibleVersesContainer.innerHTML = chapter.map((verse, i) =>
+                `<div class="verse" data-verse="${i + 1}"><strong class="font-bold mr-1">${i + 1}</strong>${verse}</div>`
+            ).join('');
+
+            applySettings(); // Aplica fonte e cor
+            updateBibleNavButtons();
+
+            // Re-apply highlights if they exist for the currently displayed chapter
+            if (state.bible.highlightedRef) {
+                const currentBookName = BIBLE_METADATA.books[bookIndex];
+                const currentChapterRef = `${currentBookName} ${chapterIndex + 1}`;
+                if (state.bible.highlightedRef.ref === currentChapterRef) {
+                    state.bible.highlightedRef.verses.forEach(vNum => {
+                        const verseEl = bibleVersesContainer.querySelector(`[data-verse="${vNum}"]`);
+                        if (verseEl) verseEl.classList.add('highlighted');
+                    });
+                }
+            }
+
+
+            // Update selects
+            bibleBookSelect.value = bookIndex;
+            bibleChapterSelect.innerHTML = bibleData[bookIndex].chapters.map((_, i) =>
+                `<option value="${i}">${i + 1}</option>`).join('');
+            bibleChapterSelect.value = chapterIndex;
+        }
+
+        function parseAndLinkBibleReferences(html) {
+            const tempTag = 'b-ref'; // Use a custom tag to avoid conflicts
+
+            // Full references first, now with optional version capture
+            const fullRefRegex = new RegExp(`((?:\\d\\s*)?${BIBLE_METADATA.bookRegex})\\s+(\\d+)(?:[:.](\\d+(?:(?:\\s*[-–—eE,]\\s*\\d+)*)?))?\\s*(?:\\(([A-Z]{2,4})\\))?`, 'gi');
+            html = html.replace(fullRefRegex, (match, book, chapter, verses, version, offset, originalString) => {
+                const precedingHtml = originalString.substring(0, offset);
+                const lastOpenRef = precedingHtml.lastIndexOf(`<${tempTag}`);
+                const lastCloseRef = precedingHtml.lastIndexOf(`</${tempTag}>`);
+                if (lastOpenRef > lastCloseRef) return match;
+
+                const normalizedBook = book.trim().replace(/\s+/g, '').toLowerCase();
+                const fullBookName = BIBLE_METADATA.spacelessMap.get(normalizedBook);
+                
+                if (fullBookName) {
+                    const versePart = verses ? `:${verses}` : '';
+                    const versionAttr = version ? `data-version="${version.toUpperCase()}"` : '';
+                    return `<${tempTag} class="bible-ref-link" data-ref="${fullBookName} ${chapter}${versePart}" ${versionAttr}>${match}</${tempTag}>`;
+                }
+                return match;
+            });
+
+            // Chapter:Verse references
+            const chapterVerseRegex = /(?<![\wÁ-úÀ-ù>])(\d+)\s*[:.]\s*(\d+(?:(?:[-\u2013\u2014eE,]\s*\d+)*)?)/gi;
+            html = html.replace(chapterVerseRegex, (match, p1, p2, offset, originalString) => {
+                const precedingHtml = originalString.substring(0, offset);
+                const lastOpenRef = precedingHtml.lastIndexOf(`<${tempTag}`);
+                const lastCloseRef = precedingHtml.lastIndexOf(`</${tempTag}>`);
+                if (lastOpenRef > lastCloseRef) return match;
+                
+                return `<${tempTag} class="bible-ref-link" data-ref="${match}" data-incomplete-type="chapter-verse">${match}</${tempTag}>`;
+            });
+
+            // Verse-only references, with optional version
+            const verseOnlyRegex = /(?:^|\s|\>|“|"|\()((?:v|vv)\.?\s*\d+(?:(?:[-\u2013\u2014eE,]\s*\d+)*)?)\s*(?:\(([A-Z]{2,4})\))?/gi;
+            html = html.replace(verseOnlyRegex, (match, p1, version, offset, originalString) => {
+                const precedingHtml = originalString.substring(0, offset);
+                const lastOpenRef = precedingHtml.lastIndexOf(`<${tempTag}`);
+                const lastCloseRef = precedingHtml.lastIndexOf(`</${tempTag}>`);
+                if (lastOpenRef > lastCloseRef) return match;
+
+                const ref = p1.replace(/\s+/g, ' ');
+                const versionAttr = version ? `data-version="${version.toUpperCase()}"` : '';
+                return match.replace(p1, `<${tempTag} class="bible-ref-link" data-ref="${ref}" data-incomplete-type="verse-only" ${versionAttr}>${p1}</${tempTag}>`);
+            });
+
+            // Restore the original tag
+            return html.replace(new RegExp(`<${tempTag}`, 'g'), '<span').replace(new RegExp(`</${tempTag}>`, 'g'), '</span>');
+        }
+
+        function showContextModal(partialRef, incompleteType) {
+            contextBookList.innerHTML = '';
+
+            if (incompleteType === 'verse-only') {
+                contextBookList.previousElementSibling.textContent = 'A referência está incompleta. Escolha um capítulo do seu esboço para completar:';
+                if (state.mentionedChaptersInText.size > 0) {
+                    const sortedChapters = [...state.mentionedChaptersInText].sort((a, b) => {
+                        const [bookA, chapA] = a.split(' ');
+                        const [bookB, chapB] = b.split(' ');
+                        if (bookA < bookB) return -1;
+                        if (bookA > bookB) return 1;
+                        return parseInt(chapA) - parseInt(chapB);
+                    });
+
+                    sortedChapters.forEach(chapterRef => {
+                        const button = document.createElement('button');
+                        button.className = 'w-full text-left px-4 py-3 rounded-lg transition bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600';
+                        button.textContent = chapterRef;
+                        button.dataset.fullChapterRef = chapterRef;
+                        contextBookList.appendChild(button);
+                    });
+                } else {
+                    contextBookList.innerHTML = '<p class="text-sm text-center text-gray-500 dark:text-gray-400">Nenhum capítulo completo encontrado no esboço para usar como contexto.</p>';
+                }
+            } else { // 'chapter-verse'
+                contextBookList.previousElementSibling.textContent = 'A referência está incompleta. Escolha um livro do seu esboço para completar:';
+                if (state.mentionedBooksInText.size > 0) {
+                    [...state.mentionedBooksInText].sort().forEach(bookName => {
+                        const button = document.createElement('button');
+                        button.className = 'w-full text-left px-4 py-3 rounded-lg transition bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600';
+                        button.textContent = bookName;
+                        button.dataset.bookName = bookName;
+                        contextBookList.appendChild(button);
+                    });
+                } else {
+                    contextBookList.innerHTML = '<p class="text-sm text-center text-gray-500 dark:text-gray-400">Nenhum livro completo encontrado no esboço para usar como contexto.</p>';
+                }
+            }
+
+            contextModal.dataset.partialRef = partialRef;
+            contextModal.dataset.incompleteType = incompleteType;
+            contextModal.classList.remove('hidden');
+        }
+
+        async function loadBibleAtReference(ref, versionOverride = null) {
+            // 1. Parse the reference
+            const [bookAndChapter, versesStr] = ref.split(':');
+            const parts = bookAndChapter.split(' ');
+            const chapter = parts.pop();
+            const bookName = parts.join(' ');
+            const fullChapterRef = `${bookName} ${chapter}`; // e.g., "Atos 17"
+
+            const verseNumbers = [];
+            if (versesStr) {
+                versesStr.split(',').forEach(part => {
+                    if (part.includes('-') || part.includes('–') || part.includes('—') || part.includes('e')) {
+                        const [start, end] = part.split(/[-–—eE]/).map(Number);
+                        for (let i = start; i <= end; i++) {
+                            verseNumbers.push(i);
+                        }
+                    } else {
+                        verseNumbers.push(Number(part.trim()));
+                    }
+                });
+            }
+
+            // 2. Update the state with the new highlight reference
+            if (verseNumbers.length > 0) {
+                state.bible.highlightedRef = { ref: fullChapterRef, verses: verseNumbers };
+            } else {
+                state.bible.highlightedRef = null; // No specific verse to highlight
+            }
+
+            // 3. Load the chapter, which will automatically apply the new highlight
+            const bookIndex = BIBLE_METADATA.books.findIndex(b => b.toLowerCase() === bookName.toLowerCase());
+            if (bookIndex === -1) {
+                console.error("Livro não encontrado:", bookName);
+                toggleBibleSidebar(false);
+                return;
+            }
+            
+            await loadAndDisplayBibleChapter(bookIndex, parseInt(chapter) - 1, versionOverride);
+
+            // 4. Scroll the first highlighted verse into view
+            if (state.bible.highlightedRef && state.bible.highlightedRef.verses.length > 0) {
+                setTimeout(() => {
+                    const firstVerseEl = bibleVersesContainer.querySelector(`[data-verse="${state.bible.highlightedRef.verses[0]}"]`);
+                    if (firstVerseEl) {
+                        firstVerseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+        }
+        async function handleReferenceClick(refLink) {
+            const ref = refLink.dataset.ref;
+            const versionAlias = refLink.dataset.version;
+            const version = resolveVersionAlias(versionAlias);
+            const incompleteType = refLink.dataset.incompleteType;
+
+            if (!incompleteType) {
+                toggleBibleSidebar(true);
+                await loadBibleAtReference(ref, version);
+                return;
+            }
+
+            const bibleIsOpen = bibleSidebar.classList.contains('open');
+
+            if (bibleIsOpen) {
+                const bookName = BIBLE_METADATA.books[state.bible.currentBook];
+                let fullRef;
+                if (incompleteType === 'verse-only') {
+                    const verses = ref.replace(/(v|vv)\.?\s*/i, '');
+                    fullRef = `${bookName} ${state.bible.currentChapter + 1}:${verses}`;
+                } else { // chapter-verse
+                    fullRef = `${bookName} ${ref}`;
+                }
+                await loadBibleAtReference(fullRef, version);
+            } else {
+                showContextModal(ref, incompleteType);
+            }
+        }
+        const initBible = () => {
+            const allAbbrs = { ...BIBLE_METADATA.abbreviations };
+
+            // Add spaced versions for abbreviations like "1Ts" -> "1 Ts"
+            for (const key in BIBLE_METADATA.abbreviations) {
+                const match = key.match(/^(\d+)(\D+)$/);
+                if (match) {
+                    const spacedKey = `${match[1]} ${match[2]}`;
+                    if (!allAbbrs[spacedKey]) {
+                        allAbbrs[spacedKey] = BIBLE_METADATA.abbreviations[key];
+                    }
+                }
+            }
+
+            BIBLE_METADATA.books.forEach(book => {
+                 allAbbrs[book] = book; // Add full book names
+                 // Handle books like "1 Samuel" and "1Samuel"
+                 const spacelessBook = book.replace(" ", "");
+                 if (book !== spacelessBook) {
+                     allAbbrs[spacelessBook] = book;
+                 }
+            });
+
+            BIBLE_METADATA.bookRegex = Object.keys(allAbbrs)
+                .sort((a, b) => b.length - a.length) // Sort by length to match longer names first
+                .map(key => key.replace(/ /g, '\\s*')) // Allow for flexible spacing
+                .join('|');
+
+            BIBLE_METADATA.spacelessMap = new Map();
+            for (const key in allAbbrs) {
+                 const spacelessKey = key.replace(/\s/g, '').toLowerCase();
+                 if (!BIBLE_METADATA.spacelessMap.has(spacelessKey)) {
+                    BIBLE_METADATA.spacelessMap.set(spacelessKey, allAbbrs[key]);
+                 }
+            }
+
+
+            const versionOptions = BIBLE_METADATA.versions.map(v => `<option value="${v.id}">${v.name}</option>`)
+                .join('');
+            bibleVersionSelect.innerHTML = versionOptions;
+            defaultBibleVersionSelect.innerHTML = versionOptions;
+            bibleVersionSelect.value = state.settings.bibleVersion;
+            defaultBibleVersionSelect.value = state.settings.bibleVersion;
+            const bookOptions = BIBLE_METADATA.books.map((name, index) =>
+                `<option value="${index}">${name}</option>`).join('');
+            bibleBookSelect.innerHTML = bookOptions;
+            bibleVersionSelect.addEventListener('change', (e) => {
+                state.settings.bibleVersion = e.target.value;
+                loadAndDisplayBibleChapter(state.bible.currentBook, state.bible.currentChapter);
+            });
+            bibleBookSelect.addEventListener('change', (e) => {
+                const bookIndex = parseInt(e.target.value);
+                loadAndDisplayBibleChapter(bookIndex, 0);
+            });
+            bibleChapterSelect.addEventListener('change', (e) => {
+                const chapterIndex = parseInt(e.target.value);
+                loadAndDisplayBibleChapter(state.bible.currentBook, chapterIndex);
+            });
+            loadAndDisplayBibleChapter(0, 0);
+        };
+
+        const updateBibleNavButtons = async () => {
+            const { currentBook, currentChapter } = state.bible;
+            const bibleData = await loadBibleData(state.settings.bibleVersion);
+
+            // Disable prev if it's the very first chapter of the Bible
+            biblePrevChapterBtn.disabled = currentBook === 0 && currentChapter === 0;
+
+            if (!bibleData) {
+                bibleNextChapterBtn.disabled = true;
+                return;
+            }
+            // Disable next if it's the very last chapter of the Bible
+            const lastBookIndex = BIBLE_METADATA.books.length - 1;
+            const lastBookData = bibleData[lastBookIndex];
+            if (!lastBookData) {
+                bibleNextChapterBtn.disabled = true;
+                return;
+            }
+            const lastChapterIndex = lastBookData.chapters.length - 1;
+            bibleNextChapterBtn.disabled = currentBook === lastBookIndex && currentChapter === lastChapterIndex;
+        };
+
+        const goToPrevChapter = async () => {
+            let currentBookIndex = state.bible.currentBook;
+            let currentChapterIndex = state.bible.currentChapter;
+            const bibleData = await loadBibleData(state.settings.bibleVersion);
+
+            if (currentChapterIndex > 0) {
+                currentChapterIndex--;
+            } else { // At the first chapter of the current book
+                if (currentBookIndex > 0) { // Go to the previous book
+                    currentBookIndex--;
+                    if (bibleData && bibleData[currentBookIndex]) {
+                       currentChapterIndex = bibleData[currentBookIndex].chapters.length - 1;
+                    }
+                }
+            }
+            loadAndDisplayBibleChapter(currentBookIndex, currentChapterIndex);
+        };
+
+        const goToNextChapter = async () => {
+            let currentBookIndex = state.bible.currentBook;
+            let currentChapterIndex = state.bible.currentChapter;
+
+            const bibleData = await loadBibleData(state.settings.bibleVersion);
+            if (!bibleData || !bibleData[currentBookIndex]) return;
+
+            const totalChaptersInBook = bibleData[currentBookIndex].chapters.length;
+
+            if (currentChapterIndex < totalChaptersInBook - 1) {
+                currentChapterIndex++;
+            } else { // At the last chapter of the current book
+                if (currentBookIndex < BIBLE_METADATA.books.length - 1) { // Go to the next book
+                    currentBookIndex++;
+                    currentChapterIndex = 0;
+                }
+            }
+            loadAndDisplayBibleChapter(currentBookIndex, currentChapterIndex);
+        };
+
+        const init = () => {
+            const setAppHeight = () => {
+                const doc = document.documentElement;
+                doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+            };
+            window.addEventListener('resize', setAppHeight);
+            setAppHeight();
+            if (timerPlayPauseBtn) timerPlayPauseBtn.innerHTML = ICONS.play;
+            if (settingsToggleBtn) settingsToggleBtn.innerHTML = ICONS.settings;
+            if (closeSettingsBtn) closeSettingsBtn.innerHTML = ICONS.close;
+            if (closeContextModalBtn) closeContextModalBtn.innerHTML = ICONS.close;
+            if (closeConfirmModalBtn) closeConfirmModalBtn.innerHTML = ICONS.close;
+            if (prevBtn) prevBtn.innerHTML = ICONS.arrowLeft;
+            if (nextBtn) nextBtn.innerHTML = ICONS.arrowRight;
+            if (historyToggleBtn) historyToggleBtn.innerHTML = ICONS.menu;
+            if (closeHistoryBtn) closeHistoryBtn.innerHTML = ICONS.close;
+            if (homeBtn) homeBtn.innerHTML = ICONS.home;
+            if (autoScrollToggleBtn) autoScrollToggleBtn.innerHTML = ICONS.scrollPlay;
+            if (bibleToggleBtn) bibleToggleBtn.innerHTML = ICONS.book;
+            if (closeBibleBtn) closeBibleBtn.innerHTML = ICONS.close;
+            if (biblePrevChapterBtn) biblePrevChapterBtn.innerHTML = ICONS.arrowLeft;
+            if (bibleNextChapterBtn) bibleNextChapterBtn.innerHTML = ICONS.arrowRight;
+            document.querySelector('[data-setting="textAlign"][data-value="text-left"]').innerHTML = ICONS
+                .alignLeft;
+            document.querySelector('[data-setting="textAlign"][data-value="text-center"]').innerHTML = ICONS
+                .alignCenter;
+            document.querySelector('[data-setting="textAlign"][data-value="text-right"]').innerHTML = ICONS
+                .alignRight;
+            document.querySelector('[data-setting="textAlign"][data-value="text-justify"]').innerHTML = ICONS
+                .alignJustify;
+            document.querySelector('[data-setting="contentAlign"][data-value="items-start"]').innerHTML = ICONS
+                .alignHorizontalStart;
+            document.querySelector('[data-setting="contentAlign"][data-value="items-center"]').innerHTML = ICONS
+                .alignHorizontalCenter;
+            document.querySelector('[data-setting="contentAlign"][data-value="items-end"]').innerHTML = ICONS
+                .alignHorizontalEnd;
+            const savedSettings = JSON.parse(localStorage.getItem('notionViewerSettings'));
+            if (savedSettings) {
+                state.settings = {
+                    ...state.settings,
+                    ...savedSettings
+                };
+                const validWidths = ['max-w-[33vw]', 'max-w-[66vw]', 'max-w-full'];
+                if (!validWidths.includes(state.settings.textWidth)) {
+                    state.settings.textWidth =
+                        'max-w-[66vw]';
+                }
+            }
+            applyTheme();
+            initBible();
+            generateBtn.addEventListener('click', () => fetchNotionContent(false));
+            previewBtn.addEventListener('click', () => fetchNotionContent(true));
+
+            // Upload listeners
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.add('highlight'), false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('highlight'), false);
+            });
+            uploadArea.addEventListener('drop', e => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    handleFile(files[0]);
+                }
+            }, false);
+
+            const triggerFileInput = () => fileInput.click();
+            uploadDocx.addEventListener('click', triggerFileInput);
+            uploadPdf.addEventListener('click', triggerFileInput);
+            uploadNotion.addEventListener('click', () => {
+                uploadArea.classList.add('hidden');
+                notionInputContainer.classList.remove('hidden');
+            });
+            fileInput.addEventListener('change', e => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+
+            settingsToggleBtn.addEventListener('click', () => toggleSettingsPanel(!settingsPanel.classList
+                .contains('open')));
+            closeSettingsBtn.addEventListener('click', () => toggleSettingsPanel(false));
+            historyToggleBtn.addEventListener('click', () => toggleHistorySidebar(!historySidebar.classList
+                .contains('open')));
+            closeHistoryBtn.addEventListener('click', () => toggleHistorySidebar(false));
+            bibleToggleBtn.addEventListener('click', () => toggleBibleSidebar(!bibleSidebar.classList.contains(
+                'open')));
+            closeBibleBtn.addEventListener('click', () => toggleBibleSidebar(false));
+            homeBtn.addEventListener('click', () => {
+                showConfirmationModal(
+                    'Tem certeza que deseja sair e encerrar a leitura do esboço?',
+                    () => showView('setup')
+                );
+            });
+            autoScrollToggleBtn.addEventListener('click', toggleAutoScroll);
+            biblePrevChapterBtn.addEventListener('click', goToPrevChapter);
+            bibleNextChapterBtn.addEventListener('click', goToNextChapter);
+
+            // Context Modal Listeners
+            closeContextModalBtn.addEventListener('click', () => contextModal.classList.add('hidden'));
+            contextOtherBtn.addEventListener('click', () => {
+                contextModal.classList.add('hidden');
+                toggleBibleSidebar(true);
+            });
+            contextBookList.addEventListener('click', async (e) => {
+                const button = e.target.closest('button');
+                if (!button || !button.dataset) return;
+
+                const partialRef = contextModal.dataset.partialRef;
+                let fullRef;
+
+                if (button.dataset.fullChapterRef) {
+                    const chapterRef = button.dataset.fullChapterRef; // e.g., "Atos 17"
+                    const verses = partialRef.replace(/(v|vv)\.?\s*/i, ''); // e.g., "5"
+                    fullRef = `${chapterRef}:${verses}`;
+                } else if (button.dataset.bookName) {
+                    const bookName = button.dataset.bookName;
+                    fullRef = `${bookName} ${partialRef}`;
+                } else {
+                    return;
+                }
+
+                contextModal.classList.add('hidden');
+                toggleBibleSidebar(true);
+                await loadBibleAtReference(fullRef);
+            });
+
+
+            document.addEventListener('click', e => {
+                const isSidebarOpen = document.body.classList.contains('history-open') || document.body
+                    .classList.contains('bible-open') || document.body.classList.contains('settings-open');
+                if (!isSidebarOpen) return;
+                const target = e.target;
+
+                // Do not close sidebars if a click originated from within the context modal,
+                // as this can interfere with the action of opening the Bible sidebar.
+                if (target.closest('#context-modal-content')) {
+                    return;
+                }
+
+                const isClickInsideSidebar = target.closest('#history-sidebar') || target.closest(
+                    '#bible-sidebar') || target.closest('#settings-panel');
+                const isClickOnToggleButton = target.closest('#history-toggle-btn') || target.closest(
+                    '#bible-toggle-btn-footer') || target.closest('#settings-toggle-btn') || target.closest('.bible-ref-link');
+                if (!isClickInsideSidebar && !isClickOnToggleButton) {
+                    closeAllSidebars();
+                }
+            });
+            slidesContainer.addEventListener('scroll', updateFooterInfo);
+            slidesContainer.addEventListener('touchstart', handleTouchStart, {
+                passive: true
+            });
+            slidesContainer.addEventListener('touchmove', handleTouchMove, {
+                passive: true
+            });
+            slidesContainer.addEventListener('touchend', handleTouchEnd, {
+                passive: true
+            });
+            document.querySelector('.settings-panel-content').addEventListener('click', handleSettingChange);
+            document.querySelector('.settings-panel-content').addEventListener('change', handleSettingChange);
+            timerPlayPauseBtn.addEventListener('click', toggleTimer);
+            nextBtn.addEventListener('click', goToNextSlide);
+            prevBtn.addEventListener('click', goToPrevSlide);
+            historyList.addEventListener('click', e => {
+                const button = e.target.closest('.history-item');
+                if (button && button.dataset.index) {
+                    goToSlide(parseInt(button.dataset.index));
+                }
+            });
+            slidesContainer.addEventListener('click', e => {
+                const refLink = e.target.closest('.bible-ref-link');
+                if (refLink) {
+                    handleReferenceClick(refLink);
+                }
+            });
+            wpmIncreaseBtn.addEventListener('click', () => {
+                state.settings.wpm = Math.min(state.settings.wpm + 10, 500);
+                applySettings();
+            });
+            wpmDecreaseBtn.addEventListener('click', () => {
+                state.settings.wpm = Math.max(state.settings.wpm - 10, 20);
+                applySettings();
+            });
+            document.addEventListener('keydown', e => {
+                if (presentationView.classList.contains('hidden')) return;
+                if (e.key === 'Escape') {
+                    closeAllSidebars();
+                    contextModal.classList.add('hidden');
+                }
+                if (settingsPanel.classList.contains('open') || historySidebar.classList.contains('open') ||
+                    bibleSidebar.classList.contains('open') || !contextModal.classList.contains('hidden') ) return;
+
+                if (state.settings.displayMode === 'slides') {
+                    if (e.key === 'ArrowRight' || e.key === ' ') goToNextSlide();
+                    if (e.key === 'ArrowLeft') goToPrevSlide();
+                }
+            });
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('pageId')) {
+                notionInputContainer.classList.remove('hidden');
+                uploadArea.classList.add('hidden');
+                pageIdInput.value = urlParams.get('pageId');
+                generateBtn.click();
+            } else {
+                renderRecentHistory();
+            }
+            applySettings();
+        };
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 
 </html>
