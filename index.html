@@ -2434,43 +2434,55 @@
         }
     }
     const handleSettingChange = (e) => {
-        const el = e.target;
-        if (!el.dataset.setting) return;
-        const { setting, value } = el.dataset;
-        let settingChanged = false;
-        if (el.tagName === 'SELECT') {
-            if (state.settings[setting] !== el.value) {
-                state.settings[setting] = el.value;
-                settingChanged = true;
-            }
-        } else if (el.tagName === 'BUTTON') {
-            const btn = el.closest('button[data-setting]');
-            if (!btn) return;
-            const { setting, value } = btn.dataset;
-            if (setting === 'theme') {
-                const newTheme = `theme-${value}`;
-                if (state.settings.theme !== newTheme) {
-                    applyTheme(newTheme);
+            // Procura pelo elemento mais próximo (seja o clicado ou um pai) que tenha o atributo 'data-setting'.
+            // Isso resolve o problema de clicar no ícone SVG em vez do botão.
+            const targetElement = e.target.closest('[data-setting]');
+
+            // Se nenhum elemento com 'data-setting' for encontrado no caminho do clique, encerra a função.
+            if (!targetElement) return;
+
+            let settingChanged = false;
+            const { setting } = targetElement.dataset;
+            
+            // Lida com botões
+            if (targetElement.tagName === 'BUTTON') {
+                const { value } = targetElement.dataset;
+
+                if (setting === 'theme') {
+                    const newTheme = `theme-${value}`;
+                    if (state.settings.theme !== newTheme) {
+                        applyTheme(newTheme);
+                    }
+                    return; // Encerra após tratar o tema
                 }
-                return;
-            }
-            const newValue = (setting === 'textWidth' || setting === 'contentAlign') ? value : (isNaN(value) ? value : parseInt(value));
-            if (state.settings[setting] !== newValue) {
-                state.settings[setting] = newValue;
-                settingChanged = true;
-            }
-        }
-        if (settingChanged) {
-            if (setting === 'displayMode' || setting === 'bibleVersion') {
-                if (setting === 'bibleVersion') {
-                    loadAndDisplayBibleChapter(state.bible.currentBook, state.bible.currentChapter);
+
+                const newValue = (isNaN(parseInt(value))) ? value : parseInt(value);
+                if (state.settings[setting] !== newValue) {
+                    state.settings[setting] = newValue;
+                    settingChanged = true;
                 }
-                rebuildSlidesAndRender();
-            } else {
-                applySettings();
+            } 
+            // Lida com seletores (dropdowns)
+            else if (targetElement.tagName === 'SELECT') {
+                const { value } = targetElement;
+                if (state.settings[setting] !== value) {
+                    state.settings[setting] = value;
+                    settingChanged = true;
+                }
             }
-        }
-    };
+
+            // Aplica as mudanças se algo foi alterado
+            if (settingChanged) {
+                if (setting === 'displayMode' || setting === 'bibleVersion') {
+                    if (setting === 'bibleVersion') {
+                        loadAndDisplayBibleChapter(state.bible.currentBook, state.bible.currentChapter);
+                    }
+                    rebuildSlidesAndRender();
+                } else {
+                    applySettings();
+                }
+            }
+        };
     const updateClock = () => {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
