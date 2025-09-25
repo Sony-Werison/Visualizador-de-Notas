@@ -1776,27 +1776,95 @@
             reader.readAsArrayBuffer(file);
         };
 
-        const processPdf = (file) => {
+const processPdf = (file) => {
             showView('loading');
+            // Configuração do worker para a biblioteca pdf.js
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+            
             const reader = new FileReader();
+            
             reader.onload = (e) => {
                 const arrayBuffer = e.target.result;
+                // Inicia o processamento do documento PDF
                 pdfjsLib.getDocument(arrayBuffer).promise.then(async (pdf) => {
                     let fullText = '';
-                    for (let i = 1; i <= pdf.numPages; i++) {
+                    const numPages = pdf.numPages;
+
+                    // Itera por cada página do PDF
+                    for (let i = 1; i <= numPages; i++) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
-                        fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
+                        
+                        // --- INÍCIO DA NOVA LÓGICA DE FORMATAÇÃO INTELIGENTE ---
+
+                        if (!textContent.items || textContent.items.length === 0) {
+                            continue;
+                        }
+
+                        // 1. Ordena os itens de texto: primeiro de cima para baixo (y), depois da esquerda para a direita (x).
+                        // Isso garante que o texto seja processado na ordem de leitura.
+                        const sortedItems = textContent.items.sort((a, b) => {
+                            if (Math.abs(a.transform[5] - b.transform[5]) > 3) {
+                                return b.transform[5] - a.transform[5]; // Ordena por Y (descendente)
+                            }
+                            return a.transform[4] - b.transform[4]; // Se na mesma linha, ordena por X (ascendente)
+                        });
+
+                        let processedText = '';
+                        let lastY = -1;
+                        let lastHeight = -1;
+
+                        // 2. Itera por cada item de texto ordenado para reconstruir os parágrafos.
+                        for (const item of sortedItems) {
+                            // Ignora itens sem texto
+                            if (!item.str.trim()) {
+                                continue;
+                            }
+
+                            const currentY = item.transform[5];
+                            const currentHeight = item.height;
+
+                            if (lastY !== -1) {
+                                const yDifference = Math.abs(lastY - currentY);
+
+                                // 3. Detecta quebras de parágrafo:
+                                // Se o espaço vertical entre as linhas for significativamente maior que a altura da linha anterior
+                                // (ex: 1.5x maior), considera-se um novo parágrafo.
+                                if (yDifference > lastHeight * 1.5) {
+                                    processedText += '\n\n'; // Adiciona duas quebras de linha para um novo parágrafo
+                                } 
+                                // 4. Detecta quebras de linha:
+                                // Se os itens não estão na mesma linha, mas não distantes o suficiente para serem um novo parágrafo.
+                                else if (yDifference > 3) {
+                                    processedText += '\n'; // Adiciona uma quebra de linha
+                                }
+                                // 5. Detecta texto na mesma linha:
+                                // Se estão na mesma linha, adiciona um espaço.
+                                else {
+                                    processedText += ' ';
+                                }
+                            }
+                            
+                            processedText += item.str.trim();
+                            lastY = currentY;
+                            lastHeight = currentHeight;
+                        }
+                        // --- FIM DA NOVA LÓGICA ---
+
+                        fullText += processedText + '\n\n';
                     }
+
+                    // O texto agora formatado é convertido em blocos para exibição
                     const blocks = textToNotionBlocks(fullText);
                     processAndRender(blocks, file.name);
+
                 }).catch(err => {
                     showError("Erro ao processar o arquivo .pdf.");
                     showView('setup');
                     console.error(err);
                 });
             };
+            
             reader.readAsArrayBuffer(file);
         };
 
