@@ -1490,6 +1490,32 @@
             alignHorizontalEnd: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21V3h2v18h-2zM4 17V7h12v10H4z"/></svg>`
         };
         const $ = (selector) => document.querySelector(selector);
+
+        const extractPageId = (urlOrId) => {
+            if (!urlOrId) return null;
+            // Verifica se é um ID válido (32 caracteres hexadecimais sem traços)
+            if (/^[a-f0-9]{32}$/.test(urlOrId)) {
+                return urlOrId;
+            }
+            // Tenta extrair o ID de uma URL do Notion
+            try {
+                const url = new URL(urlOrId);
+                const path = url.pathname;
+                // O ID é a última parte do caminho, geralmente após um traço
+                const idMatch = path.match(/[a-f0-9]{32}$/);
+                if (idMatch) {
+                    return idMatch[0];
+                }
+            } catch (e) {
+                // Não é uma URL válida, mas pode ser um ID em um formato diferente
+                const idMatch = urlOrId.match(/[a-f0-9]{32}$/);
+                if (idMatch) {
+                    return idMatch[0];
+                }
+            }
+            return null; // Retorna nulo se não encontrar um ID válido
+        };
+        
         const setupView = $('#setup-view'),
             presentationView = $('#presentation-view'),
             loadingView = $('#loading-view');
@@ -1855,7 +1881,6 @@
                     scanForReferencesInText();
                     rebuildSlidesAndRender();
                     showView('presentation');
-                    toggleSettingsPanel(true);
                 } else {
                     showView('setup');
                 }
