@@ -14,7 +14,7 @@ Notou? A barra lateral da Bíblia abriu exatamente na passagem. Lá você pode:
 - Navegar para outros livros e capítulos usando os seletores.
 - Usar as setas no rodapé da barra lateral para avançar ou retroceder capítulos.
 
-> Dica Pro: Quer ver a passagem em outra versão rapidamente? Adicione a sigla entre parênteses no seu texto, como em Romanos 8:28 (ARA). O app abrirá a versão especificada sem mudar sua padrão.
+> Dica: Quer ver a passagem em outra versão rapidamente? Adicione a sigla entre parênteses no seu texto, como em Romanos 8:28 (ARA). O app abrirá a versão especificada sem mudar sua padrão.
 > 
 
 ### Contexto Inteligente e o Seletor
@@ -55,7 +55,7 @@ Esta é a sua central de navegação. Aqui você vê:
 
 Clique em qualquer item da lista para pular diretamente para aquela página.
 
-## ⚙️ 3. Painel de Configurações: Um Mergulho Profundo
+## ⚙️ 3. Painel de Configurações: Um Mergulho fundo
 
 O painel de engrenagem (⚙️) é seu centro de comando. Vamos detalhar cada item:
 
@@ -66,12 +66,12 @@ O painel de engrenagem (⚙️) é seu centro de comando. Vamos detalhar cada it
 - **Posicionamento Horizontal:** Alinha o *bloco de texto inteiro* à esquerda, centro ou direita da tela.
 - **Alinhamento do Texto:** Justifica o *texto dentro do bloco* (à esquerda, centro, direita ou justificado).
 - **Fonte, Tamanho da Fonte e Espaçamento:** Ajustes finos de tipografia para a legibilidade perfeita.
-- **Andamento no Rodapé:** Escolha se a barra de progresso no rodapé mostra o avanço em **porcentagem (%)** ou o **tempo de leitura restante**.
+- **Andamento no Rodapé:** Escolha se a barra de gresso no rodapé mostra o avanço em **porcentagem (%)** ou o **tempo de leitura restante**.
 - **Velocidade de Leitura (PPM):** As "Palavras por Minuto" que você lê. Este valor é crucial, pois ajusta as estimativas de tempo e a velocidade da rolagem automática.
 
-## ✅ Você está Pronto!
+## ✅ Você está nto!
 
-Exploramos tudo, do básico ao avançado. Agora você está pronto para carregar seus próprios documentos .docx, .pdf ou páginas do Notion e ter a melhor experiência de leitura e apresentação.
+Exploramos tudo, do básico ao avançado. Agora você está nto para carregar seus prios documentos .docx, .pdf ou páginas do Notion e ter a melhor experiência de leitura e apresentação.
 
 **Clique no ícone de casa (🏠) no canto superior esquerdo para voltar à tela inicial e começar.**
 
