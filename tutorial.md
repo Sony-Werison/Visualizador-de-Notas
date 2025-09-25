@@ -1,52 +1,78 @@
-# Guia do Usuário: Leitor de Esboços
+# Bem-vindo ao Tutorial Interativo!
 
-Este documento serve como um guia completo para os recursos do **Leitor de Esboços**, uma ferramenta desenvolvida para a leitura, estudo e apresentação de textos com integração bíblica.
+Olá! Este é o seu guia prático para dominar o **Leitor de Esboços**. A melhor forma de aprender é fazendo, então vamos explorar os recursos juntos, diretamente nesta tela. Use este guia para testar as funcionalidades em tempo real.
 
-## Carregando Seu Conteúdo
+## 📖 1. A Estrela do Show: Integração com a Bíblia
 
-O aplicativo é compatível com os seguintes formatos de entrada:
+A mágica acontece aqui. O aplicativo detecta referências bíblicas e as torna interativas.
 
-- **📄 Arquivos Word (.docx):** Indicado para esboços previamente formatados. O sistema preserva elementos como títulos, listas e outras formatações básicas.
-- **📑 Arquivos PDF (.pdf):** O conteúdo textual de documentos PDF é extraído automaticamente para uma leitura linear.
+**Clique na referência a seguir: João 3:16**
 
-### Modos de Visualização
+Notou? A barra lateral da Bíblia abriu exatamente na passagem. Lá você pode:
 
-Existem dois modos de navegação para diferentes finalidades.
+- Mudar a versão da Bíblia (NVI, ARA, etc.).
+- Navegar para outros livros e capítulos usando os seletores.
+- Usar as setas no rodapé da barra lateral para avançar ou retroceder capítulos.
 
-### 📖 Modo Rolagem (Padrão)
-
-Este modo exibe todo o conteúdo em uma única página contínua, ideal para leitura linear. A função de **rolagem automática** (`🔽`) pode ser ativada para uma leitura sem uso das mãos, com velocidade ajustável nas configurações.
-
-### 💻 Modo Páginas (Modo Apresentação)
-
-Este modo segmenta o conteúdo em seções, similar a uma apresentação de slides. As quebras de página são geradas automaticamente a partir de **títulos (H1, H2, H3)** ou **divisores (`---`)** presentes no documento original.
-
-## Funcionalidades Bíblicas
-
-A principal funcionalidade do aplicativo é a sua capacidade de interagir com referências bíblicas.
-
-- **Detecção Automática de Referências:** O sistema identifica e converte automaticamente referências como `João 3:16` ou `1 Co 13.4-7` em links interativos.
-- **Resolução de Contexto:** Para referências incompletas (ex: `v.5`), o aplicativo sugere os capítulos mencionados no esboço para completar a informação.
-- **Consulta Rápida de Versões:** É possível visualizar uma passagem em uma tradução específica adicionando a sigla entre parênteses (ex: `Rm 8:28 (NVI)`), sem alterar a versão padrão configurada.
-
-> Versões disponíveis: NVI, ARA, ARC, ACF, NVT, entre outras.
+> Dica Pro: Quer ver a passagem em outra versão rapidamente? Adicione a sigla entre parênteses no seu texto, como em Romanos 8:28 (ARA). O app abrirá a versão especificada sem mudar sua padrão.
 > 
 
-## Painel de Configurações
+### Contexto Inteligente e o Seletor
 
-Acesse o ícone de engrenagem (`⚙️`) para personalizar a experiência de leitura.
+O aplicativo é esperto. Se a barra da Bíblia já estiver aberta, ele usa o capítulo atual como contexto para referências curtas.
 
-- **🎨 Temas:** Alterne entre os modos Claro, Escuro, Sépia e outros temas de cores.
-- **✒️ Fontes:** Modifique a família tipográfica do texto.
-- **📏 Layout:** Ajuste as margens e o alinhamento do conteúdo.
-- **⏱️ Exibição de Progresso:** Opte por visualizar o progresso da leitura em **porcentagem (%)** ou em **tempo restante**.
+**Com a barra da Bíblia ainda aberta em João 3, clique aqui: v. 17**
 
-## Recursos Adicionais
+Ele rolou direto para o versículo 17! Agora, feche a barra da Bíblia e clique novamente em **v. 17**.
 
-Explore funcionalidades projetadas para otimizar o estudo e a apresentação.
+Viu o que aconteceu? O **Seletor de Contexto** apareceu. Como a referência era ambígua, ele ofereceu os capítulos já mencionados no texto (João 3) para que você escolhesse qual usar. É uma forma inteligente de garantir que você sempre chegue à passagem certa.
 
-- **🖍️ Destaques Persistentes:** Ao clicar em uma referência bíblica, os versículos correspondentes são destacados na barra lateral. Este destaque permanece visível ao revisitar o mesmo capítulo.
-- **⏱️ Cronômetro de Sessão:** Monitore o tempo total de leitura através do cronômetro no cabeçalho. No "Modo Páginas", o menu lateral `☰` exibe o tempo dedicado a cada seção.
-- **📱 Instalação como Aplicativo (PWA):** O Leitor de Esboços pode ser "instalado" em dispositivos móveis e desktops para acesso direto.
-- **⌨️ Atalhos de Teclado:** Utilize as teclas `→` e `←` para navegar entre as páginas e `Esc` para fechar menus.
-- **💾 Persistência de Configurações:** Suas preferências de tema, fonte e versão da Bíblia são salvas automaticamente no seu navegador. Configure uma vez e use sempre.
+## 💻 2. Modos de Exibição: Rolagem vs. Páginas
+
+Você tem duas formas de ler seu conteúdo. Alterne entre elas no painel de configurações.
+
+### Modo Rolagem (Padrão)
+
+Ideal para leitura contínua. Neste modo, você pode ativar a **Rolagem Automática** clicando no ícone 🔽 no topo. A velocidade é controlada pela configuração de "Palavras por Minuto".
+
+### Modo Páginas (Apresentação)
+
+Cansado de rolar? Transforme seu esboço em slides! O app cria uma nova "página" sempre que encontra um **título** ou um **divisor (---)** no seu documento, como os que separam as seções deste tutorial.
+
+**Vá em Configurações (⚙️) e mude para o modo "Páginas" para ver este tutorial se transformar!**
+
+### A Barra de Navegação Rápida (Modo Páginas)
+
+No Modo Páginas, um novo ícone aparece no canto inferior esquerdo: o menu ☰.
+
+**Clique no menu ☰ agora.**
+
+Esta é a sua central de navegação. Aqui você vê:
+
+- Uma lista de todas as páginas do seu documento.
+- O tempo de leitura previsto para cada uma.
+- O tempo real que você gastou em cada seção (se o cronômetro estiver ativo).
+
+Clique em qualquer item da lista para pular diretamente para aquela página.
+
+## ⚙️ 3. Painel de Configurações: Um Mergulho Profundo
+
+O painel de engrenagem (⚙️) é seu centro de comando. Vamos detalhar cada item:
+
+- **Cor da Página:** Altera o esquema de cores (Claro, Escuro, Sépia, etc.) para conforto visual.
+- **Versão da Bíblia Padrão:** Define qual tradução será aberta por padrão ao clicar numa referência.
+- **Estilo e Cor de Destaque (Versículo):** Personalize como os versículos são destacados na barra da Bíblia (preenchimento, cor da fonte ou contorno).
+- **Margens:** Controla a largura do bloco de texto. "Estreito" para foco, "Largo" para usar toda a tela.
+- **Posicionamento Horizontal:** Alinha o *bloco de texto inteiro* à esquerda, centro ou direita da tela.
+- **Alinhamento do Texto:** Justifica o *texto dentro do bloco* (à esquerda, centro, direita ou justificado).
+- **Fonte, Tamanho da Fonte e Espaçamento:** Ajustes finos de tipografia para a legibilidade perfeita.
+- **Andamento no Rodapé:** Escolha se a barra de progresso no rodapé mostra o avanço em **porcentagem (%)** ou o **tempo de leitura restante**.
+- **Velocidade de Leitura (PPM):** As "Palavras por Minuto" que você lê. Este valor é crucial, pois ajusta as estimativas de tempo e a velocidade da rolagem automática.
+
+## ✅ Você está Pronto!
+
+Exploramos tudo, do básico ao avançado. Agora você está pronto para carregar seus próprios documentos .docx, .pdf ou páginas do Notion e ter a melhor experiência de leitura e apresentação.
+
+**Clique no ícone de casa (🏠) no canto superior esquerdo para voltar à tela inicial e começar.**
+
+Boa leitura e bons estudos!
