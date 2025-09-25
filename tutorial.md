@@ -2,9 +2,9 @@
 
 Olá! Este é o seu guia prático para dominar o **Leitor de Esboços**. A melhor forma de aprender é fazendo, então vamos explorar os recursos juntos, diretamente nesta tela. Use este guia para testar as funcionalidades em tempo real.
 
-## 📖 1. A Estrela do Show: Integração com a Bíblia
+## 📖 1. Integração com a Bíblia
 
-A mágica acontece aqui. O aplicativo detecta referências bíblicas e as torna interativas.
+O aplicativo detecta referências bíblicas e as torna interativas.
 
 **Clique na referência a seguir: João 3:16**
 
@@ -55,7 +55,7 @@ Esta é a sua central de navegação. Aqui você vê:
 
 Clique em qualquer item da lista para pular diretamente para aquela página.
 
-## ⚙️ 3. Painel de Configurações: Um Mergulho fundo
+## ⚙️ 3. Painel de Configurações: Entenda cada opção
 
 O painel de engrenagem (⚙️) é seu centro de comando. Vamos detalhar cada item:
 
@@ -69,10 +69,10 @@ O painel de engrenagem (⚙️) é seu centro de comando. Vamos detalhar cada it
 - **Andamento no Rodapé:** Escolha se a barra de gresso no rodapé mostra o avanço em **porcentagem (%)** ou o **tempo de leitura restante**.
 - **Velocidade de Leitura (PPM):** As "Palavras por Minuto" que você lê. Este valor é crucial, pois ajusta as estimativas de tempo e a velocidade da rolagem automática.
 
-## ✅ Você está nto!
+## ✅ Você está pronto!
 
 Exploramos tudo, do básico ao avançado. Agora você está nto para carregar seus prios documentos .docx, .pdf ou páginas do Notion e ter a melhor experiência de leitura e apresentação.
 
 **Clique no ícone de casa (🏠) no canto superior esquerdo para voltar à tela inicial e começar.**
 
-Boa leitura e bons estudos!
+Bons estudos!
