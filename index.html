@@ -1107,11 +1107,6 @@
 </head>
 
 <body class="flex flex-col items-center justify-center min-h-screen">
-    <div id="highlight-tooltip" class="hidden absolute z-50 bg-gray-800 rounded-md shadow-lg p-1">
-        <button id="highlight-btn" title="Destacar" class="text-white px-2 py-1 rounded hover:bg-gray-700">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.414.586L2.61 14.415c-.219.219-.345.509-.364.819l-.21 3.7c-.028.497.331.943.824.97l3.7-.21c.31-.019.6-.145.819-.364L19.045 7.401zm-5.48-2.836l1.586 1.586-9.252 9.252-1.586-1.586 9.252-9.252zM21 20v1c0 .552-.448 1-1 1H4c-.552 0-1-.448-1-1v-1h18z"/></svg>
-        </button>
-    </div>
     <div id="app" class="w-full flex flex-col">
         <!-- Tela de Configuração Inicial -->
         <div id="setup-view" class="w-full h-full flex flex-col items-center justify-center">
@@ -1127,7 +1122,7 @@
                         <!-- Opção DOCX -->
                         <div id="upload-docx"
                             class="flex flex-col items-center space-y-2 cursor-pointer p-4 rounded-lg hover:bg-gray-500/10">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/WORD_LOGO.png"
+                            <img src="https://logospng.org/wp-content/uploads/microsoft-word.png"
                                 alt="Ícone do Microsoft Word" class="h-16 w-16">
                         </div>
                         <!-- Opção PDF -->
@@ -3159,60 +3154,6 @@
             renderRecentHistory();
         }
         applySettings();
-// --- CÓDIGO ATUALIZADO PARA DESTAQUE (Desktop + Mobile) ---
-        const slidesContainer = $('#slides-container');
-        const highlightTooltip = $('#highlight-tooltip');
-        const highlightBtn = $('#highlight-btn');
-        let currentRange = null;
-
-        // Função unificada para lidar com a seleção de texto
-        const handleSelection = () => {
-            setTimeout(() => {
-                const selection = window.getSelection();
-                if (selection && !selection.isCollapsed) {
-                    currentRange = selection.getRangeAt(0);
-                    const rect = currentRange.getBoundingClientRect();
-
-                    highlightTooltip.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (highlightTooltip.offsetWidth / 2)}px`;
-                    highlightTooltip.style.top = `${window.scrollY + rect.top - highlightTooltip.offsetHeight - 5}px`;
-                    highlightTooltip.classList.remove('hidden');
-                } else {
-                    if (!highlightTooltip.matches(':hover')) {
-                        highlightTooltip.classList.add('hidden');
-                    }
-                }
-            }, 10);
-        };
-
-        // Adiciona os listeners para ambos os eventos
-        slidesContainer.addEventListener('mouseup', handleSelection); // Para Desktop
-        slidesContainer.addEventListener('touchend', handleSelection); // Para Mobile
-
-        // Esconde o pop-up se o usuário clicar fora dele
-        document.addEventListener('mousedown', (e) => {
-            if (!highlightTooltip.contains(e.target) && e.target !== slidesContainer && !slidesContainer.contains(e.target)) {
-                highlightTooltip.classList.add('hidden');
-            }
-        });
-        
-        // Ação do botão "Destacar" (permanece a mesma)
-        highlightBtn.addEventListener('click', () => {
-            if (currentRange) {
-                const highlightSpan = document.createElement('span');
-                highlightSpan.className = 'text-highlight notion-yellow_background';
-                
-                try {
-                    currentRange.surroundContents(highlightSpan);
-                } catch (error) {
-                    console.error("Não foi possível aplicar o destaque:", error);
-                    alert("Destaque não aplicado. Tente selecionar o texto dentro de um único parágrafo.");
-                }
-
-                window.getSelection().removeAllRanges();
-                highlightTooltip.classList.add('hidden');
-                currentRange = null;
-            }
-        });
     };
     document.addEventListener('DOMContentLoaded', init);
 </script>
